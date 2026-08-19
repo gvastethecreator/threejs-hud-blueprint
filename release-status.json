@@ -1,7 +1,9 @@
 {
   "schemaVersion": "three-hud/release-status/v0",
   "releaseReady": false,
-  "reason": "Local quality gates pass, but HUD-073 cannot close: no git repository to tag, npm whoami ENEEDAUTH, pnpm publish 404 for @scope/three-hud. validate:release fails at assert-release-ready until releaseReady is true after a real publish.",
+  "reason": "Local git tag v0.1.0 exists at 1b648523ef6684afdad03b5f094fb359d1bb0cfe, but npm whoami is ENEEDAUTH and pnpm publish 404s for placeholder @scope/three-hud. No GitHub remote. HUD-073 stays planned until a real npm scope login and registry publish succeed.",
   "requiredClosingTicket": "HUD-073",
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "localTag": "v0.1.0",
+  "localCommit": "1b648523ef6684afdad03b5f094fb359d1bb0cfe"
 }

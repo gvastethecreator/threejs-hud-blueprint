@@ -31,4 +31,17 @@ describe("release-candidate", () => {
     expect(limitations).toContain("Windfoil is experimental");
     expect(limitations).toContain("never overwrite a published version");
   });
+
+  it("keeps releaseReady false while the public package still uses the @scope placeholder", () => {
+    const pkg = JSON.parse(
+      fs.readFileSync(path.join(root, "packages/three-hud/package.json"), "utf8"),
+    ) as { name: string };
+    const status = JSON.parse(fs.readFileSync(path.join(root, "release-status.json"), "utf8")) as {
+      releaseReady: boolean;
+      requiredClosingTicket: string;
+    };
+    expect(pkg.name).toBe("@scope/three-hud");
+    expect(status.requiredClosingTicket).toBe("HUD-073");
+    expect(status.releaseReady).toBe(false);
+  });
 });
