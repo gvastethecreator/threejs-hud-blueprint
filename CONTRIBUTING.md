@@ -1,51 +1,52 @@
 # Contributing
 
-## Before opening work
+## Before you start
 
-- Read `AGENTS.md` and the active `HUD-###` ticket.
-- Confirm blockers and out-of-scope boundaries.
-- Use the existing public contracts and module direction.
-- Open an ADR before changing a durable architectural decision.
+1. Read `AGENTS.md`.
+2. Read the active `HUD-###` ticket.
+3. Make sure that blockers and out-of-scope items are clear.
+4. Use the public contracts and the module direction in `docs/architecture/`.
+5. If you change a durable architectural decision, open an ADR first.
 
 ## Pull requests
 
-A PR should represent one coherent ticket or one explicitly documented bounded slice. Include:
+A pull request covers one ticket or one documented slice. Include:
 
-- linked ticket ID;
-- outcome achieved;
-- affected contracts/modules;
-- tests and evidence;
-- performance/memory impact;
-- compatibility impact;
-- public API or documentation changes;
-- out-of-scope items left untouched.
+- the ticket ID
+- the outcome
+- the affected contracts and modules
+- tests and evidence
+- performance and memory impact
+- compatibility impact
+- public API or documentation changes
+- out-of-scope items that you left untouched
 
-Run at minimum:
+Run this command before you open the pull request:
 
 ```bash
 pnpm run validate:fast
 ```
 
-Renderer, text, layout, input, widget-showcase, package, or milestone changes require the corresponding focused browser/evidence gate and usually `validate:full`.
+If the change touches renderer, text, layout, input, widgets, packaging, or a milestone, also run the focused evidence command for that area. Then run `pnpm run validate:full`.
 
 ## API changes
 
-Before `v1`, breaking changes are possible but must still be intentional:
+Before `v1`, a breaking change is allowed if it is intentional.
 
-- update declaration snapshots;
-- update `docs/architecture/PUBLIC_API.md`;
-- record migration guidance in the changelog;
-- do not expose implementation classes merely to avoid writing a proper contract.
+1. Update declaration snapshots.
+2. Update `docs/architecture/PUBLIC_API.md`.
+3. Record the migration path in `CHANGELOG.md`.
+4. Do not export an implementation class only to skip a public contract.
 
 ## Third-party material
 
 Do not add fonts, shaders, images, or adapted code without:
 
-- source and author;
-- exact license;
-- redistribution status;
-- required notices;
-- provenance note;
-- approval in the license inventory.
+- source and author
+- exact license
+- redistribution status
+- required notices
+- provenance note
+- approval in the license inventory
 
-No font files belong in this blueprint or its default package.
+Do not put font files in this repository or in the default package.

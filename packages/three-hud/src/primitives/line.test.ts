@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { hitTest } from "../input/hitTest.js";
 import { HudLayer } from "../core/HudLayer.js";
+import { HudNode } from "../core/HudNode.js";
 import { encodeOverlayQueue } from "../render/encodeOverlayQueue.js";
 import { Line } from "./Line.js";
 
@@ -14,6 +15,21 @@ describe("line", () => {
     const command = encodeOverlayQueue([layer], "webgl").snapshot().commands[0];
     expect(command && command.kind === "shape" ? command.shape : null).toBe("line");
     expect(hitTest(layer, 30, 11)?.id).toBe("rule");
+  });
+
+  it("encodes nested line endpoints in ancestor world space", () => {
+    const layer = new HudLayer({ id: "main", referenceSize: { width: 800, height: 600 } });
+    const parent = layer.add(new HudNode({ id: "holder", width: 80, height: 80 }));
+    parent.setPosition(100, 50);
+    parent.add(new Line({ id: "nested", x1: 10, y1: 4, x2: 40, y2: 4, strokeWidth: 2 }));
+    const command = encodeOverlayQueue([layer], "webgl")
+      .snapshot()
+      .commands.find((entry) => entry.kind === "shape" && entry.shape === "line");
+    expect(command?.kind).toBe("shape");
+    if (command?.kind !== "shape") return;
+    expect(command.shapeParams?.x1).toBe(110);
+    expect(command.shapeParams?.y1).toBe(54);
+    expect(command.shapeParams?.x2).toBe(140);
   });
 
   it("keeps a one-pixel stroke on whole device pixels when snapping", () => {

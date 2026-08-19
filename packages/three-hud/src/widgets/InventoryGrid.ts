@@ -45,14 +45,36 @@ export class InventoryGrid extends HudNode {
 
   setItems(items: readonly SlotData[]): void {
     this.items = items;
-    const used = new Map(this.slots.map((slot) => [slot.key, slot]));
-    for (let index = 0; index < this.slots.length; index += 1) {
+    const capacity = this.columns * this.rows;
+    const available = new Set(this.slots);
+    const next: Array<Slot | null> = Array.from({ length: capacity }, () => null);
+    for (let index = 0; index < capacity; index += 1) {
       const data = items[index] ?? { key: `empty-${index}`, empty: true };
-      const existing = used.get(data.key) ?? this.slots[index];
-      if (!existing) continue;
-      existing.setData(data);
-      this.slots[index] = existing;
+      const match = this.slots.find(
+        (candidate) => candidate.key === data.key && available.has(candidate),
+      );
+      if (!match) continue;
+      match.setData(data);
+      next[index] = match;
+      available.delete(match);
     }
+    for (let index = 0; index < capacity; index += 1) {
+      if (next[index]) continue;
+      const data = items[index] ?? { key: `empty-${index}`, empty: true };
+      const leftover = available.values().next().value as Slot | undefined;
+      if (leftover) {
+        leftover.setData(data);
+        available.delete(leftover);
+        next[index] = leftover;
+        continue;
+      }
+      next[index] = this.add(
+        new Slot({ id: `${this.id}-slot-${data.key}-${index}`, ...data, size: this.cellSize }),
+      );
+    }
+    for (const slot of available) this.remove(slot);
+    this.slots.length = 0;
+    for (const slot of next) if (slot) this.slots.push(slot);
     this.relayout();
   }
 

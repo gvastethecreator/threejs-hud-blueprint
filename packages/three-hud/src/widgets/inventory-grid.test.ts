@@ -20,6 +20,45 @@ describe("inventory-grid", () => {
     expect(grid.slots.find((slot) => slot.key === "b")?.quantity.text).toBe("9");
   });
 
+  it("keeps distinct Slot instances when mixing a new key with a reused key", () => {
+    const grid = new InventoryGrid({
+      columns: 2,
+      rows: 1,
+      items: [
+        { key: "a", quantity: 1 },
+        { key: "b", quantity: 2 },
+      ],
+    });
+    const slotA = grid.slots.find((slot) => slot.key === "a");
+    grid.setItems([
+      { key: "c", quantity: 4 },
+      { key: "a", quantity: 1 },
+    ]);
+    expect(grid.slots[1]).toBe(slotA);
+    expect(grid.slots[0]?.key).toBe("c");
+    expect(grid.slots[0]).not.toBe(grid.slots[1]);
+    expect(new Set(grid.slots).size).toBe(2);
+  });
+
+  it("emits item identity without mutating host inventory data", () => {
+    const items = [
+      { key: "rifle", quantity: 1 },
+      { key: "med", quantity: 3 },
+    ] as const;
+    const keys: string[] = [];
+    const grid = new InventoryGrid({
+      columns: 2,
+      rows: 1,
+      items,
+      onActivate: (key) => keys.push(key),
+    });
+    const first = grid.slots[0];
+    grid.activate("rifle");
+    expect(keys).toEqual(["rifle"]);
+    expect(items[0]?.quantity).toBe(1);
+    expect(grid.slots[0]).toBe(first);
+  });
+
   it("keeps slot frames inside the parent slot world bounds", () => {
     const grid = new InventoryGrid({
       columns: 4,

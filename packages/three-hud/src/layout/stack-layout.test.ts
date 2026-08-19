@@ -19,6 +19,15 @@ describe("stack-layout", () => {
     expect(hidden.position).toEqual({ x: 0, y: 0 });
   });
 
+  it("keeps visible:false children in layout while collapse removes them", () => {
+    const a = new HudNode({ id: "a", width: 10, height: 8 });
+    const hidden = new HudNode({ id: "hidden", width: 30, height: 8, visible: false });
+    const b = new HudNode({ id: "b", width: 10, height: 8 });
+    layoutStack([a, hidden, b], { direction: "horizontal", gap: 4 });
+    expect(hidden.position.x).toBe(14);
+    expect(b.position.x).toBe(48);
+  });
+
   it("divides remaining space equally among fill children", () => {
     const a = new HudNode({ id: "fixed", width: 20, height: 10 });
     const b = new HudNode({ id: "fill-a", width: 1, height: 10 });

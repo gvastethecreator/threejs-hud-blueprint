@@ -58,4 +58,42 @@ describe("grid-layout", () => {
     expect(cells).toHaveLength(4);
     expect(nodes[4]?.clip).toEqual({ x: 0, y: 0, width: 20, height: 20 });
   });
+
+  it("includes padding in content size and keeps integer cell origins stable", () => {
+    expect(
+      gridContentSize({
+        columns: 2,
+        rows: 2,
+        cellWidth: 16,
+        cellHeight: 16,
+        gapX: 2,
+        gapY: 2,
+        padding: { top: 4, right: 3, bottom: 5, left: 1 },
+      }),
+    ).toEqual({ width: 38, height: 43 });
+    const nodes = Array.from(
+      { length: 4 },
+      (_, index) => new HudNode({ id: `i${index}`, width: 16, height: 16 }),
+    );
+    const first = layoutGrid(nodes, {
+      columns: 2,
+      rows: 2,
+      cellWidth: 16,
+      cellHeight: 16,
+      gapX: 0,
+      gapY: 0,
+    });
+    const second = layoutGrid(nodes, {
+      columns: 2,
+      rows: 2,
+      cellWidth: 16,
+      cellHeight: 16,
+      gapX: 0,
+      gapY: 0,
+    });
+    expect(second.map((cell) => ({ x: cell.x, y: cell.y }))).toEqual(
+      first.map((cell) => ({ x: cell.x, y: cell.y })),
+    );
+    expect(first.map((cell) => cell.x)).toEqual([0, 16, 0, 16]);
+  });
 });

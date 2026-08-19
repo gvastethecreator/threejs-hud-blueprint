@@ -1,15 +1,13 @@
-name: CI
+name: Release candidate
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  validate:
+  validate-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,4 +19,5 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run validate:full
+      - run: pnpm run validate:release
+      - run: echo "npm publish is not part of this workflow. Only a human may publish after this job is green and releaseReady is true."

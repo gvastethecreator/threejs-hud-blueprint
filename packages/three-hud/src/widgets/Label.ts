@@ -42,6 +42,16 @@ export class Label extends HudNode {
     this.remeasure();
   }
 
+  setFontId(fontId: string): void {
+    if (this.fontId === fontId) {
+      this.markDirty(DirtyFlag.None);
+      return;
+    }
+    this.fontId = fontId;
+    this.remeasure();
+    this.markDirty(DirtyFlag.Text | DirtyFlag.Layout | DirtyFlag.Geometry);
+  }
+
   setText(text: string): void {
     if (this.text === text) {
       this.markDirty(DirtyFlag.None);

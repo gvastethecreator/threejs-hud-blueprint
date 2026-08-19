@@ -39,11 +39,11 @@ Cooldowns, resource rings, speedometers, and gauges can be composed from the rin
 
 ## Acceptance criteria
 
-- [ ] RadialBar and Gauge use the same angle/direction convention as Ring.
-- [ ] Needle value clamping and overrange policy are explicit.
-- [ ] Tick labels can use any registered text backend.
-- [ ] Value-only needle/fill updates avoid full layout.
-- [ ] Full-circle and partial-sweep scenarios pass visual tests.
+- [x] RadialBar and Gauge use the same angle/direction convention as Ring.
+- [x] Needle value clamping and overrange policy are explicit.
+- [x] Tick labels can use any registered text backend.
+- [x] Value-only needle/fill updates avoid full layout.
+- [x] Full-circle and partial-sweep scenarios pass visual tests.
 
 ## Verification
 

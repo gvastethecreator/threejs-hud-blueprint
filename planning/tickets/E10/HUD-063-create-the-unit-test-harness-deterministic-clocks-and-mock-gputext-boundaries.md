@@ -39,11 +39,11 @@ Pure math, tree, layout, input, widgets, and lifecycle behavior can be tested wi
 
 ## Acceptance criteria
 
-- [ ] Unit tests do not require browser WebGPU.
-- [ ] Mocks enforce lifecycle and ownership mistakes rather than accepting everything.
-- [ ] Time-dependent widget/input tests use an injected deterministic clock.
-- [ ] Test helpers are available only through `./testing` or internal test paths.
-- [ ] Coverage reports distinguish package code from playground code.
+- [x] Unit tests do not require browser WebGPU.
+- [x] Mocks enforce lifecycle and ownership mistakes rather than accepting everything.
+- [x] Time-dependent widget/input tests use an injected deterministic clock.
+- [x] Test helpers are available only through `./testing` or internal test paths.
+- [x] Coverage reports distinguish package code from playground code.
 
 ## Verification
 

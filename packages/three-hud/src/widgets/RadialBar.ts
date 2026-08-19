@@ -24,11 +24,12 @@ export class RadialBar extends HudNode {
   readonly label: Label;
 
   constructor(options: RadialBarOptions = {}) {
+    const trackFill = options.fill ?? 0x2a3a4d;
     super({
+      ...options,
       width: options.width ?? 96,
       height: options.height ?? 96,
-      fill: options.fill ?? 0x2a3a4d,
-      ...options,
+      fill: 0x000000,
     });
     this.min = options.min ?? 0;
     this.max = options.max ?? 100;
@@ -37,7 +38,7 @@ export class RadialBar extends HudNode {
     const ringBase = {
       innerRadius: options.innerRadius ?? outer * 0.7,
       outerRadius: outer,
-      fill: this.fill,
+      fill: trackFill,
       ...(options.startAngle !== undefined ? { startAngle: options.startAngle } : {}),
       ...(options.sweep !== undefined ? { sweep: options.sweep } : {}),
       ...(options.direction !== undefined ? { direction: options.direction } : {}),
@@ -56,6 +57,7 @@ export class RadialBar extends HudNode {
     this.label = this.add(
       new Label({ id: `${this.id}-label`, text: String(this.value), fontSize: 12 }),
     );
+    this.placeLabel();
   }
 
   ratio(): number {
@@ -64,9 +66,18 @@ export class RadialBar extends HudNode {
   }
 
   setValue(value: number): void {
-    this.value = value;
-    this.fillRing.value = value;
-    this.label.text = String(value);
+    const next = Math.min(this.max, Math.max(this.min, value));
+    this.value = next;
+    this.fillRing.value = next;
+    this.label.setText(String(next));
+    this.placeLabel();
     this.markDirty(DirtyFlag.Geometry | DirtyFlag.Style);
+  }
+
+  private placeLabel(): void {
+    this.label.setPosition(
+      Math.max(0, (this.size.width - this.label.size.width) / 2),
+      Math.max(0, (this.size.height - this.label.size.height) / 2),
+    );
   }
 }

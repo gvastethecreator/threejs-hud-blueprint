@@ -44,11 +44,11 @@ The release states exactly which Three.js version range, renderer/backend, brows
 
 ## Acceptance criteria
 
-- [ ] No matrix cell says supported without a named passing scenario.
-- [ ] Experimental and untested are visually distinct from supported.
-- [ ] Font formats and complex-script limits are explicit.
-- [ ] The report records exact tool/browser/OS/GPU metadata without leaking secrets.
-- [ ] Release fails when a required evidence link is missing.
+- [x] No matrix cell says supported without a named passing scenario.
+- [x] Experimental and untested are visually distinct from supported.
+- [x] Font formats and complex-script limits are explicit.
+- [x] The report records exact tool/browser/OS/GPU metadata without leaking secrets.
+- [x] Release fails when a required evidence link is missing.
 
 ## Verification
 

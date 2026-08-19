@@ -73,8 +73,7 @@ export function pickLayerAt(hud: HUD, logicalY: number): HudLayer | null {
   for (let index = hud.layers.length - 1; index >= 0; index -= 1) {
     const layer = hud.layers[index];
     if (!layer || !layer.enabled) continue;
-    void logicalY;
-    return layer;
+    if (logicalY >= 0 && logicalY < layer.referenceSize.height) return layer;
   }
-  return null;
+  return hud.layers.find((layer) => layer.enabled) ?? null;
 }

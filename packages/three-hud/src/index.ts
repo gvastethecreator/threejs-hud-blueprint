@@ -1,4 +1,4 @@
-export { HUD, type HudLifecycleState, type HudOptions } from "./core/HUD.js";
+export { HUD, type HudClock, type HudLifecycleState, type HudOptions } from "./core/HUD.js";
 export { HudLayer, type HudLayerOptions } from "./core/HudLayer.js";
 export {
   HudNode,
@@ -47,6 +47,7 @@ export {
 export {
   ANCHOR_PRESETS,
   anchorPoint,
+  anchorSheet,
   layoutAbsolute,
   resolveFrame,
   type AnchorPreset,
@@ -84,7 +85,7 @@ export {
 export { LinearBar, type LinearBarOptions } from "./widgets/LinearBar.js";
 export { Panel, type PanelOptions } from "./widgets/Panel.js";
 export { RadialBar, type RadialBarOptions } from "./widgets/RadialBar.js";
-export { Crosshair, type CrosshairOptions } from "./widgets/Crosshair.js";
+export { Crosshair, Reticle, type CrosshairOptions } from "./widgets/Crosshair.js";
 export { Label, type LabelOptions } from "./widgets/Label.js";
 export { IconLabel, type IconLabelOptions } from "./widgets/IconLabel.js";
 export { Gauge, type GaugeOptions } from "./widgets/Gauge.js";

@@ -168,6 +168,28 @@ describe("three-overlay-adapter", () => {
     hud.dispose();
   });
 
+  it("places overlay instances with each layer's scale transform", async () => {
+    const renderer = createHostRenderer("webgl");
+    const adapter = createHudOverlayAdapter({
+      renderer,
+      cssViewport: { x: 0, y: 0, width: 200, height: 100 },
+    });
+    const hud = new HUD({
+      referenceSize: { width: 400, height: 200 },
+      rendererAdapter: adapter,
+    });
+    const contain = hud.createLayer({ id: "contain", scaleMode: "contain" });
+    const native = hud.createLayer({ id: "native", scaleMode: "native" });
+    contain.add(new HudNode({ id: "contain-rect", width: 80, height: 40, fill: 0xff3344 }));
+    native.add(new HudNode({ id: "native-rect", width: 80, height: 40, fill: 0x33ff44 }));
+    await hud.initialize();
+    hud.render({ deltaSeconds: 0, elapsedSeconds: 0, frame: 1 });
+    const containScale = adapter.debugInstanceScale(0);
+    const nativeScale = adapter.debugInstanceScale(1);
+    expect(nativeScale.x).not.toBeCloseTo(containScale.x);
+    hud.dispose();
+  });
+
   it("releases all adapter-owned Three.js resources on dispose", () => {
     const renderer = createHostRenderer("webgl");
     const adapter = createHudOverlayAdapter({ renderer });

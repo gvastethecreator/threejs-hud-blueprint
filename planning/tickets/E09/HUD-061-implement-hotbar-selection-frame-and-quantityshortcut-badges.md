@@ -40,11 +40,11 @@ A horizontal or vertical hotbar reuses Slot composition while adding controlled 
 
 ## Acceptance criteria
 
-- [ ] Changing active slot updates only previous/new selection visuals.
-- [ ] Shortcut text can use pixel or smooth backend.
-- [ ] Hotbar does not own keyboard/gamepad listeners in v0.1.
-- [ ] Overflow follows documented clip policy.
-- [ ] Selection remains stable when data reorders by key.
+- [x] Changing active slot updates only previous/new selection visuals.
+- [x] Shortcut text can use pixel or smooth backend.
+- [x] Hotbar does not own keyboard/gamepad listeners in v0.1.
+- [x] Overflow follows documented clip policy.
+- [x] Selection remains stable when data reorders by key.
 
 ## Verification
 

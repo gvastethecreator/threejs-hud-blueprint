@@ -44,11 +44,11 @@ Users understand when to choose analytic, SDF, bitmap, or auto mode; how to self
 
 ## Acceptance criteria
 
-- [ ] Guide never implies all fonts from a gallery share one license.
-- [ ] No downloadable font binary is included.
-- [ ] Windfoil legal caution and Apache notice obligations remain visible.
-- [ ] Pixel guide includes a failure/troubleshooting matrix.
-- [ ] Every backend claim matches the generated compatibility matrix.
+- [x] Guide never implies all fonts from a gallery share one license.
+- [x] No downloadable font binary is included.
+- [x] Windfoil legal caution and Apache notice obligations remain visible.
+- [x] Pixel guide includes a failure/troubleshooting matrix.
+- [x] Every backend claim matches the generated compatibility matrix.
 
 ## Verification
 

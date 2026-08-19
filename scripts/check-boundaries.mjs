@@ -71,6 +71,17 @@ for (const file of walkFiles(path.join(sourceRoot, "contracts"), (value) => /\.t
     );
 }
 
+const voidIdent = /\bvoid\s+[A-Za-z_]\w*\s*;/;
+for (const file of walkFiles(sourceRoot, (value) => /\.ts$/.test(value))) {
+  if (/\.test\.ts$/.test(file)) continue;
+  const source = fs.readFileSync(file, "utf8");
+  if (voidIdent.test(source)) {
+    errors.push(
+      `Unused-local suppression via void identifier: ${toPosix(path.relative(repoRoot, file))}.`,
+    );
+  }
+}
+
 if (errors.length) {
   console.error("Architecture boundary check failed:");
   for (const error of errors) console.error(`- ${error}`);

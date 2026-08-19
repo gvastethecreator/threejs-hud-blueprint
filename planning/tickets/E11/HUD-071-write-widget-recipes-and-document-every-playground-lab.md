@@ -38,11 +38,11 @@ The showcase and labs become reusable recipes for bars, cooldowns, gauges, cross
 
 ## Acceptance criteria
 
-- [ ] Every initial widget has at least one runnable recipe.
-- [ ] Recipes do not duplicate internal implementation.
-- [ ] Performance lab documents interpretation and environment caveats.
-- [ ] Scaling and typography labs expose copyable configuration.
-- [ ] Broken route/config links fail docs validation.
+- [x] Every initial widget has at least one runnable recipe.
+- [x] Recipes do not duplicate internal implementation.
+- [x] Performance lab documents interpretation and environment caveats.
+- [x] Scaling and typography labs expose copyable configuration.
+- [x] Broken route/config links fail docs validation.
 
 ## Verification
 

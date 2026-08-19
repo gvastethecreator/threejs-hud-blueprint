@@ -1,16 +1,15 @@
 {
   "schemaVersion": "three-hud/evidence-manifest/v0",
-  "status": "hud-073-closed-locally-registry-blocked",
-  "commit": "255ed984353c39d7ea086af1301a117cdb1a6ef1",
+  "status": "HUD-073-local-close-registry-blocked",
+  "commit": "e9b9f1f3da2690efb93f608b78d06e29c617d36c",
   "release": null,
+  "releaseReady": false,
   "verifiedClaims": [
-    "HUD-008 through HUD-073 are done on the local tracker",
-    "validate:release gates before assert-release-ready passed",
-    "playground WebGL scene plus HUD is visible at http://127.0.0.1:4174/"
+    "HUD-008 through HUD-072 closed with checked acceptance and closeout.json",
+    "HUD-073 local close: validate:release fails only at assert-release-ready",
+    "npm whoami ENEEDAUTH; pnpm publish 404 for @scope/three-hud",
+    "Gauge needle encodes in world space; face Ring receives fill"
   ],
-  "blockedClaims": [
-    "npm publish of @scope/three-hud@0.1.0",
-    "v0.1 releaseReady"
-  ],
-  "nextGate": null
+  "blockedClaims": ["npm publish of @scope/three-hud@0.1.0", "v0.1 releaseReady"],
+  "nextGate": "human-npm-scope-and-publish"
 }

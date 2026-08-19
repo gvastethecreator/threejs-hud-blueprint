@@ -17,5 +17,16 @@ export const PLANNED_SCENARIOS: readonly PlannedScenarioId[] = Object.freeze([
   "stress-lab",
 ]);
 
-export { DeterministicClock } from "./clock.js";
-export { createEmptyGlyphRun, createMockRenderer, createMockTextBackend } from "./mocks.js";
+export { DeterministicClock, type HudClock } from "./clock.js";
+export {
+  createEmptyGlyphRun,
+  createIdFactory,
+  createMockRenderer,
+  createMockRendererAdapter,
+  createMockResource,
+  createMockTextBackend,
+  createMockViewport,
+  type MockOwnership,
+  type MockResource,
+} from "./mocks.js";
+export { createCanonicalTreeFixture, createHudFixture, type HudFixture } from "./fixtures.js";

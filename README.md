@@ -1,33 +1,38 @@
-# Three HUD — architecture and execution blueprint
+# Three HUD
 
 **Working identifier:** `three-hud`  
-**Planned package:** `@scope/three-hud` — replace the placeholder scope before publication.  
-**Status:** complete v0.1 specification, architecture, ticket program, and implementation-ready repository skeleton. The renderer and widgets are intentionally not claimed as implemented yet.
+**Package name:** `@scope/three-hud`. If you publish, replace the `@scope` placeholder.  
+**Status:** v0.1 code exists in this workspace. Public publish is blocked. `releaseReady` is false.
 
-Three HUD is a retained-mode, canvas-native HUD/UI library for vanilla Three.js. It is designed for game interfaces rendered inside the Three.js canvas: text, progress bars, radial meters, gauges, inventories, hotbars, crosshairs, panels, icons, and compact interactive overlays.
+Three HUD is a retained-mode HUD library for vanilla Three.js. It draws game UI inside the Three.js canvas: text, bars, gauges, inventories, hotbars, crosshairs, panels, and icons.
 
-The v0.1 architecture supports three pluggable text paths:
+The package does not recreate HTML or CSS. It does not own the host frame loop. It does not require React.
 
-- **Windfoil analytic text** for high-quality WebGPU outline rendering, gated behind a feasibility decision.
-- **SDF text** as the compatibility-oriented smooth-text baseline.
-- **Bitmap text** for pixel-perfect typography and icon atlases at declared native sizes and integer scales.
+v0.1 has three text paths:
 
-The package does not recreate HTML/CSS, own the host frame loop, or require React.
+- **Windfoil** — experimental analytic text on native WebGPU.
+- **SDF** — smooth text for the compatibility path.
+- **Bitmap** — pixel text and icon atlases at declared sizes and integer scales.
 
 ## Start here
 
-1. `RESUMEN_EJECUTIVO_ES.md` — Spanish executive summary.
-2. `THREE_HUD_MASTER_SPEC.md` — consolidated architecture and 73-ticket table.
-3. `docs/product/PRODUCT_SPEC.md` — product scope and release definition.
-4. `docs/architecture/ARCHITECTURE.md` — system shape and dependency direction.
-5. `docs/architecture/PUBLIC_API.md` — proposed public API.
-6. `docs/adrs/` — bounded architecture decisions.
-7. `planning/BACKLOG.md` — construction order.
-8. `planning/tickets/` — 73 expanded v0.1 ticket briefs.
-9. `architecture-explorer.html` — filterable architecture and ticket dashboard.
-10. `VALIDATION_REPORT.md` — checks run and unexecuted dependency gates.
+1. Read `RESUMEN_EJECUTIVO_ES.md` for a Spanish summary.
+2. Read `docs/product/PRODUCT_SPEC.md` for product scope.
+3. Read `docs/api/GETTING_STARTED.md` to host a HUD overlay.
+4. Read `docs/api/KNOWN_LIMITATIONS.md` for v0.1 limits and rollback.
+5. Open `architecture-explorer.html` for the ticket and architecture dashboard.
+6. Run the playground with the command below.
 
-## Architectural shape
+## Run the playground
+
+```bash
+pnpm install
+pnpm --filter @three-hud/playground dev --host 127.0.0.1 --port 4174
+```
+
+Open `http://127.0.0.1:4174/`. Add `/?webgpu=1` for the WebGPU renderer path.
+
+## Shape
 
 ```mermaid
 flowchart LR
@@ -45,20 +50,18 @@ flowchart LR
     HUD --> Input[Pointer mapping + hit testing]
 ```
 
-## Repository strategy
+The host owns the renderer, canvas, clock, game state, and loop. The HUD owns only resources that it creates or that the host transfers to it.
 
-The workspace is deliberately smaller than the application's reference monorepos:
+## Workspace
 
-- one publishable ESM package under `packages/three-hud`;
-- optional text backends exposed through subpath exports;
-- one vanilla playground that consumes public exports;
-- one packed external-consumer fixture;
-- browser integration tests and deterministic visual labs;
-- explicit architecture, package, compatibility, memory, and release gates.
+- one publishable ESM package in `packages/three-hud`
+- optional text backends on subpath exports
+- one vanilla playground that uses public package names
+- one packed external-consumer fixture
+- browser tests and visual labs
+- architecture, package, compatibility, memory, and release gates
 
-This keeps v0.1 cohesive while preserving a future split into independently versioned adapters if real usage justifies it.
-
-## Planned package exports
+## Package exports
 
 ```text
 @scope/three-hud
@@ -70,7 +73,7 @@ This keeps v0.1 cohesive while preserving a future split into independently vers
 
 The main entry must not import optional backend code, font parsers, workers, or browser globals at module evaluation.
 
-## Development command model
+## Commands
 
 ```bash
 pnpm install
@@ -79,16 +82,19 @@ pnpm run validate:full
 pnpm run validate:release
 ```
 
-The supplied skeleton includes dry-run planning and boundary scripts. Implementation tickets progressively make the complete gate executable.
+Run `pnpm run validate:fast` before a normal closeout.  
+Run `pnpm run validate:full` for renderer, text, or milestone work.  
+If `releaseReady` is false, do not treat `pnpm run validate:release` as green.
 
 ## Font policy
 
-No third-party font binaries are included in this blueprint. Fonts must be supplied by the host or by separately licensed fixtures. Each redistributed font requires its own provenance and license record.
+This repository does not bundle third-party font binaries. The host supplies fonts, or a licensed fixture supplies them. Each redistributed font needs a provenance and license record.
 
-## Backlog size
+## Program size
 
 - 12 epics
 - 6 evidence milestones
-- 73 detailed tickets
+- 73 tickets
 - 16 architecture decisions
-- product, API, rendering, typography, layout, input, widget, quality, compatibility, legal, and release specifications
+
+Ticket briefs live in `planning/tickets/`. Live status belongs in GitHub when that tracker is connected.

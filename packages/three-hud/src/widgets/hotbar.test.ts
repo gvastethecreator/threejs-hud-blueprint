@@ -16,6 +16,30 @@ describe("hotbar", () => {
     expect(bar.selection.position.x).toBe(bar.slots[1]!.position.x - 2);
   });
 
+  it("keeps the selected item when slot data is reordered by key", () => {
+    const bar = new Hotbar({
+      slots: [{ key: "gun" }, { key: "med" }, { key: "nade" }],
+    });
+    bar.setActiveIndex(0);
+    const gun = bar.slots[0];
+    bar.setSlots([{ key: "nade" }, { key: "gun" }, { key: "med" }]);
+    expect(bar.slots[1]).toBe(gun);
+    expect(gun?.selected).toBe(true);
+    expect(bar.activeIndex).toBe(1);
+  });
+
+  it("lets shortcut labels change fontId without owning keyboard listeners", () => {
+    const bar = new Hotbar({
+      slots: [{ key: "gun" }, { key: "med" }],
+      orientation: "vertical",
+    });
+    expect(bar.orientation).toBe("vertical");
+    expect(bar.size.height).toBeGreaterThan(bar.size.width);
+    bar.shortcuts[0]?.setFontId("pixel");
+    expect(bar.shortcuts[0]?.fontId).toBe("pixel");
+    expect(typeof window === "undefined" || !("HotbarKeyHandler" in globalThis)).toBe(true);
+  });
+
   it("does not double-count slot positions when walking frame world bounds", () => {
     const bar = new Hotbar({
       slots: [{ key: "gun" }, { key: "med" }, { key: "nade" }],

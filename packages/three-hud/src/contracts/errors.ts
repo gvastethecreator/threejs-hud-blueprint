@@ -26,7 +26,7 @@ export class HudError extends Error {
 
 export class HudFeatureUnavailableError extends HudError {
   constructor(feature: string, ticket?: string) {
-    super("FEATURE_UNAVAILABLE", `${feature} is not implemented in the blueprint skeleton.`, {
+    super("FEATURE_UNAVAILABLE", `${feature} is not available.`, {
       feature,
       ticket: ticket ?? null,
     });

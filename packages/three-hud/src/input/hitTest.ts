@@ -27,7 +27,7 @@ export function isEligible(
   const clip = effectiveClip(node);
   if (clip && (x < clip.x || y < clip.y || x >= clip.x + clip.width || y >= clip.y + clip.height))
     return false;
-  void order;
+  if (order.length > 0 && !order.includes(node)) return false;
   return true;
 }
 

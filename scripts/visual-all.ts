@@ -11,6 +11,10 @@ const commands: Array<{ cmd: string; args: string[] }> = [
     args: ["run", "visual:widgets", "--", ...(verify ? ["--verify"] : []), "all"],
   },
   { cmd: "pnpm", args: ["run", "visual:showcase", "--", ...(verify ? ["--verify"] : [])] },
+  {
+    cmd: "pnpm",
+    args: ["exec", "tsx", "scripts/visual-matrix.ts", ...(verify ? ["--verify"] : [])],
+  },
 ];
 
 for (const { cmd, args } of commands) {

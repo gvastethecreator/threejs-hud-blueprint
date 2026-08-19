@@ -41,11 +41,11 @@ The actual packed npm tarball imports in Node without browser side effects, type
 
 ## Acceptance criteria
 
-- [ ] Main import does not reference `window`, `document`, `navigator`, WebGPU, workers, or font fetch at module evaluation.
-- [ ] External consumer uses no workspace aliases.
-- [ ] Windfoil/SDF/bitmap code appears only when its subpath is imported.
-- [ ] Three.js remains external/peer in the library bundle.
-- [ ] Packed files match the approved manifest.
+- [x] Main import does not reference `window`, `document`, `navigator`, WebGPU, workers, or font fetch at module evaluation.
+- [x] External consumer uses no workspace aliases.
+- [x] Windfoil/SDF/bitmap code appears only when its subpath is imported.
+- [x] Three.js remains external/peer in the library bundle.
+- [x] Packed files match the approved manifest.
 
 ## Verification
 

@@ -22,7 +22,7 @@
 
 ## Gate implementation state
 
-The blueprint supplies structural implementations for workspace, tickets, docs, and architecture. Runtime, visual, performance, memory, renderer, and package gates become enforceable through their corresponding implementation tickets. Placeholder commands must fail visibly or state `NOT IMPLEMENTED`; they must never return a false green release.
+Workspace, ticket, docs, architecture, type, unit, build, package, visual, performance, and memory commands exist as named scripts. `validate:release` still fails while `release-status.json` has `releaseReady: false`. Do not treat a local ticket closeout as a published registry release.
 
 ## Closeout evidence schema
 

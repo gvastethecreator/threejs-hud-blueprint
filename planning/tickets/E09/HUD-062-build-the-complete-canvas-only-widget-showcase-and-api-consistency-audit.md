@@ -42,11 +42,11 @@ One vertical demo proves the full product proposition—smooth text, pixel text,
 
 ## Acceptance criteria
 
-- [ ] The showcase uses only public package exports.
-- [ ] No HUD element is implemented with HTML/CSS.
-- [ ] All initial widgets work in at least one smooth and one pixel-oriented theme.
-- [ ] Backend switching does not require widget reconstruction beyond documented font/backend changes.
-- [ ] The showcase meets the current render and allocation budgets.
+- [x] The showcase uses only public package exports.
+- [x] No HUD element is implemented with HTML/CSS.
+- [x] All initial widgets work in at least one smooth and one pixel-oriented theme.
+- [x] Backend switching does not require widget reconstruction beyond documented font/backend changes.
+- [x] The showcase meets the current render and allocation budgets.
 
 ## Verification
 

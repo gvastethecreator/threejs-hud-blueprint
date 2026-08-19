@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { HUD } from "../core/HUD.js";
-import { mapPointerToLayer } from "./pointerMap.js";
+import { mapPointerToLayer, pickLayerAt } from "./pointerMap.js";
 
 describe("pointer-mapping", () => {
   it("maps split-screen canvas offsets into logical layer space", () => {
@@ -16,6 +16,17 @@ describe("pointer-mapping", () => {
     expect(mapped.canvas).toMatchObject({ x: 110, y: 30 });
     expect(mapped.viewport).toMatchObject({ x: 100, y: 30 });
     expect(mapped.logical.x).toBeCloseTo(100);
+    hud.dispose();
+  });
+
+  it("picks the top enabled layer whose reference height contains logicalY", () => {
+    const hud = new HUD({ referenceSize: { width: 200, height: 100 } });
+    const bottom = hud.createLayer({ id: "bottom", referenceSize: { width: 200, height: 40 } });
+    const top = hud.createLayer({ id: "top", referenceSize: { width: 200, height: 100 } });
+    expect(pickLayerAt(hud, 10)?.id).toBe("top");
+    top.setEnabled(false);
+    expect(pickLayerAt(hud, 10)?.id).toBe("bottom");
+    expect(pickLayerAt(hud, 80)?.id).toBe("bottom");
     hud.dispose();
   });
 });

@@ -32,7 +32,7 @@
 - `architecture/RESOURCE_LIFECYCLE.md` — ownership, cancellation, failure, disposal.
 - `architecture/ERRORS_AND_DIAGNOSTICS.md` — public errors and observable evidence.
 - `architecture/PACKAGE_AND_EXPORTS.md` — workspace, package, subpaths, consumer fixture.
-- `architecture/CODEMAP.md` — expected repository/source tree.
+- `architecture/CODEMAP.md` — original target tree. Live source is `packages/three-hud/src`.
 
 ## Decisions
 
@@ -50,11 +50,14 @@
 ## Quality
 
 - `quality/TEST_STRATEGY.md`
+- `quality/TEST_HARNESS.md`
 - `quality/VISUAL_REGRESSION.md`
+- `quality/VISUAL_THRESHOLDS.md`
 - `quality/PERFORMANCE_BUDGETS.md`
 - `quality/QUALITY_GATES.md`
 - `quality/COMPATIBILITY_MATRIX.md`
 - `quality/EVIDENCE_MODEL.md`
+- `quality/VALIDATION.md` — current validation note. Not a release claim.
 
 ## Operations
 

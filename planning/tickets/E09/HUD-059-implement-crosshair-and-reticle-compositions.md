@@ -38,10 +38,10 @@ Games can construct center reticles with lines, dot, ring, brackets, spread, rec
 
 ## Acceptance criteria
 
-- [ ] Crosshair remains centered across aspect and HUD zoom changes according to its selected layer policy.
-- [ ] Spread/recoil updates affect transforms/instances only.
-- [ ] One-pixel lines remain crisp when snapping is enabled.
-- [ ] Target/hit state style changes do not create new materials per frame.
+- [x] Crosshair remains centered across aspect and HUD zoom changes according to its selected layer policy.
+- [x] Spread/recoil updates affect transforms/instances only.
+- [x] One-pixel lines remain crisp when snapping is enabled.
+- [x] Target/hit state style changes do not create new materials per frame.
 
 ## Verification
 

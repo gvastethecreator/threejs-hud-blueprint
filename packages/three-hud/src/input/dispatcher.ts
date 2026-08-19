@@ -3,7 +3,7 @@ import type { HudLayer } from "../core/HudLayer.js";
 import type { HudNode } from "../core/HudNode.js";
 import { DirtyFlag } from "../core/DirtyFlags.js";
 import { hitTest } from "./hitTest.js";
-import { mapPointerToLayer } from "./pointerMap.js";
+import { mapPointerToLayer, pickLayerAt } from "./pointerMap.js";
 import type { ReadonlyPoint, ReadonlyRect } from "../contracts/geometry.js";
 
 export type HudPointerType = "move" | "down" | "up" | "cancel";
@@ -48,6 +48,7 @@ export type HudPointerEvent = Readonly<{
   time: number;
   canceled: boolean;
   disabled: boolean;
+  stopPropagation: () => void;
 }>;
 
 export type PointerDispatchOptions = Readonly<{
@@ -74,6 +75,7 @@ export class HudPointerController {
   pressed: HudNode | null = null;
   private readonly tracks = new Map<number, PointerTrack>();
   private lastLogical: { x: number; y: number } | null = null;
+  private lastClient: { x: number; y: number; options: PointerDispatchOptions } | null = null;
 
   constructor(private readonly hud: HUD) {}
 
@@ -88,15 +90,18 @@ export class HudPointerController {
   }
 
   dispatch(input: HudPointerInput, options: PointerDispatchOptions = {}): HudPointerEvent[] {
-    const layer = [...this.hud.layers].reverse().find((item) => item.enabled) ?? this.hud.layers[0];
-    if (!layer) return [];
-    const mapped = mapPointerToLayer(this.hud, layer, {
+    const probe = [...this.hud.layers].reverse().find((item) => item.enabled) ?? this.hud.layers[0];
+    if (!probe) return [];
+    const pointerInput = {
       clientX: input.clientX,
       clientY: input.clientY,
       canvasOrigin: options.canvasOrigin ?? { x: 0, y: 0 },
       ...(options.viewport ? { viewport: options.viewport } : {}),
       ...(options.dpr !== undefined ? { dpr: options.dpr } : {}),
-    });
+    };
+    const probeMap = mapPointerToLayer(this.hud, probe, pointerInput);
+    const layer = pickLayerAt(this.hud, probeMap.logical.y) ?? probe;
+    const mapped = layer === probe ? probeMap : mapPointerToLayer(this.hud, layer, pointerInput);
     const track = this.tracks.get(input.pointerId) ?? {
       hover: null,
       pressed: null,
@@ -111,6 +116,7 @@ export class HudPointerController {
         ? track.capture
         : hitTest(layer, mapped.logical.x, mapped.logical.y);
     const events: HudPointerEvent[] = [];
+    let stopped = false;
     const emit = (
       type: HudPointerEvent["type"],
       currentTarget: HudNode,
@@ -139,6 +145,9 @@ export class HudPointerController {
         time: input.time,
         canceled,
         disabled: hit.disabled,
+        stopPropagation() {
+          stopped = true;
+        },
       };
       events.push(event);
       this.listeners.get(currentTarget)?.forEach((listener) => listener(event));
@@ -158,18 +167,19 @@ export class HudPointerController {
       stopAt?: HudNode,
     ): boolean => {
       const ancestors = path(hit);
-      let stopped = false;
       for (let index = ancestors.length - 1; index >= 0; index -= 1) {
         const current = ancestors[index];
         if (!current || current === stopAt) continue;
         emit(type, current, "capture", hit);
+        if (stopped) return true;
       }
       emit(type, hit, "target", hit);
+      if (stopped) return true;
       for (const current of ancestors.slice(1)) {
         if (current === stopAt) break;
         emit(type, current, "bubble", hit);
+        if (stopped) return true;
       }
-      void stopped;
       return stopped;
     };
 
@@ -206,6 +216,7 @@ export class HudPointerController {
       track.pressed = null;
       track.capture = null;
       this.pressed = null;
+      this.tracks.delete(input.pointerId);
     } else if (input.type === "cancel") {
       const hit = track.capture ?? track.pressed ?? target;
       if (hit) dispatchPath("pointercancel", hit);
@@ -213,9 +224,11 @@ export class HudPointerController {
       track.pressed = null;
       track.capture = null;
       this.pressed = null;
+      this.tracks.delete(input.pointerId);
     }
 
     this.lastLogical = { x: mapped.logical.x, y: mapped.logical.y };
+    this.lastClient = { x: input.clientX, y: input.clientY, options };
     return events;
   }
 
@@ -230,19 +243,19 @@ export class HudPointerController {
   }
 
   recomputeHover(options: PointerDispatchOptions = {}): HudPointerEvent[] {
-    if (!this.lastLogical) return [];
+    if (!this.lastClient) return [];
     return this.dispatch(
       {
         pointerId: 1,
         type: "move",
-        clientX: this.lastLogical.x,
-        clientY: this.lastLogical.y,
+        clientX: this.lastClient.x,
+        clientY: this.lastClient.y,
         button: 0,
         buttons: 0,
         pointerType: "mouse",
         time: 0,
       },
-      options,
+      { ...this.lastClient.options, ...options },
     );
   }
 

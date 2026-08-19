@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { HudError } from "../contracts/errors.js";
+import { DirtyFlag } from "../core/DirtyFlags.js";
+import { HudNode } from "../core/HudNode.js";
 import {
   DEFAULT_THEME,
   PIXEL_THEME,
   THEME_PRECEDENCE,
+  applyStyle,
   resolveToken,
   resolveWidgetStyle,
   serializeTheme,
@@ -30,6 +33,16 @@ describe("themes", () => {
     );
     expect(style["fill"]).toBe(0x111111);
     expect(PIXEL_THEME.radii["panel"]).toBe(0);
+  });
+
+  it("applies a paint override without marking layout dirty", () => {
+    const node = new HudNode({ id: "paint", width: 20, height: 10, fill: 0x15202c });
+    node.clearDirty();
+    const layout = node.invalidationCounters().layout;
+    applyStyle(node, { fill: 0x334455 });
+    expect(node.fill).toBe(0x334455);
+    expect(node.invalidationCounters().layout).toBe(layout);
+    expect((node.dirtyFlags & DirtyFlag.Layout) === 0).toBe(true);
   });
 });
 

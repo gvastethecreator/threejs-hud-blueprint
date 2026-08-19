@@ -48,3 +48,15 @@ Every supported cell must point to evidence containing:
 - backend capability report;
 - passed scenario IDs;
 - known limitations.
+
+## Generated evidence (HUD-068)
+
+Generated from named passing scenario IDs, not hardcoded object equality.
+
+| Cell            | Status       | Scenario IDs                                                                                                                                       |
+| --------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| webgl-baseline  | measured     | shape:rect, shape:rounded-rect, shape:line, shape:ring, text:label, linear-bar, linear, radial, crosshair, hotbar, gauge, panel, label, icon-label |
+| node-import     | measured     | ssr-import                                                                                                                                         |
+| webgpu-windfoil | experimental | windfoil-three-spike                                                                                                                               |
+
+Three.js peer: `>=0.185.0 <0.186.0`.

@@ -5,6 +5,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 for (const relative of [
   "packages/three-hud/dist",
   "apps/playground/dist",
+  "apps/playground/tsconfig.tsbuildinfo",
+  "packages/three-hud/tsconfig.tsbuildinfo",
   "coverage",
   "test-results",
   "playwright-report",

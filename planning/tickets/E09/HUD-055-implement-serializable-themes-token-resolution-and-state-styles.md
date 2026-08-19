@@ -39,11 +39,11 @@ Widgets and primitives can resolve colors, typography, spacing, radii, strokes, 
 
 ## Acceptance criteria
 
-- [ ] A theme can be JSON-serialized after excluding functions/resources.
-- [ ] Missing tokens produce actionable diagnostics.
-- [ ] Hover/pressed/disabled/selected overrides resolve in a documented precedence order.
-- [ ] Changing a paint token does not force full layout.
-- [ ] Widgets accept direct style overrides without mutating the shared theme.
+- [x] A theme can be JSON-serialized after excluding functions/resources.
+- [x] Missing tokens produce actionable diagnostics.
+- [x] Hover/pressed/disabled/selected overrides resolve in a documented precedence order.
+- [x] Changing a paint token does not force full layout.
+- [x] Widgets accept direct style overrides without mutating the shared theme.
 
 ## Verification
 

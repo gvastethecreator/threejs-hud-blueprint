@@ -1,6 +1,8 @@
 import { HudNode, type HudNodeOptions } from "../core/HudNode.js";
 import type { ReadonlyInsets } from "../contracts/geometry.js";
 import { zeroInsets } from "../contracts/geometry.js";
+import type { HudTextureHandle } from "../primitives/Image.js";
+import { NineSlice } from "../primitives/NineSlice.js";
 import { RoundedRect } from "../primitives/RoundedRect.js";
 import { setLayoutProps } from "../layout/box.js";
 import { layoutStack } from "../layout/stack.js";
@@ -10,10 +12,12 @@ export type PanelOptions = HudNodeOptions &
     padding?: ReadonlyInsets;
     radius?: number;
     clip?: boolean;
+    skin?: HudTextureHandle | null;
   }>;
 
 export class Panel extends HudNode {
   readonly background: RoundedRect;
+  readonly skin: NineSlice | null;
   readonly content: HudNode;
   readonly padding: ReadonlyInsets;
 
@@ -34,6 +38,17 @@ export class Panel extends HudNode {
         radius: options.radius ?? 8,
       }),
     );
+    this.skin = options.skin
+      ? this.add(
+          new NineSlice({
+            id: `${this.id}-skin`,
+            width: this.size.width,
+            height: this.size.height,
+            texture: options.skin,
+          }),
+        )
+      : null;
+    if (this.skin) this.background.visible = false;
     this.content = this.add(
       new HudNode({
         id: `${this.id}-content`,
@@ -59,12 +74,19 @@ export class Panel extends HudNode {
   }
 
   layoutChildren(direction: "horizontal" | "vertical" = "vertical", gap = 8): void {
+    this.background.setSize(this.size.width, this.size.height);
+    this.skin?.setSize(this.size.width, this.size.height);
+    this.content.setSize(
+      Math.max(0, this.size.width - this.padding.left - this.padding.right),
+      Math.max(0, this.size.height - this.padding.top - this.padding.bottom),
+    );
+    this.content.setPosition(this.padding.left, this.padding.top);
     layoutStack(this.content.children, {
       direction,
       gap,
       padding: zeroInsets(),
-      x: this.content.position.x,
-      y: this.content.position.y,
+      x: 0,
+      y: 0,
       width: this.content.size.width,
       height: this.content.size.height,
     });

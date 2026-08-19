@@ -17,7 +17,10 @@ Thumbs.db
 !.env.example
 .scratch/
 .playwright-mcp/
-/playground-4174*.png
+*.tsbuildinfo
+/maze-quality*.png
+/playground-*.png
+/scratch-playground-*.png
 evidence/tickets/
 evidence/performance/raw/
 evidence/visual/current/

@@ -52,12 +52,24 @@ export class IconLabel extends HudNode {
     this.relayout();
   }
 
+  setText(text: string): void {
+    this.label.setText(text);
+    this.relayout();
+  }
+
+  setValue(value: string): void {
+    this.valueLabel.setText(value);
+    this.relayout();
+  }
+
   relayout(): void {
+    this.valueLabel.setLayoutVisibility(this.valueLabel.text ? "participate" : "collapse");
     layoutStack([this.icon, this.label, this.valueLabel], {
       direction: "horizontal",
       gap: this.gap,
-      x: this.position.x,
-      y: this.position.y,
+      x: 0,
+      y: 0,
+      align: "center",
     });
     const width =
       this.icon.size.width +

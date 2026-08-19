@@ -38,11 +38,11 @@ Pointer positions from the host canvas map into the correct layer/logical space 
 
 ## Acceptance criteria
 
-- [ ] The topmost eligible node wins under the same order contract as rendering.
-- [ ] Split-screen viewport offsets map correctly.
-- [ ] Clipped-out regions do not receive hits.
-- [ ] A stationary pointer can recompute hover after layout changes.
-- [ ] The adapter removes all DOM listeners on disconnect/dispose.
+- [x] The topmost eligible node wins under the same order contract as rendering.
+- [x] Split-screen viewport offsets map correctly.
+- [x] Clipped-out regions do not receive hits.
+- [x] A stationary pointer can recompute hover after layout changes.
+- [x] The adapter removes all DOM listeners on disconnect/dispose.
 
 ## Verification
 

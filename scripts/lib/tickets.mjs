@@ -135,7 +135,11 @@ function sectionBullets(body, heading) {
 function sectionChecklist(body, heading) {
   return section(body, heading)
     .split("\n")
-    .map((line) => /^-\s+\[[ xX]\]\s+(.*)$/.exec(line)?.[1]?.trim())
+    .map((line) => {
+      const match = /^-\s+\[([ xX])\]\s+(.*)$/.exec(line);
+      if (!match) return null;
+      return { checked: match[1] !== " ", text: match[2]?.trim() ?? "" };
+    })
     .filter(Boolean);
 }
 

@@ -42,11 +42,11 @@ Visual output is captured through deterministic routes/configurations with appro
 
 ## Acceptance criteria
 
-- [ ] Each release-critical scenario identifies renderer, active backend, Three.js version, browser, DPR, and font fixture.
-- [ ] A missing required profile fails rather than silently skipping.
-- [ ] Experimental profiles may report without blocking only when policy says so.
-- [ ] Baselines contain no licensed font binary.
-- [ ] Diff thresholds are documented per scenario class.
+- [x] Each release-critical scenario identifies renderer, active backend, Three.js version, browser, DPR, and font fixture.
+- [x] A missing required profile fails rather than silently skipping.
+- [x] Experimental profiles may report without blocking only when policy says so.
+- [x] Baselines contain no licensed font binary.
+- [x] Diff thresholds are documented per scenario class.
 
 ## Verification
 

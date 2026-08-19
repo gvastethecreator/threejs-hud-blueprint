@@ -19,6 +19,7 @@ import {
 } from "three";
 import type { ReadonlyRect } from "../contracts/geometry.js";
 import type { HudLayer } from "../core/HudLayer.js";
+import type { HudNode } from "../core/HudNode.js";
 import { cssRectToDevice } from "../viewport/hostSurface.js";
 import { HudResourcePool } from "./resourcePool.js";
 import {
@@ -72,6 +73,7 @@ export type HudOverlayAdapter = HudRendererAdapter & {
   readonly debugMeshCount: number;
   debugInstanceUv(index: number): readonly [number, number, number, number];
   debugInstanceShape(index: number): number;
+  debugInstanceScale(index: number): { x: number; y: number };
   debugTextInstanceShape(index: number): number;
 };
 
@@ -139,6 +141,11 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     debugInstanceShape(index: number) {
       return pool.instanceShape(index);
     },
+    debugInstanceScale(index: number) {
+      const array = pool.mesh.instanceMatrix.array;
+      const base = index * 16;
+      return { x: Number(array[base] ?? 0), y: Number(array[base + 5] ?? 0) };
+    },
     debugTextInstanceShape(index: number) {
       return textPool.instanceShape(index);
     },
@@ -197,7 +204,7 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     const layerOf = (sourceNodeId: string): HudLayer => {
       for (const layer of layers) {
         if (!layer.enabled) continue;
-        const match = findLayer(layer, sourceNodeId, layers);
+        const match = findLayer(layer, sourceNodeId);
         if (match) return match;
       }
       const fallback = layers.find((layer) => layer.enabled) ?? layers[0];
@@ -387,15 +394,16 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
   }
 }
 
-function findLayer(
-  root: HudLayer,
-  sourceNodeId: string,
-  layers: readonly HudLayer[],
-): HudLayer | null {
-  if (root.id === sourceNodeId) return root;
-  const match = layers.find((layer) => layer.id === sourceNodeId);
-  void match;
-  return root;
+function findLayer(root: HudLayer, sourceNodeId: string): HudLayer | null {
+  return containsNode(root, sourceNodeId) ? root : null;
+}
+
+function containsNode(node: HudNode, sourceNodeId: string): boolean {
+  if (node.id === sourceNodeId) return true;
+  for (const child of node.children) {
+    if (containsNode(child, sourceNodeId)) return true;
+  }
+  return false;
 }
 
 function readCssViewport(renderer: OverlayRendererLike): ReadonlyRect | null {

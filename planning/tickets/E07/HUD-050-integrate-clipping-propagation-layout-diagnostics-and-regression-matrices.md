@@ -40,11 +40,11 @@ Resolved layout boxes drive effective clips, hit bounds, and visual diagnostics 
 
 ## Acceptance criteria
 
-- [ ] Render clip and hit-test clip agree on visible interactive area.
-- [ ] Debug overlays do not alter layout or batch ordering.
-- [ ] Layout errors include a node path and relevant constraints.
-- [ ] Snapshot updates require explicit approval.
-- [ ] No scenario depends on DOM layout.
+- [x] Render clip and hit-test clip agree on visible interactive area.
+- [x] Debug overlays do not alter layout or batch ordering.
+- [x] Layout errors include a node path and relevant constraints.
+- [x] Snapshot updates require explicit approval.
+- [x] No scenario depends on DOM layout.
 
 ## Verification
 

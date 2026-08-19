@@ -44,11 +44,11 @@ Every owned CPU, Three.js, texture, font, worker, shader, and GPU resource has o
 
 ## Acceptance criteria
 
-- [ ] Resource counters return to baseline after repeated cycles.
-- [ ] Borrowed renderer/textures are not disposed.
-- [ ] Owned resources dispose exactly once.
-- [ ] Context/device loss produces visible state and no infinite retry loop.
-- [ ] Late async callbacks cannot recreate disposed resources.
+- [x] Resource counters return to baseline after repeated cycles.
+- [x] Borrowed renderer/textures are not disposed.
+- [x] Owned resources dispose exactly once.
+- [x] Context/device loss produces visible state and no infinite retry loop.
+- [x] Late async callbacks cannot recreate disposed resources.
 
 ## Verification
 

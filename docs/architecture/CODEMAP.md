@@ -1,5 +1,7 @@
 # Expected Repository and Source Structure
 
+This file is the original v0.1 target tree from the blueprint. Live source lives under `packages/three-hud/src` and `apps/playground/src`. Missing folders in this tree are not proof that product code is missing.
+
 ```text
 three-hud/
 ├─ .github/

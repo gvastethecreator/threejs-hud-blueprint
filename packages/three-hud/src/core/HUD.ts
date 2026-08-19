@@ -12,10 +12,15 @@ import {
 import { HudLayer, type HudLayerOptions } from "./HudLayer.js";
 import { snapshotHud, type HudSnapshot } from "./snapshot.js";
 
+export type HudClock = Readonly<{
+  nowMs(): number;
+}>;
+
 export type HudOptions = Readonly<{
   referenceSize: ReadonlySize;
   rendererAdapter?: HudRendererAdapter;
   onDiagnostic?: HudDiagnosticHandler;
+  clock?: HudClock;
 }>;
 
 export type HudLifecycleState = "created" | "initializing" | "ready" | "suspended" | "disposed";
@@ -28,6 +33,7 @@ export class HUD {
   elapsedSeconds = 0;
   epoch = 0;
   readonly pointer: HudPointerController;
+  readonly clock: HudClock;
   private readonly rendererAdapter: HudRendererAdapter | undefined;
   private readonly onDiagnostic: HudDiagnosticHandler | undefined;
   private layerSeq = 0;
@@ -37,6 +43,7 @@ export class HUD {
     this.referenceSize = Object.freeze({ ...options.referenceSize });
     this.rendererAdapter = options.rendererAdapter;
     this.onDiagnostic = options.onDiagnostic;
+    this.clock = options.clock ?? { nowMs: () => 0 };
     this.pointer = new HudPointerController(this);
   }
 

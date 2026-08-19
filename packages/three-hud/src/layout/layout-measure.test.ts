@@ -36,5 +36,23 @@ describe("layout-measure", () => {
       measureNode(parent, { width: 100, height: 100 }, (diagnostic) => codes.push(diagnostic.code)),
     ).toThrow(HudError);
     expect(codes).toEqual(["LAYOUT_CYCLE"]);
+    try {
+      measureNode(parent, { width: 100, height: 100 });
+    } catch (error) {
+      expect(error).toBeInstanceOf(HudError);
+      expect((error as HudError).details).toMatchObject({
+        nodeId: "fill",
+        path: "auto/fill",
+        constraintWidth: 100,
+      });
+    }
+  });
+
+  it("returns the same box object when layout is repeated without changes", () => {
+    const node = new HudNode({ id: "fixed-repeat", width: 32, height: 16 });
+    setLayoutProps(node, { width: 32, height: 16 });
+    const first = layoutNode(node, { width: 100, height: 100 });
+    const second = layoutNode(node, { width: 100, height: 100 });
+    expect(second).toBe(first);
   });
 });

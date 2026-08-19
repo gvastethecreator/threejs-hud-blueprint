@@ -40,11 +40,11 @@ Nodes resolve content measurement and final layout through a small deterministic
 
 ## Acceptance criteria
 
-- [ ] A content-sized label measures before its parent stack resolves.
-- [ ] Fixed dimensions do not trigger unnecessary intrinsic measurement.
-- [ ] Fill is valid only inside a container that defines remaining space.
-- [ ] Repeated layout without changes performs no recomputation.
-- [ ] Cycle/non-convergence fixtures fail deterministically.
+- [x] A content-sized label measures before its parent stack resolves.
+- [x] Fixed dimensions do not trigger unnecessary intrinsic measurement.
+- [x] Fill is valid only inside a container that defines remaining space.
+- [x] Repeated layout without changes performs no recomputation.
+- [x] Cycle/non-convergence fixtures fail deterministically.
 
 ## Verification
 

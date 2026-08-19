@@ -39,11 +39,11 @@ Health, stamina, mana, loading, and ammunition bars can be represented through o
 
 ## Acceptance criteria
 
-- [ ] Out-of-range values follow documented clamp/overflow policy.
-- [ ] Value-only updates do not remeasure unchanged labels unless label text changes.
-- [ ] Segment gaps remain stable under supported scale modes.
-- [ ] Delayed value is host-controlled; the widget owns no tween loop.
-- [ ] Zero and full values render without negative or excess bounds.
+- [x] Out-of-range values follow documented clamp/overflow policy.
+- [x] Value-only updates do not remeasure unchanged labels unless label text changes.
+- [x] Segment gaps remain stable under supported scale modes.
+- [x] Delayed value is host-controlled; the widget owns no tween loop.
+- [x] Zero and full values render without negative or excess bounds.
 
 ## Verification
 

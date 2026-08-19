@@ -13,4 +13,19 @@ describe("hit-test", () => {
     clipped.setPointerEvents("none");
     expect(hitTest(root, 10, 10)?.id).toBe("root");
   });
+
+  it("ignores debug overlays even when they cover the point", () => {
+    const root = new HudNode({ id: "root", width: 40, height: 40 });
+    const overlay = root.add(
+      new HudNode({
+        id: "debug",
+        width: 40,
+        height: 40,
+        debugOverlay: true,
+        pointerEvents: "none",
+      }),
+    );
+    overlay.setPosition(0, 0);
+    expect(hitTest(root, 10, 10)?.id).toBe("root");
+  });
 });

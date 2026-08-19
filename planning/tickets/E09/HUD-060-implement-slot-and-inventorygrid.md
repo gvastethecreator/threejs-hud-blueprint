@@ -41,11 +41,11 @@ A fixed inventory can display item icon, frame, quantity, cooldown, rarity/state
 
 ## Acceptance criteria
 
-- [ ] Updating one slot does not rebuild every slot.
-- [ ] Reordering by stable key preserves reusable slot instances.
-- [ ] Empty and missing-icon states are deterministic.
-- [ ] Quantity and cooldown overlays clip within the slot.
-- [ ] Click emits item identity but does not mutate host inventory data.
+- [x] Updating one slot does not rebuild every slot.
+- [x] Reordering by stable key preserves reusable slot instances.
+- [x] Empty and missing-icon states are deterministic.
+- [x] Quantity and cooldown overlays clip within the slot.
+- [x] Click emits item identity but does not mutate host inventory data.
 
 ## Verification
 

@@ -41,11 +41,11 @@ A vanilla Three.js user can install the package, create a HUD, register a font/b
 
 ## Acceptance criteria
 
-- [ ] Every getting-started import exists in the packed export map.
-- [ ] Examples include complete cleanup.
-- [ ] No example uses deep imports or HTML/CSS for the HUD itself.
-- [ ] Unsupported Windfoil conditions show capability handling.
-- [ ] Docs build/check links every public symbol included in examples.
+- [x] Every getting-started import exists in the packed export map.
+- [x] Examples include complete cleanup.
+- [x] No example uses deep imports or HTML/CSS for the HUD itself.
+- [x] Unsupported Windfoil conditions show capability handling.
+- [x] Docs build/check links every public symbol included in examples.
 
 ## Verification
 

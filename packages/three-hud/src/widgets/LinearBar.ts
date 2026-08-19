@@ -28,6 +28,7 @@ export class LinearBar extends HudNode {
   readonly fillNode: HudNode;
   readonly delayedNode: HudNode;
   readonly labelNode: Label;
+  readonly segmentFills: HudNode[] = [];
 
   constructor(options: LinearBarOptions = {}) {
     super({
@@ -42,7 +43,7 @@ export class LinearBar extends HudNode {
     this.delayedValue = options.delayedValue ?? this.value;
     this.orientation = options.orientation ?? "horizontal";
     this.reverse = options.reverse ?? false;
-    this.segments = options.segments ?? 1;
+    this.segments = Math.max(1, Math.floor(options.segments ?? 1));
     this.gap = options.gap ?? 2;
     if (this.min > this.max)
       throw new HudError("INVALID_ARGUMENT", "LinearBar min cannot exceed max.", {
@@ -55,6 +56,19 @@ export class LinearBar extends HudNode {
     this.fillNode = this.add(
       new HudNode({ id: `${this.id}-fill`, height: this.size.height, fill: 0x3dff8a }),
     );
+    if (this.segments > 1) {
+      for (let index = 0; index < this.segments; index += 1) {
+        this.segmentFills.push(
+          this.add(
+            new HudNode({
+              id: `${this.id}-seg-${index}`,
+              height: this.size.height,
+              fill: 0x3dff8a,
+            }),
+          ),
+        );
+      }
+    }
     this.labelNode = this.add(
       new Label({ id: `${this.id}-label`, text: options.label ?? "", fontSize: 12 }),
     );
@@ -86,24 +100,46 @@ export class LinearBar extends HudNode {
     const cross = this.orientation === "horizontal" ? this.size.height : this.size.width;
     const fillMain = main * ratio;
     const delayedMain = main * delayedRatio;
+    this.placeSpan(this.delayedNode, delayedMain, main, cross);
+    if (this.segments <= 1) {
+      this.fillNode.opacity = 1;
+      this.placeSpan(this.fillNode, fillMain, main, cross);
+      return;
+    }
+    this.fillNode.opacity = 0;
+    this.placeSpan(this.fillNode, 0, main, cross);
+    const gapTotal = this.gap * Math.max(0, this.segments - 1);
+    const segMain = (main - gapTotal) / this.segments;
+    const filledUnits = ratio * this.segments;
+    for (let index = 0; index < this.segments; index += 1) {
+      const segment = this.segmentFills[index];
+      if (!segment) continue;
+      const visible = Math.min(1, Math.max(0, filledUnits - index));
+      const length = segMain * visible;
+      const slot = this.reverse ? this.segments - 1 - index : index;
+      const origin = slot * (segMain + this.gap);
+      this.placeAt(segment, origin, length, main, cross);
+    }
+  }
+
+  private placeSpan(node: HudNode, length: number, main: number, cross: number): void {
+    const origin = this.reverse ? main - length : 0;
+    this.placeAt(node, origin, length, main, cross);
+  }
+
+  private placeAt(
+    node: HudNode,
+    origin: number,
+    length: number,
+    main: number,
+    cross: number,
+  ): void {
     if (this.orientation === "horizontal") {
-      this.fillNode.setSize(
-        fillMain,
-        cross,
-        DirtyFlag.Geometry | DirtyFlag.HitTest | DirtyFlag.Queue,
-      );
-      this.delayedNode.setSize(delayedMain, cross, DirtyFlag.Geometry | DirtyFlag.Queue);
-      this.fillNode.setPosition(this.reverse ? main - fillMain : 0, 0);
-      this.delayedNode.setPosition(this.reverse ? main - delayedMain : 0, 0);
+      node.setSize(length, cross, DirtyFlag.Geometry | DirtyFlag.HitTest | DirtyFlag.Queue);
+      node.setPosition(origin, 0);
     } else {
-      this.fillNode.setSize(
-        cross,
-        fillMain,
-        DirtyFlag.Geometry | DirtyFlag.HitTest | DirtyFlag.Queue,
-      );
-      this.delayedNode.setSize(cross, delayedMain, DirtyFlag.Geometry | DirtyFlag.Queue);
-      this.fillNode.setPosition(0, this.reverse ? 0 : main - fillMain);
-      this.delayedNode.setPosition(0, this.reverse ? 0 : main - delayedMain);
+      node.setSize(cross, length, DirtyFlag.Geometry | DirtyFlag.HitTest | DirtyFlag.Queue);
+      node.setPosition(0, this.reverse ? origin : main - origin - length);
     }
     this.labelNode.setPosition(8, Math.max(0, (this.size.height - this.labelNode.size.height) / 2));
   }

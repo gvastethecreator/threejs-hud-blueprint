@@ -37,11 +37,11 @@ Interactive nodes receive deterministic capture/target/bubble pointer events and
 
 ## Acceptance criteria
 
-- [ ] Parent and child event order matches the documented phase contract.
-- [ ] Pointer capture continues delivery outside bounds until release/cancel.
-- [ ] Removing a captured node emits or records deterministic cancellation.
-- [ ] Click fires only when the configured gesture contract is met.
-- [ ] Event objects expose logical coordinates and source layer.
+- [x] Parent and child event order matches the documented phase contract.
+- [x] Pointer capture continues delivery outside bounds until release/cancel.
+- [x] Removing a captured node emits or records deterministic cancellation.
+- [x] Click fires only when the configured gesture contract is met.
+- [x] Event objects expose logical coordinates and source layer.
 
 ## Verification
 

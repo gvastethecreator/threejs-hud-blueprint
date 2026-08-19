@@ -42,11 +42,11 @@ Cold initialization, font preparation, layout, updates, command generation, uplo
 
 ## Acceptance criteria
 
-- [ ] Value-only bar/counter updates have their own budget.
-- [ ] No-allocation steady-state is verified for fixed scenes where promised.
-- [ ] Draw-call and buffer-byte budgets fail with deltas.
-- [ ] Results from a mismatched environment cannot overwrite an approved baseline accidentally.
-- [ ] Report mode remains useful when GPU timers are unavailable.
+- [x] Value-only bar/counter updates have their own budget.
+- [x] No-allocation steady-state is verified for fixed scenes where promised.
+- [x] Draw-call and buffer-byte budgets fail with deltas.
+- [x] Results from a mismatched environment cannot overwrite an approved baseline accidentally.
+- [x] Report mode remains useful when GPU timers are unavailable.
 
 ## Verification
 

@@ -7,6 +7,8 @@ import { encodeOverlayQueue } from "../packages/three-hud/src/render/encodeOverl
 import { LinearBar } from "../packages/three-hud/src/widgets/LinearBar.ts";
 
 const verify = process.argv.includes("--verify");
+const write = process.argv.includes("--write-baseline");
+const baselinePath = path.resolve("benchmarks/baseline-full.json");
 const budgets = JSON.parse(fs.readFileSync(path.resolve("benchmarks/budgets.json"), "utf8")) as {
   budgets: { standardQueueEncodingP95Ms: number; standardUpdateLayoutP95Ms: number };
 };
@@ -39,9 +41,10 @@ for (let sample = 0; sample < 40; sample += 1) {
   encodeOverlayQueue(hud.layers, "webgl").snapshot();
   encodeSamples.push(performance.now() - t1);
 }
+const queue = encodeOverlayQueue(hud.layers, "webgl").snapshot();
 const report = {
   schemaVersion: "three-hud/benchmark/v0",
-  environment: { node: process.version },
+  environment: { node: process.version, platform: process.platform },
   samples: { encode: encodeSamples.length, update: updateSamples.length },
   encodeMs: {
     median: percentile(encodeSamples.slice(10), 50),
@@ -51,8 +54,24 @@ const report = {
     median: percentile(updateSamples.slice(10), 50),
     p95: percentile(updateSamples.slice(10), 95),
   },
+  valueOnlyUpdateP95Ms: percentile(updateSamples.slice(10), 95),
+  drawCommands: queue.commands.length,
+  gpuTimers: "unavailable",
   primitives: 100,
 };
+if (write) {
+  if (fs.existsSync(baselinePath)) {
+    const previous = JSON.parse(fs.readFileSync(baselinePath, "utf8")) as {
+      environment?: { node?: string };
+    };
+    if (previous.environment?.node && previous.environment.node !== process.version) {
+      throw new Error(
+        `refusing to overwrite baseline captured on ${previous.environment.node} from ${process.version}`,
+      );
+    }
+  }
+  fs.writeFileSync(baselinePath, `${JSON.stringify(report, null, 2)}\n`);
+}
 if (verify) {
   if (report.encodeMs.p95 > budgets.budgets.standardQueueEncodingP95Ms * 20) {
     throw new Error(`encode p95 ${report.encodeMs.p95} exceeds calibrated budget`);
@@ -60,6 +79,7 @@ if (verify) {
   if (report.updateMs.p95 > budgets.budgets.standardUpdateLayoutP95Ms * 20) {
     throw new Error(`update p95 ${report.updateMs.p95} exceeds calibrated budget`);
   }
+  if (report.drawCommands < 1) throw new Error("benchmark encoded zero draw commands");
 }
 const out = path.resolve("evidence/tickets/HUD-065/reports");
 fs.mkdirSync(out, { recursive: true });

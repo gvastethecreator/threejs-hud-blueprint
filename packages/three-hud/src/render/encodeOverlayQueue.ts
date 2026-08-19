@@ -1,5 +1,6 @@
 import { collectPaintOrder } from "../core/order.js";
 import type { HudLayer } from "../core/HudLayer.js";
+import type { HudNode } from "../core/HudNode.js";
 import { composeBatchKey, type GlyphQuad, type ShapeParams } from "./commands.js";
 import { effectiveClip, intersectRects } from "./clip.js";
 import { RenderQueue } from "./renderQueue.js";
@@ -105,6 +106,16 @@ function shapeOf(node: { primitive?: string }): "rect" | "rounded-rect" | "line"
   return "rect";
 }
 
+function ancestorOrigin(node: HudNode): { x: number; y: number } {
+  let x = 0;
+  let y = 0;
+  for (let current = node.parent; current; current = current.parent) {
+    x += current.position.x;
+    y += current.position.y;
+  }
+  return { x, y };
+}
+
 function shapeParams(node: unknown): ShapeParams | undefined {
   if (typeof node !== "object" || node === null) return undefined;
   const record = node as {
@@ -120,16 +131,19 @@ function shapeParams(node: unknown): ShapeParams | undefined {
     startAngle?: number;
     sweep?: number;
     progressSweep?: () => number;
+    parent?: HudNode | null;
+    position?: { x: number; y: number };
   };
   if (record.primitive === "rounded-rect" && typeof record.radius === "number") {
     return { radius: record.radius };
   }
   if (record.primitive === "line") {
+    const origin = ancestorOrigin(record as HudNode);
     return {
-      x1: numberOr(record.x1, 0),
-      y1: numberOr(record.y1, 0),
-      x2: numberOr(record.x2, 0),
-      y2: numberOr(record.y2, 0),
+      x1: numberOr(record.x1, 0) + origin.x,
+      y1: numberOr(record.y1, 0) + origin.y,
+      x2: numberOr(record.x2, 0) + origin.x,
+      y2: numberOr(record.y2, 0) + origin.y,
       strokeWidth: numberOr(record.strokeWidth, 1),
     };
   }

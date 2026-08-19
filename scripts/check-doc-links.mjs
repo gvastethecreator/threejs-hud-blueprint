@@ -4,10 +4,19 @@ import { fileURLToPath } from "node:url";
 import { walkFiles, toPosix } from "./lib/tickets.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const markdownFiles = walkFiles(
-  repoRoot,
-  (file) => file.endsWith(".md") && !file.includes(`${path.sep}node_modules${path.sep}`),
-);
+const ignoredDocRoots = [
+  `${path.sep}node_modules${path.sep}`,
+  `${path.sep}.scratch${path.sep}`,
+  `${path.sep}coverage${path.sep}`,
+  `${path.sep}playwright-report${path.sep}`,
+  `${path.sep}test-results${path.sep}`,
+  `${path.sep}release${path.sep}`,
+];
+const markdownFiles = walkFiles(repoRoot, (file) => {
+  if (!file.endsWith(".md")) return false;
+  const relative = `${path.sep}${path.relative(repoRoot, file)}`;
+  return !ignoredDocRoots.some((marker) => relative.includes(marker));
+});
 const errors = [];
 for (const file of markdownFiles) {
   const source = fs.readFileSync(file, "utf8");

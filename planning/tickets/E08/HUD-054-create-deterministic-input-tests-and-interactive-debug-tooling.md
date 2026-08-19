@@ -38,10 +38,10 @@ Pointer behavior can be inspected and reproduced through scripted event sequence
 
 ## Acceptance criteria
 
-- [ ] The same scripted sequence yields the same event trace.
-- [ ] Debug overlays do not intercept pointer input.
-- [ ] At least one browser E2E case verifies real event adapter wiring.
-- [ ] Input diagnostics contain no unbounded event history.
+- [x] The same scripted sequence yields the same event trace.
+- [x] Debug overlays do not intercept pointer input.
+- [x] At least one browser E2E case verifies real event adapter wiring.
+- [x] Input diagnostics contain no unbounded event history.
 
 ## Verification
 

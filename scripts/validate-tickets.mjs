@@ -27,6 +27,14 @@ for (const ticket of tickets) {
   if (!ticket.outcome) errors.push(`${ticket.id}: missing Outcome.`);
   if (ticket.scope.length === 0) errors.push(`${ticket.id}: missing Scope bullets.`);
   if (ticket.acceptance.length === 0) errors.push(`${ticket.id}: missing acceptance criteria.`);
+  const ticketNumber = Number.parseInt(ticket.id.replace("HUD-", ""), 10);
+  if (ticket.status === "done" && ticketNumber >= 8 && ticketNumber <= 72) {
+    for (const item of ticket.acceptance) {
+      if (item && typeof item === "object" && item.checked !== true) {
+        errors.push(`${ticket.id}: done ticket has unchecked acceptance: ${item.text}`);
+      }
+    }
+  }
   if (ticket.verification.length === 0) errors.push(`${ticket.id}: missing Verification bullets.`);
   const requiredLabels = [
     `epic:${ticket.epic}`,

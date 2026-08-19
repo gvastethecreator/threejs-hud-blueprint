@@ -37,11 +37,11 @@ Inventory and hotbar layouts can use a fixed row/column grid with cell size, gap
 
 ## Acceptance criteria
 
-- [ ] A grid produces stable cell rectangles across resize and integer scale.
-- [ ] Content size derives from rows, columns, cells, gaps, and padding.
-- [ ] Overflow/extra children follow the documented policy.
-- [ ] Min/max constraints clamp before final pivot/anchor placement.
-- [ ] Inventory-sized fixture has no cumulative pixel drift.
+- [x] A grid produces stable cell rectangles across resize and integer scale.
+- [x] Content size derives from rows, columns, cells, gaps, and padding.
+- [x] Overflow/extra children follow the documented policy.
+- [x] Min/max constraints clamp before final pivot/anchor placement.
+- [x] Inventory-sized fixture has no cumulative pixel drift.
 
 ## Verification
 

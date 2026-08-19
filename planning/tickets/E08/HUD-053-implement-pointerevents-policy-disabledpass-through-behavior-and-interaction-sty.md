@@ -37,10 +37,10 @@ Containers and widgets can opt out, intercept only their box, allow child-only i
 
 ## Acceptance criteria
 
-- [ ] Each pointerEvents mode has nested-parent/child fixtures.
-- [ ] Disabled behavior is consistent across hit testing and widget visuals.
-- [ ] Pass-through nodes do not receive synthetic hover.
-- [ ] State changes invalidate style only, unless widget geometry genuinely changes.
+- [x] Each pointerEvents mode has nested-parent/child fixtures.
+- [x] Disabled behavior is consistent across hit testing and widget visuals.
+- [x] Pass-through nodes do not receive synthetic hover.
+- [x] State changes invalidate style only, unless widget geometry genuinely changes.
 
 ## Verification
 

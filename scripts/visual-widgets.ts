@@ -5,7 +5,10 @@ import type { HudLayer } from "../packages/three-hud/src/core/HudLayer.ts";
 import { Crosshair } from "../packages/three-hud/src/widgets/Crosshair.ts";
 import { Gauge } from "../packages/three-hud/src/widgets/Gauge.ts";
 import { Hotbar } from "../packages/three-hud/src/widgets/Hotbar.ts";
+import { IconLabel } from "../packages/three-hud/src/widgets/IconLabel.ts";
+import { Label } from "../packages/three-hud/src/widgets/Label.ts";
 import { LinearBar } from "../packages/three-hud/src/widgets/LinearBar.ts";
+import { Panel } from "../packages/three-hud/src/widgets/Panel.ts";
 import { RadialBar } from "../packages/three-hud/src/widgets/RadialBar.ts";
 import { encodeOverlayQueue } from "../packages/three-hud/src/render/encodeOverlayQueue.ts";
 import { hashRgba, rasterCommands } from "../packages/three-hud/src/render/overlayRaster.ts";
@@ -45,6 +48,23 @@ const builders: Record<string, (layer: HudLayer) => void> = {
     const gauge = new Gauge({ id: "g", width: 48, height: 48, value: 3, max: 10 });
     gauge.setPosition(8, 8);
     layer.add(gauge);
+  },
+  panel: (layer) => {
+    const panel = new Panel({ id: "p", width: 96, height: 48, fill: 0x1c3a58 });
+    panel.setPosition(8, 8);
+    panel.content.add(new Label({ id: "pt", text: "TRAY", fontSize: 10, color: 0xe8f6ff }));
+    panel.layoutChildren();
+    layer.add(panel);
+  },
+  label: (layer) => {
+    const label = new Label({ id: "lb", text: "HP", fontSize: 16, color: 0xe8f6ff });
+    label.setPosition(8, 8);
+    layer.add(label);
+  },
+  "icon-label": (layer) => {
+    const icon = new IconLabel({ id: "il", text: "AMMO", value: "18", iconSize: 12, gap: 4 });
+    icon.setPosition(8, 8);
+    layer.add(icon);
   },
 };
 

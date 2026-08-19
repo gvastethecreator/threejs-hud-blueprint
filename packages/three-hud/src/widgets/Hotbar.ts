@@ -85,6 +85,31 @@ export class Hotbar extends HudNode {
     this.onActivate?.(slot.key, index);
   }
 
+  setSlots(items: readonly SlotData[]): void {
+    const available = new Set(this.slots);
+    const next: Slot[] = [];
+    const activeKey = this.slots[this.activeIndex]?.key;
+    for (let index = 0; index < items.length; index += 1) {
+      const data = items[index] ?? { key: `hot-${index}`, empty: true as const };
+      const match = this.slots.find(
+        (candidate) => candidate.key === data.key && available.has(candidate),
+      );
+      if (match) {
+        match.setData(data);
+        available.delete(match);
+        next.push(match);
+        continue;
+      }
+      next.push(this.add(new Slot({ id: `${this.id}-${data.key}`, ...data, size: this.cellSize })));
+    }
+    for (const leftover of available) leftover.dispose();
+    this.slots.length = 0;
+    this.slots.push(...next);
+    this.relayout();
+    const kept = activeKey ? this.slots.findIndex((slot) => slot.key === activeKey) : 0;
+    this.setActiveIndex(kept >= 0 ? kept : 0);
+  }
+
   private relayout(): void {
     layoutStack(this.slots, { direction: this.orientation, gap: this.gap, x: 0, y: 0 });
     for (let index = 0; index < this.slots.length; index += 1) {

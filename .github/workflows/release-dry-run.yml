@@ -24,4 +24,6 @@ jobs:
       - run: pnpm run validate:full
       - run: pnpm run package:verify
       - run: pnpm run test:consumer
+      - run: pnpm run release:dry-run
       - run: pnpm --filter @scope/three-hud publish --dry-run --no-git-checks
+      - run: echo "Live npm publish is blocked here. Run validate:release on a release-ready commit first."

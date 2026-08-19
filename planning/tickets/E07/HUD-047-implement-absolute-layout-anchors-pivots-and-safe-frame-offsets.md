@@ -38,10 +38,10 @@ Screen-corner, edge, center, and custom-anchor placement works against the layer
 
 ## Acceptance criteria
 
-- [ ] All nine common anchor presets match reference fixtures.
-- [ ] Changing content size preserves the anchored edge according to pivot.
-- [ ] Safe-frame anchoring responds to inset changes.
-- [ ] Custom anchors outside 0–1 are either allowed/documented or rejected consistently.
+- [x] All nine common anchor presets match reference fixtures.
+- [x] Changing content size preserves the anchored edge according to pivot.
+- [x] Safe-frame anchoring responds to inset changes.
+- [x] Custom anchors outside 0–1 are either allowed/documented or rejected consistently.
 
 ## Verification
 

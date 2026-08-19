@@ -42,11 +42,11 @@ Releases are produced from a clean, validated commit through a repeatable dry-ru
 
 ## Acceptance criteria
 
-- [ ] Publish job cannot run without `validate:release` success.
-- [ ] Dry run outputs package version, files, integrity, notices, and planned tag.
-- [ ] No secret is printed in logs.
-- [ ] Experimental subpaths are identified in changelog and docs.
-- [ ] Release workflow is permission-minimal and pinned according to repository policy.
+- [x] Publish job cannot run without `validate:release` success.
+- [x] Dry run outputs package version, files, integrity, notices, and planned tag.
+- [x] No secret is printed in logs.
+- [x] Experimental subpaths are identified in changelog and docs.
+- [x] Release workflow is permission-minimal and pinned according to repository policy.
 
 ## Verification
 

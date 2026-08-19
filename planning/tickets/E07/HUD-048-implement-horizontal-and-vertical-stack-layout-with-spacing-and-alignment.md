@@ -35,11 +35,11 @@ HUD panels can arrange children in a predictable row or column with padding, mar
 
 ## Acceptance criteria
 
-- [ ] Hidden/collapsed policy is explicit and tested.
-- [ ] Gap is applied only between participating children.
-- [ ] Stretch respects child min/max constraints.
-- [ ] Multiple fill children divide remaining space through one documented rule.
-- [ ] Stack layout snapshots are deterministic.
+- [x] Hidden/collapsed policy is explicit and tested.
+- [x] Gap is applied only between participating children.
+- [x] Stretch respects child min/max constraints.
+- [x] Multiple fill children divide remaining space through one documented rule.
+- [x] Stack layout snapshots are deterministic.
 
 ## Verification
 

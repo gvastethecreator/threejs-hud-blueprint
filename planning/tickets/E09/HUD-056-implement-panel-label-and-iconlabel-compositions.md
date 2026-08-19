@@ -39,11 +39,11 @@ The foundational content widgets compose panel backgrounds, borders, nine-slice 
 
 ## Acceptance criteria
 
-- [ ] Widgets introduce no custom renderer path.
-- [ ] Label backend can be changed without changing widget props.
-- [ ] Panel padding participates in child layout.
-- [ ] IconLabel intrinsic size includes icon, gap, and text.
-- [ ] All owned child primitives are disposed with the widget.
+- [x] Widgets introduce no custom renderer path.
+- [x] Label backend can be changed without changing widget props.
+- [x] Panel padding participates in child layout.
+- [x] IconLabel intrinsic size includes icon, gap, and text.
+- [x] All owned child primitives are disposed with the widget.
 
 ## Verification
 

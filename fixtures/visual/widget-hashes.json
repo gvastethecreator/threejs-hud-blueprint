@@ -3,9 +3,12 @@
   "hashes": {
     "linear-bar": "f59bafc5",
     "linear": "383d6e85",
-    "radial": "67b6a1c6",
-    "crosshair": "e26244c5",
-    "hotbar": "42256b65",
-    "gauge": "ead40af9"
+    "radial": "b2498ce6",
+    "crosshair": "1bc1b2c5",
+    "hotbar": "568bacb9",
+    "gauge": "c302dae0",
+    "panel": "0ef370a5",
+    "label": "520ab5c5",
+    "icon-label": "e81691e5"
   }
 }
