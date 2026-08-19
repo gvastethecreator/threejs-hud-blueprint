@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "three-hud/evidence-manifest/v0",
+  "status": "proven-through-HUD-072-next-HUD-073",
+  "commit": null,
+  "release": null,
+  "verifiedClaims": [
+    "overlay adapter draws encodeOverlayQueue commands, not leftover HUD-007 debug meshes",
+    "ring, line, rounded-rect, and label encode as distinct primitives",
+    "SDF/bitmap prepare store atlas UVs, not glyphCount-only metadata",
+    "visual:verify compares committed primitive raster hashes",
+    "benchmark:full --verify measures encode/update p95 against budgets",
+    "layoutGrid/layoutStack set local slot positions without double-counting child world bounds",
+    "playground WebGL scene plus HUD is visible at http://127.0.0.1:4174/"
+  ],
+  "blockedClaims": [
+    "npm publish of @scope/three-hud@0.1.0",
+    "git tag v0.1.0",
+    "v0.1 releaseReady",
+    "HUD-073 close"
+  ],
+  "nextGate": "HUD-073"
+}

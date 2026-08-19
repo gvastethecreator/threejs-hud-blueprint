@@ -1,0 +1,80 @@
+name: Bug report
+description: Report behavior that contradicts a documented or verified Three HUD contract.
+title: "[BUG] "
+labels: ["bug", "status:needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include private fonts or proprietary assets. Reduce the problem to a licensed fixture whenever possible.
+  - type: input
+    id: version
+    attributes:
+      label: Three HUD version or commit
+      placeholder: 0.1.0 / commit SHA
+    validations:
+      required: true
+  - type: input
+    id: three
+    attributes:
+      label: Three.js version
+      placeholder: 0.185.1
+    validations:
+      required: true
+  - type: dropdown
+    id: renderer
+    attributes:
+      label: Renderer profile
+      options:
+        - WebGLRenderer
+        - WebGPURenderer using WebGPU
+        - WebGPURenderer using WebGL fallback
+        - Node import/package only
+        - Unknown
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser, OS, GPU, and DPR
+      placeholder: Chromium 000 / Windows 11 / RTX 3090 / DPR 1.25
+    validations:
+      required: true
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Text backend
+      options:
+        - None / primitives only
+        - SDF
+        - Bitmap
+        - Windfoil analytic
+        - Auto
+        - Unknown
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include code, scenario ID, repository, or exact steps using public exports.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected contract and actual result
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Diagnostics and evidence
+      description: Attach capability report, console output, screenshot manifest, or resource ledger. Remove secrets/private font bytes.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Preflight
+      options:
+        - label: I verified this does not rely on a deep import or unsupported private Three.js API.
+          required: true
+        - label: I did not attach unlicensed font binaries or private assets.
+          required: true

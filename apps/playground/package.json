@@ -1,0 +1,20 @@
+{
+  "name": "@three-hud/playground",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@scope/three-hud": "workspace:*",
+    "three": "0.185.1"
+  },
+  "devDependencies": {
+    "@types/three": "0.185.4",
+    "typescript": "7.0.2",
+    "vite": "8.2.1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "three-hud/visual-hash/v0",
+  "hashes": {
+    "shape:rect": "bc0b5ca5",
+    "shape:rounded-rect": "014734c5",
+    "shape:line": "ec71a22d",
+    "shape:ring": "621a7e25",
+    "text:label": "6ae22fc5"
+  }
+}

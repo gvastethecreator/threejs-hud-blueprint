@@ -1,0 +1,65 @@
+name: Compatibility or backend report
+description: Report a renderer, browser, font, or text-backend compatibility finding.
+title: "[COMPAT] "
+labels: ["compatibility", "status:needs-triage"]
+body:
+  - type: input
+    id: scenario
+    attributes:
+      label: Scenario ID or lab
+      placeholder: typography-lab / scaling-lab / custom reproduction
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Package, Three.js, browser, and OS versions
+    validations:
+      required: true
+  - type: dropdown
+    id: renderer
+    attributes:
+      label: Effective renderer
+      options:
+        - WebGL
+        - WebGPU
+        - WebGL fallback through WebGPURenderer
+        - Node/package
+    validations:
+      required: true
+  - type: input
+    id: adapter
+    attributes:
+      label: GPU adapter / device and flags
+  - type: dropdown
+    id: text_backend
+    attributes:
+      label: Backend
+      options:
+        - None
+        - SDF
+        - Bitmap
+        - Windfoil
+        - Auto
+  - type: textarea
+    id: finding
+    attributes:
+      label: Finding
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Machine-readable evidence or reproduction
+    validations:
+      required: true
+  - type: dropdown
+    id: proposed_claim
+    attributes:
+      label: Proposed compatibility state
+      options:
+        - target / unverified
+        - verified
+        - experimental
+        - blocked
+        - regression from previously verified

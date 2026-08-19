@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "three-hud/github-project/v0",
+  "title": "Three HUD",
+  "views": [
+    {
+      "name": "Execution",
+      "layout": "board",
+      "groupBy": "Status",
+      "sort": ["Priority", "ID"]
+    },
+    {
+      "name": "Architecture tracks",
+      "layout": "table",
+      "groupBy": "Epic",
+      "sort": ["Milestone", "ID"]
+    },
+    {
+      "name": "Release gates",
+      "layout": "table",
+      "filter": "Milestone:M4 OR Milestone:M5",
+      "sort": ["Priority", "ID"]
+    }
+  ],
+  "fields": [
+    {
+      "name": "Status",
+      "type": "single_select",
+      "options": ["Backlog", "Ready", "In Progress", "Blocked", "Review", "Done"]
+    },
+    {
+      "name": "Epic",
+      "type": "single_select",
+      "options": [
+        "E00",
+        "E01",
+        "E02",
+        "E03",
+        "E04",
+        "E05",
+        "E06",
+        "E07",
+        "E08",
+        "E09",
+        "E10",
+        "E11"
+      ]
+    },
+    {
+      "name": "Milestone",
+      "type": "single_select",
+      "options": ["M0", "M1", "M2", "M3", "M4", "M5"]
+    },
+    {
+      "name": "Priority",
+      "type": "single_select",
+      "options": ["P0", "P1", "P2"]
+    },
+    {
+      "name": "Size",
+      "type": "single_select",
+      "options": ["XS", "S", "M", "L", "XL"]
+    },
+    {
+      "name": "Type",
+      "type": "single_select",
+      "options": ["decision", "docs", "quality", "release", "spike", "task"]
+    },
+    {
+      "name": "Ticket ID",
+      "type": "text"
+    },
+    {
+      "name": "Evidence",
+      "type": "text"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "three-hud/performance-budgets/v0",
+  "status": "provisional",
+  "scenes": {
+    "small-hud": { "nodes": 40, "glyphs": 250, "clips": 2 },
+    "standard-showcase": { "nodes": 120, "glyphs": 1200, "clips": 8 },
+    "text-heavy": { "nodes": 180, "glyphs": 3000, "clips": 12 },
+    "inventory-stress": { "nodes": 550, "glyphs": 1500, "clips": 20 },
+    "static-stress": { "nodes": 1000, "glyphs": 5000, "clips": 32 }
+  },
+  "budgets": {
+    "steadyStateAllocatedBytesPerFrameTarget": 0,
+    "standardUpdateLayoutP95Ms": 1.5,
+    "standardQueueEncodingP95Ms": 1.0,
+    "mainEntryGzipKiB": 30,
+    "mainEntryGzipReleaseCeilingKiB": 40,
+    "bitmapSubpathGzipKiB": 20,
+    "sdfAdapterOwnCodeGzipKiB": 20,
+    "disposeOwnedResourceDelta": 0
+  },
+  "calibrationTicket": "HUD-065"
+}

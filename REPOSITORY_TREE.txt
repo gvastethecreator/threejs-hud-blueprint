@@ -1,0 +1,348 @@
+three-hud-blueprint/
+├─ .github/
+│  ├─ ISSUE_TEMPLATE/
+│  │  ├─ bug_report.yml
+│  │  ├─ compatibility_report.yml
+│  │  ├─ config.yml
+│  │  └─ feature_request.yml
+│  ├─ workflows/
+│  │  ├─ ci.yml
+│  │  ├─ planning-integrity.yml
+│  │  └─ release-dry-run.yml
+│  ├─ CODEOWNERS
+│  ├─ dependabot.yml
+│  └─ PULL_REQUEST_TEMPLATE.md
+├─ apps/
+│  └─ playground/
+│     ├─ src/
+│     │  └─ main.ts
+│     ├─ index.html
+│     ├─ package.json
+│     ├─ README.md
+│     └─ tsconfig.json
+├─ benchmarks/
+│  └─ budgets.json
+├─ docs/
+│  ├─ adrs/
+│  │  ├─ ADR-0001-use-a-retained-semantic-hud-tree.md
+│  │  ├─ ADR-0002-use-a-lean-workspace-and-publish-one-package-in-v0-1.md
+│  │  ├─ ADR-0003-keep-renderer-frame-loop-and-game-state-host-owned.md
+│  │  ├─ ADR-0004-use-logical-reference-coordinates-and-independent-layer-scale-policies.md
+│  │  ├─ ADR-0005-use-canonical-glyphrun-records-and-pluggable-text-backends.md
+│  │  ├─ ADR-0006-gate-windfoil-as-an-optional-webgpu-backend.md
+│  │  ├─ ADR-0007-use-an-isolated-sdf-adapter-as-the-smooth-compatibility-baseline.md
+│  │  ├─ ADR-0008-use-a-distinct-bitmap-backend-for-pixel-perfect-fonts.md
+│  │  ├─ ADR-0009-keep-the-core-framework-neutral-and-dom-output-free.md
+│  │  ├─ ADR-0010-do-not-implement-flexbox-in-v0-1.md
+│  │  ├─ ADR-0011-build-widgets-exclusively-from-public-primitives.md
+│  │  ├─ ADR-0012-make-resource-ownership-and-disposal-explicit.md
+│  │  ├─ ADR-0013-require-ssr-import-and-packed-external-consumer-gates.md
+│  │  ├─ ADR-0014-use-github-for-live-state-and-local-files-for-expanded-briefsevidence.md
+│  │  ├─ ADR-0015-start-with-a-narrow-tested-three-js-peer-range.md
+│  │  ├─ ADR-0016-do-not-bundle-third-party-fonts.md
+│  │  └─ README.md
+│  ├─ agents/
+│  ├─ api/
+│  ├─ architecture/
+│  │  ├─ ARCHITECTURE.md
+│  │  ├─ BITMAP_BACKEND.md
+│  │  ├─ CODEMAP.md
+│  │  ├─ ERRORS_AND_DIAGNOSTICS.md
+│  │  ├─ INPUT.md
+│  │  ├─ LAYOUT.md
+│  │  ├─ MODULE_CONTRACTS.md
+│  │  ├─ PACKAGE_AND_EXPORTS.md
+│  │  ├─ PUBLIC_API.md
+│  │  ├─ RENDER_PIPELINE.md
+│  │  ├─ RESOURCE_LIFECYCLE.md
+│  │  ├─ SDF_BACKEND.md
+│  │  ├─ TEXT_SYSTEM.md
+│  │  ├─ VIEWPORT_AND_SCALING.md
+│  │  ├─ WIDGETS_AND_THEMES.md
+│  │  └─ WINDFOIL_BACKEND.md
+│  ├─ operations/
+│  │  ├─ DEPENDENCY_POLICY.md
+│  │  ├─ FONT_AND_LICENSE_POLICY.md
+│  │  ├─ GITHUB_PROJECT.md
+│  │  ├─ MAINTENANCE.md
+│  │  └─ RELEASE_PROCESS.md
+│  ├─ product/
+│  │  ├─ PRODUCT_SPEC.md
+│  │  ├─ REQUIREMENTS.md
+│  │  ├─ RISK_REGISTER.md
+│  │  ├─ SUCCESS_METRICS.md
+│  │  └─ USER_STORIES.md
+│  ├─ quality/
+│  │  ├─ COMPATIBILITY_MATRIX.md
+│  │  ├─ EVIDENCE_MODEL.md
+│  │  ├─ PERFORMANCE_BUDGETS.md
+│  │  ├─ QUALITY_GATES.md
+│  │  ├─ TEST_STRATEGY.md
+│  │  └─ VISUAL_REGRESSION.md
+│  ├─ research/
+│  │  ├─ INITIAL_PROJECT_PLAN.md
+│  │  ├─ REFERENCE_PROJECT_AUDIT.md
+│  │  ├─ SOURCES.md
+│  │  ├─ TEXT_BACKEND_COMPARISON.md
+│  │  └─ WINDFOIL_RESEARCH.md
+│  └─ INDEX.md
+├─ e2e/
+│  └─ smoke.spec.ts
+├─ evidence/
+│  └─ manifests/
+│     └─ latest.json
+├─ fixtures/
+│  ├─ external-consumer/
+│  │  ├─ src/
+│  │  │  └─ index.ts
+│  │  ├─ package.json
+│  │  ├─ README.md
+│  │  └─ tsconfig.json
+│  └─ fonts/
+│     └─ README.md
+├─ packages/
+│  └─ three-hud/
+│     ├─ src/
+│     │  ├─ contracts/
+│     │  │  ├─ capabilities.ts
+│     │  │  ├─ errors.ts
+│     │  │  ├─ geometry.ts
+│     │  │  ├─ moduleContracts.ts
+│     │  │  └─ version.ts
+│     │  ├─ core/
+│     │  │  ├─ DirtyFlags.ts
+│     │  │  ├─ HUD.ts
+│     │  │  ├─ HudLayer.ts
+│     │  │  ├─ HudNode.test.ts
+│     │  │  └─ HudNode.ts
+│     │  ├─ render/
+│     │  │  └─ contracts.ts
+│     │  ├─ testing/
+│     │  │  └─ index.ts
+│     │  ├─ text/
+│     │  │  ├─ bitmap.ts
+│     │  │  ├─ contracts.ts
+│     │  │  ├─ sdf.ts
+│     │  │  ├─ stub.ts
+│     │  │  └─ windfoil.ts
+│     │  ├─ viewport/
+│     │  │  ├─ resolveViewport.test.ts
+│     │  │  └─ resolveViewport.ts
+│     │  └─ index.ts
+│     ├─ LICENSE
+│     ├─ package.json
+│     ├─ README.md
+│     ├─ THIRD_PARTY_NOTICES.md
+│     ├─ tsconfig.json
+│     ├─ tsconfig.lib.json
+│     └─ vite.lib.config.ts
+├─ planning/
+│  ├─ github/
+│  │  ├─ issue-bodies/
+│  │  │  ├─ HUD-001.md
+│  │  │  ├─ HUD-002.md
+│  │  │  ├─ HUD-003.md
+│  │  │  ├─ HUD-004.md
+│  │  │  ├─ HUD-005.md
+│  │  │  ├─ HUD-006.md
+│  │  │  ├─ HUD-007.md
+│  │  │  ├─ HUD-008.md
+│  │  │  ├─ HUD-009.md
+│  │  │  ├─ HUD-010.md
+│  │  │  ├─ HUD-011.md
+│  │  │  ├─ HUD-012.md
+│  │  │  ├─ HUD-013.md
+│  │  │  ├─ HUD-014.md
+│  │  │  ├─ HUD-015.md
+│  │  │  ├─ HUD-016.md
+│  │  │  ├─ HUD-017.md
+│  │  │  ├─ HUD-018.md
+│  │  │  ├─ HUD-019.md
+│  │  │  ├─ HUD-020.md
+│  │  │  ├─ HUD-021.md
+│  │  │  ├─ HUD-022.md
+│  │  │  ├─ HUD-023.md
+│  │  │  ├─ HUD-024.md
+│  │  │  ├─ HUD-025.md
+│  │  │  ├─ HUD-026.md
+│  │  │  ├─ HUD-027.md
+│  │  │  ├─ HUD-028.md
+│  │  │  ├─ HUD-029.md
+│  │  │  ├─ HUD-030.md
+│  │  │  ├─ HUD-031.md
+│  │  │  ├─ HUD-032.md
+│  │  │  ├─ HUD-033.md
+│  │  │  ├─ HUD-034.md
+│  │  │  ├─ HUD-035.md
+│  │  │  ├─ HUD-036.md
+│  │  │  ├─ HUD-037.md
+│  │  │  ├─ HUD-038.md
+│  │  │  ├─ HUD-039.md
+│  │  │  ├─ HUD-040.md
+│  │  │  ├─ HUD-041.md
+│  │  │  ├─ HUD-042.md
+│  │  │  ├─ HUD-043.md
+│  │  │  ├─ HUD-044.md
+│  │  │  ├─ HUD-045.md
+│  │  │  ├─ HUD-046.md
+│  │  │  ├─ HUD-047.md
+│  │  │  ├─ HUD-048.md
+│  │  │  ├─ HUD-049.md
+│  │  │  ├─ HUD-050.md
+│  │  │  ├─ HUD-051.md
+│  │  │  ├─ HUD-052.md
+│  │  │  ├─ HUD-053.md
+│  │  │  ├─ HUD-054.md
+│  │  │  ├─ HUD-055.md
+│  │  │  ├─ HUD-056.md
+│  │  │  ├─ HUD-057.md
+│  │  │  ├─ HUD-058.md
+│  │  │  ├─ HUD-059.md
+│  │  │  ├─ HUD-060.md
+│  │  │  ├─ HUD-061.md
+│  │  │  ├─ HUD-062.md
+│  │  │  ├─ HUD-063.md
+│  │  │  ├─ HUD-064.md
+│  │  │  ├─ HUD-065.md
+│  │  │  ├─ HUD-066.md
+│  │  │  ├─ HUD-067.md
+│  │  │  ├─ HUD-068.md
+│  │  │  ├─ HUD-069.md
+│  │  │  ├─ HUD-070.md
+│  │  │  ├─ HUD-071.md
+│  │  │  ├─ HUD-072.md
+│  │  │  └─ HUD-073.md
+│  │  ├─ issues.csv
+│  │  ├─ issues.ndjson
+│  │  ├─ labels.json
+│  │  ├─ milestones.json
+│  │  ├─ project-fields.json
+│  │  └─ README.md
+│  ├─ tickets/
+│  │  ├─ E00/
+│  │  │  ├─ HUD-001-bootstrap-the-lean-pnpm-workspace-and-publishable-package-skeleton.md
+│  │  │  ├─ HUD-002-establish-source-of-truth-documents-and-the-agent-operating-guide.md
+│  │  │  ├─ HUD-003-define-fast-full-and-release-quality-command-matrices.md
+│  │  │  ├─ HUD-004-create-typed-module-contracts-and-an-executable-boundary-checker.md
+│  │  │  └─ HUD-005-prepare-github-issue-forms-labels-project-fields-and-mirror-protocol.md
+│  │  ├─ E01/
+│  │  │  ├─ HUD-006-implement-a-renderer-capability-probe-and-compatibility-report.md
+│  │  │  ├─ HUD-007-prove-a-state-safe-three-js-hud-overlay-pass-on-webgl-and-webgpu.md
+│  │  │  ├─ HUD-008-port-windfoil-font-extraction-and-row-band-preprocessing-into-an-isolated-typesc.md
+│  │  │  ├─ HUD-009-render-windfoil-glyph-instances-through-three-js-without-private-renderer-patche.md
+│  │  │  ├─ HUD-010-execute-the-typography-zoom-dpr-clipping-and-performance-evidence-matrix.md
+│  │  │  └─ HUD-011-record-the-architecture-gate-verdict-for-the-windfoil-backend.md
+│  │  ├─ E02/
+│  │  │  ├─ HUD-012-define-the-public-core-contracts-diagnostics-and-error-model.md
+│  │  │  ├─ HUD-013-implement-the-retained-hudnode-tree-local-transforms-and-world-bounds.md
+│  │  │  ├─ HUD-014-implement-dirty-flags-and-bounded-invalidation-propagation.md
+│  │  │  ├─ HUD-015-implement-hudlayer-and-hud-rootcontroller-ownership.md
+│  │  │  ├─ HUD-016-implement-hud-initialize-update-render-resize-and-dispose-semantics.md
+│  │  │  └─ HUD-017-guarantee-deterministic-ordering-stable-ids-and-debug-metadata.md
+│  │  ├─ E03/
+│  │  │  ├─ HUD-018-implement-logical-reference-resolution-and-viewport-transforms.md
+│  │  │  ├─ HUD-019-implement-contain-cover-native-and-stretch-scale-modes.md
+│  │  │  ├─ HUD-020-implement-integer-scaling-and-device-pixel-snapping.md
+│  │  │  ├─ HUD-021-add-safe-insets-letterbox-bounds-and-independent-hud-zoom.md
+│  │  │  ├─ HUD-022-synchronize-css-size-drawing-buffer-size-dpr-and-multi-viewport-state.md
+│  │  │  └─ HUD-023-provide-authoritative-screen-viewport-layer-logical-and-device-coordinate-conver.md
+│  │  ├─ E04/
+│  │  │  ├─ HUD-024-define-draw-commands-render-queue-ordering-and-batch-keys.md
+│  │  │  ├─ HUD-025-implement-the-three-js-overlay-adapter-with-complete-state-restoration.md
+│  │  │  ├─ HUD-026-implement-shared-quad-geometry-instance-buffers-material-cache-and-resource-pool.md
+│  │  │  ├─ HUD-027-implement-rect-roundedrect-and-line-primitives.md
+│  │  │  ├─ HUD-028-implement-image-and-nineslice-primitives.md
+│  │  │  ├─ HUD-029-implement-arc-ring-segmented-progress-and-tick-geometry.md
+│  │  │  ├─ HUD-030-implement-rectangular-clip-propagation-opacity-blend-and-color-policy.md
+│  │  │  └─ HUD-031-create-the-primitive-regression-suite-and-initial-draw-call-budgets.md
+│  │  ├─ E05/
+│  │  │  ├─ HUD-032-define-fontsource-fontmetadata-pixel-policy-and-license-records.md
+│  │  │  ├─ HUD-033-implement-fontregistry-loading-abort-deduplication-and-resource-ownership.md
+│  │  │  ├─ HUD-034-define-canonical-glyphrun-and-textbackend-capability-contracts.md
+│  │  │  ├─ HUD-035-implement-canonical-text-style-measurement-and-cache-keys.md
+│  │  │  ├─ HUD-036-implement-basic-ltr-shaping-kerning-multiline-layout-wrapping-and-alignment.md
+│  │  │  ├─ HUD-037-implement-fallback-fonts-missing-glyph-policy-and-text-diagnostics.md
+│  │  │  └─ HUD-038-create-the-shared-text-backend-conformance-and-dirty-update-harness.md
+│  │  ├─ E06/
+│  │  │  ├─ HUD-039-implement-the-windfoil-analytic-text-adapter-behind-its-approved-exposure-level.md
+│  │  │  ├─ HUD-040-implement-windfoil-glyph-atlas-growth-reuse-updates-and-memory-diagnostics.md
+│  │  │  ├─ HUD-041-harden-windfoil-failure-device-loss-minification-and-performance-behavior.md
+│  │  │  ├─ HUD-042-implement-an-isolated-sdf-text-adapter-as-the-compatibility-baseline.md
+│  │  │  ├─ HUD-043-define-sdf-atlas-lifecycle-capability-truth-and-fallback-policy.md
+│  │  │  ├─ HUD-044-implement-bitmap-font-manifests-prebuilt-atlases-and-runtime-rasterization.md
+│  │  │  └─ HUD-045-enforce-bitmap-integer-scaling-nearest-filtering-and-mixed-backend-parity.md
+│  │  ├─ E07/
+│  │  │  ├─ HUD-046-implement-the-two-pass-layout-box-and-measurement-model.md
+│  │  │  ├─ HUD-047-implement-absolute-layout-anchors-pivots-and-safe-frame-offsets.md
+│  │  │  ├─ HUD-048-implement-horizontal-and-vertical-stack-layout-with-spacing-and-alignment.md
+│  │  │  ├─ HUD-049-implement-fixed-grid-layout-content-sizing-and-minmax-constraints.md
+│  │  │  └─ HUD-050-integrate-clipping-propagation-layout-diagnostics-and-regression-matrices.md
+│  │  ├─ E08/
+│  │  │  ├─ HUD-051-implement-canvas-pointer-mapping-and-a-deterministic-hit-test-index.md
+│  │  │  ├─ HUD-052-implement-pointer-event-propagation-hoverpressclick-and-capture.md
+│  │  │  ├─ HUD-053-implement-pointerevents-policy-disabledpass-through-behavior-and-interaction-sty.md
+│  │  │  └─ HUD-054-create-deterministic-input-tests-and-interactive-debug-tooling.md
+│  │  ├─ E09/
+│  │  │  ├─ HUD-055-implement-serializable-themes-token-resolution-and-state-styles.md
+│  │  │  ├─ HUD-056-implement-panel-label-and-iconlabel-compositions.md
+│  │  │  ├─ HUD-057-implement-linearbar-with-segmented-delayed-and-labeled-variants.md
+│  │  │  ├─ HUD-058-implement-radialbar-and-gauge-with-ticks-labels-and-needle.md
+│  │  │  ├─ HUD-059-implement-crosshair-and-reticle-compositions.md
+│  │  │  ├─ HUD-060-implement-slot-and-inventorygrid.md
+│  │  │  ├─ HUD-061-implement-hotbar-selection-frame-and-quantityshortcut-badges.md
+│  │  │  └─ HUD-062-build-the-complete-canvas-only-widget-showcase-and-api-consistency-audit.md
+│  │  ├─ E10/
+│  │  │  ├─ HUD-063-create-the-unit-test-harness-deterministic-clocks-and-mock-gputext-boundaries.md
+│  │  │  ├─ HUD-064-implement-visual-regression-harness-and-browserrenderer-scenario-matrix.md
+│  │  │  ├─ HUD-065-implement-benchmark-runner-statistics-and-enforceable-performance-budgets.md
+│  │  │  ├─ HUD-066-verify-disposal-contextdevice-loss-cancellation-and-memory-ownership.md
+│  │  │  ├─ HUD-067-enforce-ssr-safe-import-tree-shaking-bundle-budgets-and-packed-consumer-integrit.md
+│  │  │  └─ HUD-068-publish-the-tested-compatibility-matrix-and-release-qa-report.md
+│  │  └─ E11/
+│  │     ├─ HUD-069-write-public-api-reference-and-minimal-getting-started-paths.md
+│  │     ├─ HUD-070-write-typography-pixel-art-font-source-and-license-guides.md
+│  │     ├─ HUD-071-write-widget-recipes-and-document-every-playground-lab.md
+│  │     ├─ HUD-072-implement-versioning-changelog-release-automation-and-provenance-dry-run.md
+│  │     └─ HUD-073-close-the-v0-1-release-candidate-and-publish-v0-1-0.md
+│  ├─ BACKLOG.md
+│  ├─ EPICS.md
+│  ├─ MILESTONES.md
+│  ├─ README.md
+│  └─ ticket-index.json
+├─ scripts/
+│  ├─ lib/
+│  │  └─ tickets.mjs
+│  ├─ assert-release-ready.mjs
+│  ├─ bootstrap-github-metadata.mjs
+│  ├─ check-boundaries.mjs
+│  ├─ check-doc-links.mjs
+│  ├─ clean-package.mjs
+│  ├─ clean.mjs
+│  ├─ create-github-issues.mjs
+│  ├─ generate-ticket-index.mjs
+│  ├─ not-implemented-gate.mjs
+│  ├─ package-verify.mjs
+│  ├─ test-external-consumer.mjs
+│  ├─ test-ssr-import.mjs
+│  ├─ validate-tickets.mjs
+│  └─ workspace-check.mjs
+├─ .gitignore
+├─ .npmrc
+├─ AGENTS.md
+├─ architecture-explorer.html
+├─ CONTEXT.md
+├─ CONTRIBUTING.md
+├─ LICENSE
+├─ package.json
+├─ playwright.config.ts
+├─ pnpm-workspace.yaml
+├─ README.md
+├─ release-status.json
+├─ RESUMEN_EJECUTIVO_ES.md
+├─ ROADMAP.md
+├─ SECURITY.md
+├─ THIRD_PARTY_NOTICES.md
+├─ THREE_HUD_MASTER_SPEC.md
+├─ tsconfig.base.json
+├─ tsconfig.json
+└─ vitest.config.ts

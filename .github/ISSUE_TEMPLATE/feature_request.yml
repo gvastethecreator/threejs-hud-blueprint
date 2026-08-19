@@ -1,0 +1,52 @@
+name: Feature request
+description: Propose a bounded addition to the canvas-native HUD product.
+title: "[FEATURE] "
+labels: ["enhancement", "status:needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and user outcome
+      description: Describe the game/tool workflow, not only the desired API.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed capability
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Likely area
+      options:
+        - Core/lifecycle
+        - Viewport/scaling
+        - Rendering/primitives
+        - Typography/font resources
+        - Layout
+        - Input
+        - Themes/widgets
+        - Framework adapter
+        - Quality/tooling
+        - Documentation
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Existing workaround and alternatives considered
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Proposed non-goals
+      description: State what this request should not expand into.
+    validations:
+      required: true
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: Product fit
+      options:
+        - label: The proposal can remain canvas-native and does not require DOM output in core.
+        - label: The host can remain owner of renderer, loop, canvas, and game state.
+        - label: Widgets can remain independent from a concrete text backend.

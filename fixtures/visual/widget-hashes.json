@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "three-hud/widget-hash/v0",
+  "hashes": {
+    "linear-bar": "f59bafc5",
+    "linear": "383d6e85",
+    "radial": "67b6a1c6",
+    "crosshair": "e26244c5",
+    "hotbar": "42256b65",
+    "gauge": "ead40af9"
+  }
+}

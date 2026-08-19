@@ -1,0 +1,64 @@
+{
+  "name": "@scope/three-hud",
+  "version": "0.1.0",
+  "description": "Canvas-native retained HUD primitives, typography contracts, layout, and game widgets for Three.js.",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./text/windfoil": {
+      "types": "./dist/text/windfoil.d.ts",
+      "import": "./dist/text/windfoil.js"
+    },
+    "./text/sdf": {
+      "types": "./dist/text/sdf.d.ts",
+      "import": "./dist/text/sdf.js"
+    },
+    "./text/bitmap": {
+      "types": "./dist/text/bitmap.d.ts",
+      "import": "./dist/text/bitmap.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "clean": "node ../../scripts/clean-package.mjs packages/three-hud",
+    "build:js": "vite build --config vite.lib.config.ts",
+    "build:types": "tsc -p tsconfig.lib.json --emitDeclarationOnly",
+    "build": "pnpm run clean && pnpm run build:js && pnpm run build:types",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run src"
+  },
+  "devDependencies": {
+    "@types/three": "0.185.4",
+    "three": "0.185.1",
+    "typescript": "7.0.2",
+    "vite": "8.2.1",
+    "vitest": "4.1.10"
+  },
+  "peerDependencies": {
+    "three": ">=0.185.0 <0.186.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

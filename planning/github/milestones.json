@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "three-hud/github-milestones/v0",
+  "milestones": [
+    {
+      "id": "M0",
+      "title": "M0 — Architecture proof",
+      "description": "The workspace exists, project authorities are explicit, and the Windfoil/Three.js feasibility gate has a recorded verdict.",
+      "ticketCount": 11
+    },
+    {
+      "id": "M1",
+      "title": "M1 — Core alpha",
+      "description": "A host can create, resize, update, render, and dispose a HUD containing batched primitives across supported scale modes.",
+      "ticketCount": 20
+    },
+    {
+      "id": "M2",
+      "title": "M2 — Typography and layout alpha",
+      "description": "At least two text backends work through one contract, pixel text is crisp at integer scales, and stack/grid layout is stable.",
+      "ticketCount": 19
+    },
+    {
+      "id": "M3",
+      "title": "M3 — Interactive widget alpha",
+      "description": "Pointer interaction and the initial game-widget set work in the canvas-only showcase without backend-specific widget code.",
+      "ticketCount": 12
+    },
+    {
+      "id": "M4",
+      "title": "M4 — v0.1 release candidate",
+      "description": "Visual, performance, package, compatibility, disposal, documentation, and legal gates pass on a packed external consumer.",
+      "ticketCount": 10
+    },
+    {
+      "id": "M5",
+      "title": "M5 — v0.1.0",
+      "description": "The approved release candidate is published with provenance, changelog, compatibility declaration, and rollback notes.",
+      "ticketCount": 1
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    groups:
+      toolchain:
+        patterns:
+          - "vite"
+          - "vitest"
+          - "typescript"
+          - "oxlint"
+          - "oxfmt"
+      browser-tests:
+        patterns:
+          - "playwright"
+          - "@playwright/test"
+    labels:
+      - dependencies
+      - status:needs-triage
