@@ -24,6 +24,7 @@ export type PreparedSdfText = Readonly<{
   atlasWidth: number;
   atlasHeight: number;
   sdf: true;
+  atlas: Uint8Array;
   glyphs: readonly PreparedSdfGlyph[];
 }>;
 
@@ -43,8 +44,8 @@ type MutablePrepared = {
   atlasWidth: number;
   atlasHeight: number;
   sdf: true;
-  glyphs: PreparedSdfGlyph[];
   atlas: Uint8Array;
+  glyphs: PreparedSdfGlyph[];
 };
 
 export class SdfTextBackend implements TextBackend {
@@ -96,8 +97,11 @@ export class SdfTextBackend implements TextBackend {
     };
     this.nextId += 1;
     this.prepared.set(record.id, record);
-    const { atlas: _atlas, ...publicRecord } = record;
-    return Object.freeze({ ...publicRecord, glyphs: Object.freeze(glyphs.slice()) });
+    return Object.freeze({
+      ...record,
+      atlas: record.atlas,
+      glyphs: Object.freeze(glyphs.slice()),
+    });
   }
 
   update(prepared: unknown, run: GlyphRun): void {

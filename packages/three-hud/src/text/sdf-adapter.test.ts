@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as main from "../index.js";
 import { createGlyphRun } from "./contracts.js";
 import { runTextBackendConformance } from "./textBackendConformance.js";
+import { ASCII_ATLAS_WIDTH, rasterAsciiAtlas } from "./asciiAtlas.js";
 import { SDF_PACKAGE_SUBPATH, createSdfTextBackend } from "./sdf.js";
 
 describe("sdf-adapter", () => {
@@ -28,11 +29,37 @@ describe("sdf-adapter", () => {
     expect(prepared.atlasWidth).toBeGreaterThan(0);
     expect(prepared.atlasHeight).toBeGreaterThan(0);
     expect(prepared.sdf).toBe(true);
+    expect(prepared.atlas.length).toBeGreaterThan(0);
     expect(prepared.glyphs).toHaveLength(4);
     expect(prepared.glyphs[0]?.u1).toBeGreaterThan(prepared.glyphs[0]?.u0 ?? 1);
     expect(prepared.glyphs[0]?.v1).toBeGreaterThan(prepared.glyphs[0]?.v0 ?? 1);
     again.disposePrepared(prepared);
     again.dispose();
+  });
+
+  it("stores a signed-distance field a consumer can tell from the 5x7 bitmap atlas", () => {
+    const backend = createSdfTextBackend();
+    const run = createGlyphRun({
+      fontId: "ui",
+      text: "A",
+      fontSize: 16,
+      glyphs: [glyph(0, 0)],
+      bounds: { x: 0, y: 0, width: 8, height: 12 },
+    });
+    const prepared = backend.prepare(run);
+    const binary = rasterAsciiAtlas(false);
+    expect(prepared.atlas.length).toBe(binary.length);
+    const onIndex = (17 * ASCII_ATLAS_WIDTH + 10) * 4 + 3;
+    const farIndex = 3;
+    expect(binary[onIndex]).toBe(255);
+    expect(binary[farIndex]).toBe(0);
+    const on = prepared.atlas[onIndex] ?? 0;
+    const far = prepared.atlas[farIndex] ?? 0;
+    expect(on).toBeGreaterThan(128);
+    expect(on).toBeLessThan(255);
+    expect(far).toBeLessThan(128);
+    backend.disposePrepared(prepared);
+    backend.dispose();
   });
 
   it("declares WebGPU encode-only versus unsupported modes precisely", () => {

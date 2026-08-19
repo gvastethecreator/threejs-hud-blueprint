@@ -41,6 +41,11 @@ if (verify) {
     throw new Error("compatibility matrix missing primitive scenario shape:rect");
   if (passedScenarioIds.length < 4)
     throw new Error("compatibility matrix has too few scenario IDs");
+  if (report.cells["webgl-baseline"].status === "measured") {
+    throw new Error(
+      "webgl-baseline cannot be labeled measured from CPU overlay hashes; GPU/browser evidence is missing",
+    );
+  }
 }
 const dir = path.resolve("docs/quality");
 fs.mkdirSync(dir, { recursive: true });

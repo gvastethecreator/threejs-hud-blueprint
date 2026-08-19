@@ -39,20 +39,9 @@ if (write) {
   );
 }
 if (verify) {
-  if (!fs.existsSync(baselinePath))
-    throw new Error("missing fixtures/visual/primitive-hashes.json");
-  const baseline = JSON.parse(fs.readFileSync(baselinePath, "utf8")) as {
-    hashes: Record<string, string>;
-  };
-  for (const [key, hash] of Object.entries(hashes)) {
-    if (baseline.hashes[key] !== hash)
-      throw new Error(`visual hash mismatch for ${key}: ${hash} != ${baseline.hashes[key]}`);
-  }
-  if (hashes["shape:ring"] === hashes["shape:rect"])
-    throw new Error("ring raster matches rect; primitives are not distinct");
-  if (hashes["text:label"] === hashes["shape:line"])
-    throw new Error("text raster matches line; label is not drawing glyphs");
-  if (!hashes["text:label"]) throw new Error("label did not encode as text");
+  throw new Error(
+    "visual:verify cannot pass on none-cpu-raster CPU overlay hashes; this entry is not a GPU/browser visual profile",
+  );
 }
 console.log(JSON.stringify({ commandCount: queue.commands.length, hashes, verified: verify }));
 hud.dispose();

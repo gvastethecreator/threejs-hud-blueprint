@@ -127,6 +127,14 @@ if (verify) {
   if (!fs.existsSync(path.join(root, "docs/quality/VISUAL_THRESHOLDS.md"))) {
     throw new Error("missing visual threshold policy");
   }
+  const cpuWebgl = scenarios.filter(
+    (row) => row.blocking && row.profile === "webgl-baseline" && row.renderer === "none-cpu-raster",
+  );
+  if (cpuWebgl.length > 0) {
+    throw new Error(
+      `webgl-baseline cannot be verified from none-cpu-raster (${cpuWebgl.length} CPU raster rows)`,
+    );
+  }
 }
 
 const outDir = path.resolve("evidence/tickets/HUD-064");

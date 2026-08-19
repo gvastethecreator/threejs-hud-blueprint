@@ -9,6 +9,12 @@ import {
   createMockTextBackend,
 } from "../packages/three-hud/src/testing/mocks.ts";
 
+if (!process.argv.includes("--mock")) {
+  throw new Error(
+    "memory:verify cannot pass on a mock ledger; no WEBGL_lose_context profile was measured",
+  );
+}
+
 const ledger = { create: 0, dispose: 0, late: 0 };
 
 for (let index = 0; index < 3; index += 1) {

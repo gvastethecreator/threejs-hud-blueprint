@@ -11,6 +11,6 @@
 
 ## Rollback
 
-CAUTION: Do not overwrite a published version.
+CAUTION: never overwrite a published version.
 
 Deprecate the bad version. Then publish a patch from a verified commit. Keep the failed tarball under `release/`.

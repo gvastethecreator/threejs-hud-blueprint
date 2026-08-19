@@ -95,7 +95,7 @@ export function rasterAsciiAtlas(sdf = false): Uint8Array {
       }
     }
   }
-  if (sdf) spreadCoverage(data, ASCII_ATLAS_WIDTH, ASCII_ATLAS_HEIGHT);
+  if (sdf) writeSignedDistanceField(data, ASCII_ATLAS_WIDTH, ASCII_ATLAS_HEIGHT, 4);
   return data;
 }
 
@@ -138,19 +138,35 @@ export function rasterText(text: string, color: number, pixelSize = 2): RasterTe
   return { width, height, data };
 }
 
-function spreadCoverage(data: Uint8Array, width: number, height: number): void {
-  const copy = data.slice();
-  for (let y = 1; y < height - 1; y += 1) {
-    for (let x = 1; x < width - 1; x += 1) {
-      const i = (y * width + x) * 4 + 3;
-      let max = copy[i] ?? 0;
-      for (let oy = -1; oy <= 1; oy += 1) {
-        for (let ox = -1; ox <= 1; ox += 1) {
-          const sample = copy[((y + oy) * width + (x + ox)) * 4 + 3] ?? 0;
-          max = Math.max(max, sample);
+function writeSignedDistanceField(
+  data: Uint8Array,
+  width: number,
+  height: number,
+  spread: number,
+): void {
+  const inside = new Uint8Array(width * height);
+  for (let i = 0; i < inside.length; i += 1) {
+    inside[i] = (data[i * 4 + 3] ?? 0) > 127 ? 1 : 0;
+  }
+  const spreadSq = spread * spread;
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const on = inside[y * width + x] === 1;
+      let best = spreadSq;
+      const y0 = Math.max(0, y - spread);
+      const y1 = Math.min(height - 1, y + spread);
+      const x0 = Math.max(0, x - spread);
+      const x1 = Math.min(width - 1, x + spread);
+      for (let sy = y0; sy <= y1; sy += 1) {
+        for (let sx = x0; sx <= x1; sx += 1) {
+          if ((inside[sy * width + sx] === 1) === on) continue;
+          const distSq = (sx - x) * (sx - x) + (sy - y) * (sy - y);
+          if (distSq < best) best = distSq;
         }
       }
-      data[i] = Math.round((max + (copy[i] ?? 0)) / 2);
+      const signed = (on ? 1 : -1) * Math.min(spread, Math.sqrt(best));
+      const encoded = 128 + Math.round((signed / spread) * 127);
+      data[(y * width + x) * 4 + 3] = Math.max(0, Math.min(255, encoded));
     }
   }
 }

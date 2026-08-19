@@ -1,5 +1,6 @@
 import {
   Crosshair,
+  DEFAULT_THEME,
   Gauge,
   HUD,
   Hotbar,
@@ -7,6 +8,7 @@ import {
   InventoryGrid,
   Label,
   LinearBar,
+  PIXEL_THEME,
   Panel,
   RadialBar,
   THREE_HUD_IMPLEMENTATION_STATUS,
@@ -99,7 +101,7 @@ const title = new Label({
 title.setPosition(SAFE, 48);
 const lookHint = new Label({
   id: "look-hint",
-  text: "CLICK LOOK - QE TURN",
+  text: "CLICK LOOK - QE TURN - T THEME - F FONT",
   fontSize: 12,
   color: 0xb8c8d8,
 });
@@ -287,6 +289,36 @@ layer.add(crosshair);
 layer.add(inventory);
 layer.add(hotbar);
 await hud.initialize();
+let themeName: "default" | "pixel" = "default";
+let fontName: "ui" | "pixel" = "ui";
+const showcaseLabels = [
+  title,
+  lookHint,
+  trayTitle,
+  trayPos,
+  trayHead,
+  trayHelp,
+  ammoCaption,
+];
+
+function applyShowcaseSkin(): void {
+  const theme = themeName === "pixel" ? PIXEL_THEME : DEFAULT_THEME;
+  const fill = Number(theme.colors["fill"]);
+  const panelFill = Number(theme.colors["panel"]);
+  const text = Number(theme.colors["text"]);
+  panel.fill = panelFill;
+  panel.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
+  health.fillNode.fill = fill;
+  health.fillNode.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
+  stamina.fillNode.fill = fill;
+  stamina.fillNode.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
+  for (const label of showcaseLabels) {
+    label.color = text;
+    label.setFontId(fontName);
+  }
+}
+
+applyShowcaseSkin();
 const connected = connectHudPointerEvents(hud, renderer.domElement, hud.pointer);
 hud.pointer.addListener(hotbar, (event) => {
   if (event.type === "click" && (event.phase === "target" || event.phase === "bubble")) {
@@ -449,6 +481,8 @@ function writeStatus(): void {
     `HUD: title + health + ammo + inventory + hotbar + crosshair`,
     `renderer: ${useWebgpu ? "WebGPURenderer" : "WebGLRenderer"} ${capability.kind}/${capability.backend}`,
     `viewport: ${width}×${height} css px / DPR ${renderer.getPixelRatio()} / contain ${viewport.scaleX.toFixed(3)}`,
+    `theme: ${themeName}`,
+    `font: ${fontName}`,
     `hotbar: slot ${hotbar.activeIndex + 1} (${hotbar.slots[hotbar.activeIndex]?.key ?? "none"})`,
     `windfoil: ${capability.windfoil.supported ? "supported" : "unsupported"}  spike=${windfoilDraw.status}`,
   ].join(" · ");
@@ -485,6 +519,16 @@ function onKey(event: KeyboardEvent, down: boolean): void {
   const digit = event.code.startsWith("Digit") ? Number(event.code.slice(5)) : 0;
   if (digit >= 1 && digit <= 6) {
     hotbar.activate(digit - 1);
+    writeStatus();
+  }
+  if (event.code === "KeyT") {
+    themeName = themeName === "pixel" ? "default" : "pixel";
+    applyShowcaseSkin();
+    writeStatus();
+  }
+  if (event.code === "KeyF") {
+    fontName = fontName === "pixel" ? "ui" : "pixel";
+    applyShowcaseSkin();
     writeStatus();
   }
 }

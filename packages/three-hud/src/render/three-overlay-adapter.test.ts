@@ -1,3 +1,4 @@
+import { ShaderMaterial } from "three";
 import { describe, expect, it, vi } from "vitest";
 import { HudError } from "../contracts/errors.js";
 import { HUD } from "../core/HUD.js";
@@ -102,6 +103,15 @@ describe("three-overlay-adapter", () => {
     }
   });
 
+  it("does not install ShaderMaterial on a WebGPU host renderer", () => {
+    const renderer = createHostRenderer("webgpu");
+    const adapter = createHudOverlayAdapter({ renderer });
+    expect(adapter.profile).toBe("webgpu");
+    expect(adapter.debugShapeMaterial()).not.toBeInstanceOf(ShaderMaterial);
+    expect(adapter.debugTextMaterial()).not.toBeInstanceOf(ShaderMaterial);
+    adapter.dispose();
+  });
+
   it("fails unsupported renderer kinds before allocating overlay resources", () => {
     expect(() =>
       createHudOverlayAdapter({ renderer: { isCSS2DRenderer: true } as OverlayRendererLike }),
@@ -165,6 +175,23 @@ describe("three-overlay-adapter", () => {
     expect(command?.kind).toBe("shape");
     expect(adapter.debugInstanceShape(0)).toBe(SHAPE_RING);
     expect(adapter.debugMeshCount).toBeLessThanOrEqual(3);
+    hud.dispose();
+  });
+
+  it("draws a clipped rect at the clip size, not full worldBounds", async () => {
+    const renderer = createHostRenderer("webgl");
+    const adapter = createHudOverlayAdapter({ renderer });
+    const hud = new HUD({ referenceSize: { width: 100, height: 100 }, rendererAdapter: adapter });
+    const layer = hud.createLayer({ id: "main" });
+    const panel = layer.add(new HudNode({ id: "panel", width: 40, height: 20, fill: 0x33ffaa }));
+    panel.setPosition(8, 4);
+    panel.setClip({ x: 8, y: 4, width: 10, height: 20 });
+    await hud.initialize();
+    hud.render({ deltaSeconds: 0, elapsedSeconds: 0, frame: 1 });
+    const scale = adapter.debugInstanceScale(0);
+    expect(scale.x).toBeCloseTo(0.2);
+    expect(scale.y).toBeCloseTo(0.4);
+    expect(scale.x).not.toBeCloseTo(0.8);
     hud.dispose();
   });
 

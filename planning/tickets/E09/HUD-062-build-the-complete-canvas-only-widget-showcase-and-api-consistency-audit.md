@@ -6,7 +6,7 @@ milestone: M3
 type: quality
 priority: P0
 size: L
-status: done
+status: active
 github_issue: pending
 sync: pending
 blocked_by:
@@ -44,8 +44,8 @@ One vertical demo proves the full product proposition—smooth text, pixel text,
 
 - [x] The showcase uses only public package exports.
 - [x] No HUD element is implemented with HTML/CSS.
-- [x] All initial widgets work in at least one smooth and one pixel-oriented theme.
-- [x] Backend switching does not require widget reconstruction beyond documented font/backend changes.
+- [ ] All initial widgets work in at least one smooth and one pixel-oriented theme.
+- [ ] Backend switching does not require widget reconstruction beyond documented font/backend changes.
 - [x] The showcase meets the current render and allocation budgets.
 
 ## Verification

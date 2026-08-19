@@ -29,6 +29,7 @@ import {
   type LayerViewportTransform,
 } from "../viewport/layerTransform.js";
 import type { HudFrameInfo, HudRendererAdapter } from "./contracts.js";
+import { intersectRects } from "./clip.js";
 import { encodeOverlayQueue } from "./encodeOverlayQueue.js";
 import {
   OVERLAY_COLOR_POLICY,
@@ -48,6 +49,7 @@ import {
   SHAPE_RING,
   SHAPE_ROUNDED,
   SHAPE_TEXT,
+  createOverlayShaderMaterial,
   createTextMaterial,
 } from "./overlayMaterial.js";
 import {
@@ -75,6 +77,8 @@ export type HudOverlayAdapter = HudRendererAdapter & {
   debugInstanceShape(index: number): number;
   debugInstanceScale(index: number): { x: number; y: number };
   debugTextInstanceShape(index: number): number;
+  debugShapeMaterial(): unknown;
+  debugTextMaterial(): unknown;
 };
 
 type DisposableResource = { dispose: () => void };
@@ -89,14 +93,38 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
   camera.position.z = 1;
   const owned: DisposableResource[] = [];
   const atlas = own(createAtlasTexture());
-  const pool = own(new HudResourcePool({ initialCapacity: 64, maxCapacity: 4096 }));
+  const webgpuSafe = profile === "webgpu";
+  const shapeMaterial = own(
+    webgpuSafe
+      ? new MeshBasicMaterial({
+          transparent: true,
+          depthTest: OVERLAY_COLOR_POLICY.depthTest,
+          depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
+          toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
+        })
+      : createOverlayShaderMaterial(false),
+  );
+  const textMaterial = own(
+    webgpuSafe
+      ? new MeshBasicMaterial({
+          map: atlas,
+          transparent: true,
+          depthTest: OVERLAY_COLOR_POLICY.depthTest,
+          depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
+          toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
+        })
+      : createTextMaterial(atlas),
+  );
+  const pool = own(
+    new HudResourcePool({ initialCapacity: 64, maxCapacity: 4096, material: shapeMaterial }),
+  );
   pool.mesh.renderOrder = 1;
   scene.add(pool.mesh);
   const textPool = own(
     new HudResourcePool({
       initialCapacity: 64,
       maxCapacity: 4096,
-      material: createTextMaterial(atlas),
+      material: textMaterial,
     }),
   );
   textPool.mesh.renderOrder = 2;
@@ -148,6 +176,12 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     },
     debugTextInstanceShape(index: number) {
       return textPool.instanceShape(index);
+    },
+    debugShapeMaterial() {
+      return pool.mesh.material;
+    },
+    debugTextMaterial() {
+      return textPool.mesh.material;
     },
     initialize() {},
     resize() {},
@@ -246,7 +280,9 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
   function writeCommand(command: HudDrawCommand, transform: LayerViewportTransform): void {
     if (command.kind === "text") {
       for (const glyph of command.glyphs) {
-        placeRect(glyph, transform);
+        const visible = command.clip ? intersectRects(glyph, command.clip) : glyph;
+        if (!visible) continue;
+        placeRect(visible, transform);
         const slot = textPool.acquireSlot();
         textPool.writeInstance(slot, rectMatrix, command.fill, {
           shape: SHAPE_TEXT,
@@ -258,7 +294,9 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
       return;
     }
     if (command.kind === "image") {
-      placeRect(command.bounds, transform);
+      const visible = command.clip ? intersectRects(command.bounds, command.clip) : command.bounds;
+      if (!visible) return;
+      placeRect(visible, transform);
       const slot = pool.acquireSlot();
       pool.writeInstance(slot, rectMatrix, command.tint, {
         shape: SHAPE_IMAGE,
@@ -277,7 +315,9 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
       });
       return;
     }
-    placeRect(command.bounds, transform);
+    const visible = command.clip ? intersectRects(command.bounds, command.clip) : command.bounds;
+    if (!visible) return;
+    placeRect(visible, transform);
     const slot = pool.acquireSlot();
     if (command.shape === "ring") {
       const inner = params?.innerRadius ?? 0;
@@ -370,7 +410,12 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
         },
       });
     }
-    placeRect(command.bounds, transform);
+    const visible = command.clip ? intersectRects(command.bounds, command.clip) : command.bounds;
+    if (!visible) {
+      gpu.mesh.visible = false;
+      return;
+    }
+    placeRect(visible, transform);
     gpu.mesh.matrix.copy(rectMatrix);
     gpu.mesh.matrixWorldNeedsUpdate = true;
     gpu.mesh.visible = true;

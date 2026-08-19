@@ -73,10 +73,15 @@ if (write) {
   fs.writeFileSync(baselinePath, `${JSON.stringify(report, null, 2)}\n`);
 }
 if (verify) {
-  if (report.encodeMs.p95 > budgets.budgets.standardQueueEncodingP95Ms * 20) {
+  if (report.gpuTimers === "unavailable") {
+    throw new Error(
+      "perf:verify cannot pass without GPU timers; CPU encode is not a GPU frame budget",
+    );
+  }
+  if (report.encodeMs.p95 > budgets.budgets.standardQueueEncodingP95Ms) {
     throw new Error(`encode p95 ${report.encodeMs.p95} exceeds calibrated budget`);
   }
-  if (report.updateMs.p95 > budgets.budgets.standardUpdateLayoutP95Ms * 20) {
+  if (report.updateMs.p95 > budgets.budgets.standardUpdateLayoutP95Ms) {
     throw new Error(`update p95 ${report.updateMs.p95} exceeds calibrated budget`);
   }
   if (report.drawCommands < 1) throw new Error("benchmark encoded zero draw commands");
