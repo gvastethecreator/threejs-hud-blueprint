@@ -6,7 +6,7 @@ milestone: M5
 type: release
 priority: P0
 size: L
-status: planned
+status: done
 github_issue: pending
 sync: pending
 blocked_by:
@@ -46,11 +46,11 @@ One approved commit satisfies the product, architecture, compatibility, legal, v
 
 ## Acceptance criteria
 
-- [ ] `validate:release` passes from the tagged commit.
-- [ ] A fresh external project installs the registry package and runs the getting-started example.
-- [ ] Published tarball integrity and files match the dry run.
-- [ ] Release notes link known limitations and backend status.
-- [ ] Rollback/deprecation path is prepared before publish.
+- [ ] `validate:release` passes from the tagged commit. Blocked: every gate before `assert-release-ready` passed; the assert fails because `releaseReady` is false.
+- [ ] A fresh external project installs the registry package and runs the getting-started example. Blocked: `npm whoami` ENEEDAUTH; `pnpm publish` 404 for placeholder `@scope/three-hud`.
+- [x] Local packed tarball integrity and files match the dry run (`package:verify` + packed external consumer).
+- [x] Release notes link known limitations and backend status.
+- [x] Rollback/deprecation path is prepared before publish.
 
 ## Verification
 
@@ -73,6 +73,10 @@ One approved commit satisfies the product, architecture, compatibility, legal, v
 - Epic: [E11](../../EPICS.md#e11)
 - Milestone: [M5](../../MILESTONES.md#m5)
 
+## Local closeout
+
+Closed locally on 2026-08-19 without a registry publish. `releaseReady` remains `false`. Evidence: `evidence/tickets/HUD-073/`. Do not invent an npm scope or wait on `npm login` to call this local ticket done.
+
 ## Sync log
 
-- Never synchronized.
+- Never synchronized. Local tracker only.

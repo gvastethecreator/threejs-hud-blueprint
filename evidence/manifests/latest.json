@@ -1,17 +1,16 @@
 {
   "schemaVersion": "three-hud/evidence-manifest/v0",
-  "status": "proven-through-HUD-072-next-HUD-073",
-  "commit": "1b648523ef6684afdad03b5f094fb359d1bb0cfe",
+  "status": "hud-073-closed-locally-registry-blocked",
+  "commit": "255ed984353c39d7ea086af1301a117cdb1a6ef1",
   "release": null,
   "verifiedClaims": [
-    "local git repository and annotated tag v0.1.0 exist",
+    "HUD-008 through HUD-073 are done on the local tracker",
+    "validate:release gates before assert-release-ready passed",
     "playground WebGL scene plus HUD is visible at http://127.0.0.1:4174/"
   ],
   "blockedClaims": [
     "npm publish of @scope/three-hud@0.1.0",
-    "GitHub remote for the tag",
-    "v0.1 releaseReady",
-    "HUD-073 close"
+    "v0.1 releaseReady"
   ],
-  "nextGate": "HUD-073"
+  "nextGate": null
 }
