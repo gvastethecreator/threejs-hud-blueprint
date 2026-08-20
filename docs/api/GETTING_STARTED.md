@@ -64,6 +64,13 @@ Run this command:
 pnpm --filter @three-hud/playground dev --host 127.0.0.1 --port 4174
 ```
 
-Then open `http://127.0.0.1:4174/`.
+Then open `http://127.0.0.1:4174/`. Add `/?webgpu=1` for the WebGPU renderer path.
+
+Playground keys:
+
+- `W` `A` `S` `D` move. `Q` `E` turn. `Shift` sprint.
+- `1` through `6` hotbar slots.
+- `T` switch default/pixel theme.
+- `F` switch `ui`/`pixel` font.
 
 See [widget recipes](WIDGETS.md) and [known limitations](KNOWN_LIMITATIONS.md).

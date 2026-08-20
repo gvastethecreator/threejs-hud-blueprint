@@ -21,7 +21,9 @@ describe("e10 verify honesty", () => {
   it("fails pnpm run visual:verify because the named entry is CPU-hash raster, not a GPU profile", () => {
     const result = run("pnpm run visual:verify");
     expect(result.status).not.toBe(0);
-    expect(`${result.stdout}${result.stderr}`).toMatch(/none-cpu-raster|CPU overlay hash|CPU-hash/i);
+    expect(`${result.stdout}${result.stderr}`).toMatch(
+      /none-cpu-raster|CPU overlay hash|CPU-hash/i,
+    );
   });
 
   it("measures a this-run packed tarball main-entry gzip against the budget", () => {

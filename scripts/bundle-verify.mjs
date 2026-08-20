@@ -19,11 +19,15 @@ if (!fs.existsSync(distEntry)) {
 }
 
 const packDir = fs.mkdtempSync(path.join(os.tmpdir(), "three-hud-pack-"));
-const pack = spawnSync("pnpm", ["--filter", "@scope/three-hud", "pack", "--pack-destination", packDir], {
-  cwd: root,
-  encoding: "utf8",
-  shell: process.platform === "win32",
-});
+const pack = spawnSync(
+  "pnpm",
+  ["--filter", "@scope/three-hud", "pack", "--pack-destination", packDir],
+  {
+    cwd: root,
+    encoding: "utf8",
+    shell: process.platform === "win32",
+  },
+);
 if (pack.status !== 0) {
   throw new Error(`this-run pnpm pack failed: ${pack.stderr || pack.stdout || pack.status}`);
 }

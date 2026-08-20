@@ -21,7 +21,7 @@ describe("pointer-mapping", () => {
 
   it("picks the top enabled layer whose reference height contains logicalY", () => {
     const hud = new HUD({ referenceSize: { width: 200, height: 100 } });
-    const bottom = hud.createLayer({ id: "bottom", referenceSize: { width: 200, height: 40 } });
+    hud.createLayer({ id: "bottom", referenceSize: { width: 200, height: 40 } });
     const top = hud.createLayer({ id: "top", referenceSize: { width: 200, height: 100 } });
     expect(pickLayerAt(hud, 10)?.id).toBe("top");
     top.setEnabled(false);

@@ -17,6 +17,8 @@ Open `http://127.0.0.1:4174/?webgpu=1` for the WebGPU renderer path.
 - Click the canvas to lock look.
 - Press `W` `A` `S` `D` to move. Press `Q` `E` to turn. Hold `Shift` to sprint.
 - Press `1` through `6` to activate a hotbar slot.
+- Press `T` to switch the default theme and the pixel theme.
+- Press `F` to switch the `ui` font and the `pixel` font.
 
 ## Note
 

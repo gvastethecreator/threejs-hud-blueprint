@@ -7,7 +7,6 @@ import {
   resolveFontMetadata,
   type FontMetadata,
   type FontRegistration,
-  type FontSource,
 } from "./contracts.js";
 
 export type FontHandleState = "loading" | "ready" | "failed" | "disposed";

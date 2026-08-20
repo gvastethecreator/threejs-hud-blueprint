@@ -10,6 +10,7 @@ for (const relative of [
   "coverage",
   "test-results",
   "playwright-report",
+  "blob-report",
 ]) {
   fs.rmSync(path.join(root, relative), { recursive: true, force: true });
 }

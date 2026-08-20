@@ -21,6 +21,8 @@ A pull request covers one ticket or one documented slice. Include:
 - public API or documentation changes
 - out-of-scope items that you left untouched
 
+In VS Code, the common tasks are in `.vscode/tasks.json` (**🚀 Dev**, **📦 Build**, **✅ Test**, **⚡ Fast**).
+
 Run this command before you open the pull request:
 
 ```bash

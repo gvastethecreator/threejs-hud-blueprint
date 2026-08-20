@@ -39,6 +39,5 @@ if (!fs.existsSync("apps/playground/src/labs/capability.ts"))
   throw new Error("missing playground capability lab");
 if (!source.includes("PIXEL_THEME"))
   throw new Error("playground missing PIXEL_THEME showcase path");
-if (!source.includes("setFontId"))
-  throw new Error("playground missing setFontId backend switch");
+if (!source.includes("setFontId")) throw new Error("playground missing setFontId backend switch");
 console.log("examples:verify passed");

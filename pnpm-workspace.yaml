@@ -3,6 +3,15 @@ packages:
   - "apps/*"
 
 minimumReleaseAge: 10080
+# Intentional latest-stable bump on 2026-08-19 after changelog review.
+# Remove these excludes after 2026-08-25, when the packages pass the 7-day age gate.
+minimumReleaseAgeExclude:
+  - vitest
+  - "@vitest/*"
+  - oxlint
+  - oxfmt
+  - "@oxlint/*"
+  - "@oxfmt/*"
 trustPolicy: no-downgrade
 blockExoticSubdeps: true
 

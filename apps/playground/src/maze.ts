@@ -130,12 +130,7 @@ export function worldToCell(grid: MazeGrid, x: number, z: number): { x: number; 
   };
 }
 
-export function isBlocked(
-  grid: MazeGrid,
-  x: number,
-  z: number,
-  radius = PLAYER_RADIUS,
-): boolean {
+export function isBlocked(grid: MazeGrid, x: number, z: number, radius = PLAYER_RADIUS): boolean {
   const samples = [
     { x: x - radius, z: z - radius },
     { x: x + radius, z: z - radius },
@@ -158,10 +153,7 @@ function makeCanvas(size: number): CanvasRenderingContext2D {
   return ctx;
 }
 
-function canvasTexture(
-  ctx: CanvasRenderingContext2D,
-  anisotropy: number,
-): THREE.CanvasTexture {
+function canvasTexture(ctx: CanvasRenderingContext2D, anisotropy: number): THREE.CanvasTexture {
   const texture = new THREE.CanvasTexture(ctx.canvas);
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;

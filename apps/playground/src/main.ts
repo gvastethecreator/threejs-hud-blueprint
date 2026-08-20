@@ -291,15 +291,7 @@ layer.add(hotbar);
 await hud.initialize();
 let themeName: "default" | "pixel" = "default";
 let fontName: "ui" | "pixel" = "ui";
-const showcaseLabels = [
-  title,
-  lookHint,
-  trayTitle,
-  trayPos,
-  trayHead,
-  trayHelp,
-  ammoCaption,
-];
+const showcaseLabels = [title, lookHint, trayTitle, trayPos, trayHead, trayHelp, ammoCaption];
 
 function applyShowcaseSkin(): void {
   const theme = themeName === "pixel" ? PIXEL_THEME : DEFAULT_THEME;
@@ -592,7 +584,8 @@ function frame(now: number): void {
     (held.has("KeyW") || held.has("ArrowUp") ? 1 : 0) -
     (held.has("KeyS") || held.has("ArrowDown") ? 1 : 0);
   const strafe = (held.has("KeyD") ? 1 : 0) - (held.has("KeyA") ? 1 : 0);
-  const pace = (canSprint && tools.boots ? 4.6 : canSprint ? 3.35 : 2.2) * (tools.flare > 0 ? 1.08 : 1);
+  const pace =
+    (canSprint && tools.boots ? 4.6 : canSprint ? 3.35 : 2.2) * (tools.flare > 0 ? 1.08 : 1);
   const look = yawToLook(player.yaw);
   const right = yawToRight(player.yaw);
   const wishX = (look.x * forward + right.x * strafe) * pace;
@@ -624,13 +617,10 @@ function frame(now: number): void {
     player.y + Math.sin(now * 0.037) * 0.03 * shakeAmt,
     player.z + Math.cos(now * 0.029) * 0.04 * shakeAmt,
   );
-  gameCamera.lookAt(
-    player.x + lookPitched.x,
-    player.y + lookPitched.y,
-    player.z + lookPitched.z,
-  );
+  gameCamera.lookAt(player.x + lookPitched.x, player.y + lookPitched.y, player.z + lookPitched.z);
   const moving = forward !== 0 || strafe !== 0;
-  fovPunch = canSprint && moving ? Math.min(6, fovPunch + 18 * delta) : fovPunch * Math.exp(-delta / 0.18);
+  fovPunch =
+    canSprint && moving ? Math.min(6, fovPunch + 18 * delta) : fovPunch * Math.exp(-delta / 0.18);
   gameCamera.fov = baseFov + fovPunch;
   gameCamera.updateProjectionMatrix();
   mazeScene.torch.position.set(player.x, 1.32, player.z);
