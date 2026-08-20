@@ -37,14 +37,19 @@ hp.setValue(40);
 hp.setDelayedValue(40);
 ```
 
-## RadialBar and Gauge
+## RadialBar, Gauge, and Compass
 
 ```ts
 const ammo = new RadialBar({ width: 96, height: 96, value: 18, max: 30 });
 ammo.setValue(12);
 const speed = new Gauge({ width: 128, height: 128, value: 40, max: 100, ticks: 5 });
 speed.setValue(70);
+const heading = new Compass({ heading: 0, fontId: "pixel" });
+heading.setHeading(Math.PI / 2);
+heading.setColor(0xffffff, 0x888888);
 ```
+
+`Compass` keeps N E S W fixed. Heading `0` points north. Call `setHeading` in radians.
 
 ## Crosshair / Reticle
 
@@ -78,6 +83,22 @@ bar.setActiveIndex(1);
 ```
 
 The widgets never mutate the host arrays.
+
+## Monochrome starter theme
+
+`createMonochromeTheme()` is grayscale HUD data. Use it as the first skin.
+
+```ts
+import { MONOCHROME_THEME, themeColor } from "@scope/three-hud";
+
+const theme = MONOCHROME_THEME;
+const ink = themeColor(theme, "text");
+const paper = themeColor(theme, "panel");
+slot.setTheme(theme);
+crosshair.setColor(themeColor(theme, "crosshair"));
+```
+
+`MONOCHROME_INVERT_THEME` swaps ink and paper. Both themes use radius 0 and the `pixel` font by default.
 
 ## Performance lab
 

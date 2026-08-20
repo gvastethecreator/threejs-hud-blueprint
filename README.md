@@ -34,9 +34,10 @@ Open `http://127.0.0.1:4174/`. Add `/?webgpu=1` for the WebGPU renderer path.
 
 Playground keys:
 
+- The maze walks a wireframe tour. Press `P` to pause it.
 - `W` `A` `S` `D` move. `Q` `E` turn. `Shift` sprint.
 - `1` through `6` hotbar slots.
-- `T` switch default/pixel theme.
+- `T` invert the monochrome HUD.
 - `F` switch `ui`/`pixel` font.
 
 In VS Code, run **🚀 Dev** from the task list. Other common tasks: **📦 Build**, **✅ Test**, **⚡ Fast**.

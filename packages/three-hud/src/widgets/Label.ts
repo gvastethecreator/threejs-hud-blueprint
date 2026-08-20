@@ -1,6 +1,6 @@
 import { HudNode, type HudNodeOptions } from "../core/HudNode.js";
 import { DirtyFlag } from "../core/DirtyFlags.js";
-import { createMonospaceFace, layoutText, type LayoutTextResult } from "../text/layoutText.js";
+import { createHudTypeFace, layoutText, type LayoutTextResult } from "../text/layoutText.js";
 
 export type LabelOptions = HudNodeOptions &
   Readonly<{
@@ -32,7 +32,7 @@ export class Label extends HudNode {
     this.layout = layoutText(
       this.text,
       { font: this.fontId, size: this.fontSize },
-      createMonospaceFace(this.fontId),
+      createHudTypeFace(this.fontId),
     );
     this.remeasure();
   }
@@ -66,7 +66,7 @@ export class Label extends HudNode {
     this.layout = layoutText(
       this.text,
       { font: this.fontId, size: this.fontSize },
-      createMonospaceFace(this.fontId),
+      createHudTypeFace(this.fontId),
     );
     this.setSize(
       this.layout.width,

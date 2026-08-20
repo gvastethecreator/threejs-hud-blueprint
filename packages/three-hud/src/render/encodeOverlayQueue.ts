@@ -44,6 +44,7 @@ export function encodeOverlayQueue(
           glyphCount: glyphs.length,
           fill: text.color,
           text: text.text,
+          fontId: text.layout.run.fontId,
           glyphs,
         };
         queue.push({ ...draft, batchKey: composeBatchKey(draft) });
@@ -195,10 +196,13 @@ function glyphQuads(
   text: { layout: LayoutTextResult },
   origin: { x: number; y: number },
 ): GlyphQuad[] {
-  const size = Math.max(1, text.layout.height / Math.max(1, text.layout.run.lines.length));
+  const em = Math.max(1, text.layout.run.fontSize);
+  const glyphHeight = em;
+  const glyphWidth = em * (5 / 7);
   const quads: GlyphQuad[] = [];
   for (const line of text.layout.run.lines) {
     const end = line.startGlyph + line.glyphCount;
+    const lineTop = origin.y + line.bounds.y;
     for (let index = line.startGlyph; index < end; index += 1) {
       const glyph = text.layout.run.glyphs[index];
       if (!glyph) continue;
@@ -206,9 +210,9 @@ function glyphQuads(
       const uv = atlasUv(Number.isFinite(code) ? code : 63);
       quads.push({
         x: origin.x + glyph.x,
-        y: origin.y + line.bounds.y + glyph.y,
-        width: Math.max(1, glyph.advanceX || size * 0.6),
-        height: size,
+        y: lineTop,
+        width: glyphWidth,
+        height: glyphHeight,
         u0: uv.u0,
         v0: uv.v0,
         u1: uv.u1,

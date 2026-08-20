@@ -73,6 +73,10 @@ export class LinearBar extends HudNode {
       new Label({ id: `${this.id}-label`, text: options.label ?? "", fontSize: 12 }),
     );
     this.syncFill();
+    this.labelNode.setPosition(
+      8,
+      Math.max(0, (this.size.height - this.labelNode.size.height) / 2),
+    );
   }
 
   setValue(value: number): void {
@@ -141,6 +145,5 @@ export class LinearBar extends HudNode {
       node.setSize(cross, length, DirtyFlag.Geometry | DirtyFlag.HitTest | DirtyFlag.Queue);
       node.setPosition(0, this.reverse ? origin : main - origin - length);
     }
-    this.labelNode.setPosition(8, Math.max(0, (this.size.height - this.labelNode.size.height) / 2));
   }
 }

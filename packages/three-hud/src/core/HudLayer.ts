@@ -25,7 +25,7 @@ export type HudLayerOptions = HudNodeOptions &
   }>;
 
 export class HudLayer extends HudNode {
-  readonly referenceSize: ReadonlySize;
+  referenceSize: ReadonlySize;
   scaleMode: HudScaleMode;
   zoom: number;
   zoomAnchor: ReadonlyPoint;
@@ -50,6 +50,15 @@ export class HudLayer extends HudNode {
     this.safeInsets = Object.freeze({ ...(options.safeInsets ?? zeroInsets()) });
     this.order = options.order ?? 0;
     this.enabled = options.enabled ?? true;
+  }
+
+  setReferenceSize(width: number, height: number): void {
+    this.assertAlive();
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
+      throw new RangeError("referenceSize must be finite and positive.");
+    }
+    this.referenceSize = Object.freeze({ width, height });
+    this.markDirty(DirtyFlag.Layout | DirtyFlag.Transform | DirtyFlag.Queue);
   }
 
   setEnabled(enabled: boolean): void {

@@ -64,12 +64,76 @@ export const DEFAULT_THEME: HudTheme = Object.freeze({
   widgets: {
     LinearBar: { hovered: { fill: 0x6dffb0 }, disabled: { fill: 0x556677 } },
     Slot: {
+      base: { fill: 0x2a3d52 },
       selected: { fill: 0x4aa3ff },
       hovered: { fill: 0x2a4a5c },
       disabled: { fill: 0x101820 },
     },
   },
 });
+
+export type MonochromeThemeOptions = Readonly<{
+  invert?: boolean;
+  font?: string;
+  size?: number;
+}>;
+
+export function isGrayscaleColor(value: number): boolean {
+  if (!Number.isInteger(value) || value < 0 || value > 0xffffff) return false;
+  const r = (value >> 16) & 255;
+  const g = (value >> 8) & 255;
+  const b = value & 255;
+  return r === g && g === b;
+}
+
+export function themeColor(theme: HudTheme, key: string): number {
+  const value = resolveToken(theme, `colors.${key}`);
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    throw new HudError("INVALID_ARGUMENT", "Theme color must be a number.", { path: key });
+  }
+  return value;
+}
+
+export function createMonochromeTheme(options: MonochromeThemeOptions = {}): HudTheme {
+  const invert = options.invert === true;
+  const ink = invert ? 0x000000 : 0xffffff;
+  const paper = invert ? 0xffffff : 0x000000;
+  const muted = invert ? 0x666666 : 0x888888;
+  const track = invert ? 0xdddddd : 0x222222;
+  const slot = invert ? 0xeeeeee : 0x111111;
+  const font = options.font ?? "pixel";
+  const size = options.size ?? 14;
+  return Object.freeze({
+    id: invert ? "monochrome-invert" : "monochrome",
+    colors: {
+      panel: paper,
+      track,
+      fill: ink,
+      delayed: muted,
+      text: ink,
+      muted,
+      crosshair: ink,
+      slot,
+      selected: ink,
+    },
+    typography: { label: { font, size, color: ink } },
+    spacing: { sm: 2, md: 4, lg: 8 },
+    radii: { panel: 0, slot: 0 },
+    strokes: { panel: { width: 2, color: ink } },
+    widgets: {
+      LinearBar: { hovered: { fill: muted }, disabled: { fill: muted } },
+      Slot: {
+        base: { fill: slot },
+        selected: { fill: ink },
+        hovered: { fill: muted },
+        disabled: { fill: track },
+      },
+    },
+  });
+}
+
+export const MONOCHROME_THEME: HudTheme = createMonochromeTheme();
+export const MONOCHROME_INVERT_THEME: HudTheme = createMonochromeTheme({ invert: true });
 
 export const PIXEL_THEME: HudTheme = Object.freeze({
   id: "pixel",
@@ -90,6 +154,7 @@ export const PIXEL_THEME: HudTheme = Object.freeze({
   widgets: {
     LinearBar: { hovered: { fill: 0xb4ff6a }, disabled: { fill: 0x595959 } },
     Slot: {
+      base: { fill: 0x45283c },
       selected: { fill: 0x5fcde4 },
       hovered: { fill: 0x76428a },
       disabled: { fill: 0x222034 },

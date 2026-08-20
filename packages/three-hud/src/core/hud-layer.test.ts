@@ -74,4 +74,19 @@ describe("hud-layer", () => {
     expect(encodeOverlayQueue([layer], "webgl").size).toBe(0);
     hud.dispose();
   });
+
+  it("replaces the layer reference size used by the viewport transform", () => {
+    const hud = new HUD({ referenceSize: { width: 1920, height: 1080 } });
+    const layer = hud.createLayer({ id: "ui", scaleMode: "native" });
+    layer.setReferenceSize(390, 844);
+    expect(layer.referenceSize).toEqual({ width: 390, height: 844 });
+    const view = resolveLayerViewport({
+      referenceSize: layer.referenceSize,
+      viewport: { x: 0, y: 0, width: 390, height: 844 },
+      mode: "native",
+    });
+    expect(view.scaleX).toBe(1);
+    expect(view.scaleY).toBe(1);
+    hud.dispose();
+  });
 });

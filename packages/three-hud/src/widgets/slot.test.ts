@@ -1,4 +1,9 @@
 import { describe, expect, it } from "vitest";
+import {
+  MONOCHROME_INVERT_THEME,
+  MONOCHROME_THEME,
+  themeColor,
+} from "../theme/theme.js";
 import { Slot } from "./Slot.js";
 
 describe("slot", () => {
@@ -21,5 +26,13 @@ describe("slot", () => {
     expect(qty.y).toBeGreaterThanOrEqual(host.y);
     expect(qty.x + qty.width).toBeLessThanOrEqual(host.x + host.width + 8);
     expect(qty.y + qty.height).toBeLessThanOrEqual(host.y + host.height + 8);
+  });
+
+  it("paints selected frames from the assigned theme", () => {
+    const slot = new Slot({ key: "gun", theme: MONOCHROME_THEME });
+    slot.setSelected(true);
+    expect(slot.frame.fill).toBe(themeColor(MONOCHROME_THEME, "selected"));
+    slot.setTheme(MONOCHROME_INVERT_THEME);
+    expect(slot.frame.fill).toBe(themeColor(MONOCHROME_INVERT_THEME, "selected"));
   });
 });

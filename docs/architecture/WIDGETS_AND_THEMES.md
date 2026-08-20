@@ -215,6 +215,12 @@ Expected invalidation:
 
 ## Default themes
 
-v0.1 should include at most a small neutral theme and perhaps a pixel-oriented theme as code data, not font/image assets.
+v0.1 includes `DEFAULT_THEME`, `PIXEL_THEME`, and a reusable monochrome starter:
+
+- `createMonochromeTheme({ invert, font, size })`
+- `MONOCHROME_THEME` (black paper, white ink)
+- `MONOCHROME_INVERT_THEME` (white paper, black ink)
+
+Monochrome colors are grayscale. Panel and slot radii are 0. The default font is `pixel`. Themes are code data, not font or image assets.
 
 Themes demonstrate token structure but do not lock visual identity for all games.

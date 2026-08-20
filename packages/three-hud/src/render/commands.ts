@@ -71,6 +71,7 @@ export type TextDrawableCommand = DrawCommandBase &
     glyphCount: number;
     fill: number;
     text: string;
+    fontId?: string;
     glyphs: readonly GlyphQuad[];
   }>;
 

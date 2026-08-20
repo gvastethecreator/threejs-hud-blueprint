@@ -37,6 +37,9 @@ describe("crosshair", () => {
     expect(cross.left.fill).toBe(0xff6688);
     cross.setHit(false);
     expect(cross.left.fill).toBe(0xe8f6ff);
+    cross.setColor(0xffffff);
+    expect(cross.left.fill).toBe(0xffffff);
+    expect(cross.dot.fill).toBe(0xffffff);
   });
 
   it("builds a reticle with ring and brackets from the same primitives", () => {

@@ -68,9 +68,36 @@ Then open `http://127.0.0.1:4174/`. Add `/?webgpu=1` for the WebGPU renderer pat
 
 Playground keys:
 
+- The maze walks a wireframe tour until you take over.
+- `P` pause or resume the tour.
 - `W` `A` `S` `D` move. `Q` `E` turn. `Shift` sprint.
 - `1` through `6` hotbar slots.
-- `T` switch default/pixel theme.
+- `T` invert the monochrome HUD (black paper or white paper).
 - `F` switch `ui`/`pixel` font.
+
+Start a black-and-white HUD with `createMonochromeTheme()`:
+
+```ts
+import {
+  LinearBar,
+  MONOCHROME_THEME,
+  createMonochromeTheme,
+  themeColor,
+} from "@scope/three-hud";
+
+const theme = MONOCHROME_THEME;
+const ink = themeColor(theme, "text");
+const track = themeColor(theme, "track");
+const health = new LinearBar({
+  width: 280,
+  height: 20,
+  value: 80,
+  fill: track,
+  label: "HP",
+});
+health.fillNode.fill = ink;
+
+const inverted = createMonochromeTheme({ invert: true, font: "pixel", size: 14 });
+```
 
 See [widget recipes](WIDGETS.md) and [known limitations](KNOWN_LIMITATIONS.md).

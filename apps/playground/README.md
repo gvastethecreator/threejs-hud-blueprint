@@ -14,11 +14,15 @@ Open `http://127.0.0.1:4174/?webgpu=1` for the WebGPU renderer path.
 
 ## Controls
 
-- Click the canvas to lock look.
-- Press `W` `A` `S` `D` to move. Press `Q` `E` to turn. Hold `Shift` to sprint.
+- The maze starts in a black-and-white wireframe tour. It walks the open cells on its own.
+- Press `P` to pause or resume the tour.
+- Press `W` `A` `S` `D` to take over move. Press `Q` `E` to turn. Hold `Shift` to sprint.
+- Click the canvas to lock look. This also pauses the tour.
 - Press `1` through `6` to activate a hotbar slot.
-- Press `T` to switch the default theme and the pixel theme.
-- Press `F` to switch the `ui` font and the `pixel` font.
+- Press `T` to invert the monochrome HUD (black paper or white paper).
+- Press `F` to switch the `ui` (SDF) font and the `pixel` (nearest 5×7) font.
+
+Use `MONOCHROME_THEME` from `@scope/three-hud` as the starter HUD skin.
 
 ## Note
 

@@ -12,7 +12,7 @@
         height: 100%;
         margin: 0;
         overflow: hidden;
-        background: #070707;
+        background: #000;
         user-select: none;
       }
       canvas {
@@ -34,10 +34,11 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         padding: 2px 10px;
-        color: #b8c0c8;
-        background: rgba(0, 0, 0, 0.42);
+        color: #ccc;
+        background: #000;
         border: none;
-        border-bottom: 1px solid #2a2a2a;
+        border-bottom: 1px solid #333;
+        letter-spacing: 0.04em;
         border-radius: 0;
         font:
           10px/1.4 ui-monospace,
@@ -56,8 +57,9 @@
         const status = document.getElementById("status");
         if (status) {
           status.textContent = message;
-          status.style.background = "#4a1010";
-          status.style.borderColor = "#ff6b6b";
+          status.style.background = "#111";
+          status.style.borderColor = "#fff";
+          status.style.color = "#fff";
         }
       }
       window.addEventListener("error", (event) => {

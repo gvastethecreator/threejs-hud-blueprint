@@ -14,6 +14,7 @@ const FONT: Partial<Record<number, GlyphBits>> = {
   43: [0, 4, 4, 31, 4, 4, 0],
   45: [0, 0, 0, 31, 0, 0, 0],
   46: [0, 0, 0, 0, 0, 0, 4],
+  47: [1, 1, 2, 4, 8, 16, 16],
   48: [14, 17, 19, 21, 25, 17, 14],
   49: [4, 12, 4, 4, 4, 4, 14],
   50: [14, 17, 1, 2, 4, 8, 31],
@@ -47,7 +48,7 @@ const FONT: Partial<Record<number, GlyphBits>> = {
   84: [31, 4, 4, 4, 4, 4, 4],
   85: [17, 17, 17, 17, 17, 17, 14],
   86: [17, 17, 17, 17, 17, 10, 4],
-  87: [17, 17, 17, 21, 21, 21, 10],
+  87: [17, 17, 21, 21, 21, 27, 17],
   88: [17, 17, 10, 4, 10, 17, 17],
   89: [17, 17, 10, 4, 4, 4, 4],
   90: [31, 1, 2, 4, 8, 16, 31],
@@ -60,14 +61,21 @@ function bitsFor(code: number): GlyphBits {
 
 export type AtlasUv = Readonly<{ u0: number; v0: number; u1: number; v1: number }>;
 
+export const ASCII_GLYPH_WIDTH = 5;
+export const ASCII_GLYPH_HEIGHT = 7;
+export const ASCII_GLYPH_PAD = 1;
+export const ASCII_GLYPH_ADVANCE = 6;
+
 export function atlasUv(codePoint: number): AtlasUv {
   const index = Math.min(ASCII_ATLAS_COUNT - 1, Math.max(0, codePoint - ASCII_ATLAS_FIRST));
   const column = index % ASCII_ATLAS_COLUMNS;
   const row = Math.floor(index / ASCII_ATLAS_COLUMNS);
-  const u0 = column / ASCII_ATLAS_COLUMNS;
-  const v0 = 1 - (row + 1) / ASCII_ATLAS_ROWS;
-  const u1 = (column + 1) / ASCII_ATLAS_COLUMNS;
-  const v1 = 1 - row / ASCII_ATLAS_ROWS;
+  const cellX = column * ASCII_ATLAS_CELL + ASCII_GLYPH_PAD;
+  const cellY = row * ASCII_ATLAS_CELL + ASCII_GLYPH_PAD;
+  const u0 = cellX / ASCII_ATLAS_WIDTH;
+  const u1 = (cellX + ASCII_GLYPH_WIDTH) / ASCII_ATLAS_WIDTH;
+  const v1 = 1 - cellY / ASCII_ATLAS_HEIGHT;
+  const v0 = 1 - (cellY + ASCII_GLYPH_HEIGHT) / ASCII_ATLAS_HEIGHT;
   return { u0, v0, u1, v1 };
 }
 

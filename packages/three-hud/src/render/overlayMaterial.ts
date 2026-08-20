@@ -41,6 +41,9 @@ export function createOverlayShaderMaterial(textured = false): ShaderMaterial {
       }
     `,
     fragmentShader: /* glsl */ `
+      #ifdef GL_OES_standard_derivatives
+        #extension GL_OES_standard_derivatives : enable
+      #endif
       uniform sampler2D map;
       uniform float useMap;
       varying vec2 vUv;
@@ -48,22 +51,34 @@ export function createOverlayShaderMaterial(textured = false): ShaderMaterial {
       varying float vShape;
       varying vec4 vParams;
       varying vec4 vUvRect;
+      float aawidth(float value) {
+        return max(1.0e-5, fwidth(value));
+      }
+      float aastep(float edge, float value) {
+        float w = aawidth(value);
+        return smoothstep(edge - w, edge + w, value);
+      }
       float rounded(vec2 uv, float radius) {
         vec2 p = uv * 2.0 - 1.0;
         vec2 d = abs(p) - (1.0 - radius);
         float dist = length(max(d, 0.0)) + min(max(d.x, d.y), 0.0) - radius;
-        return 1.0 - smoothstep(-0.02, 0.02, dist);
+        return 1.0 - aastep(0.0, dist);
       }
       float ring(vec2 uv, float inner, float start, float sweep) {
         vec2 p = uv * 2.0 - 1.0;
         float r = length(p);
-        float inRing = step(inner, r) * step(r, 1.0);
+        float inRing = aastep(inner, r) * (1.0 - aastep(1.0, r));
         float ang = atan(p.y, p.x);
         float rel = mod(ang - start + 6.2831853, 6.2831853);
         float limit = abs(sweep);
-        float inSweep = step(rel, limit);
+        float inSweep = 1.0 - aastep(limit, rel);
         if (limit >= 6.2831853 - 0.001) inSweep = 1.0;
         return inRing * inSweep;
+      }
+      float rectCover(vec2 uv) {
+        vec2 fw = max(vec2(1.0e-5), fwidth(uv));
+        vec2 edge = smoothstep(vec2(0.0), fw, uv) * smoothstep(vec2(0.0), fw, 1.0 - uv);
+        return edge.x * edge.y;
       }
       void main() {
         float alpha = 1.0;
@@ -72,12 +87,20 @@ export function createOverlayShaderMaterial(textured = false): ShaderMaterial {
           alpha = rounded(vUv, max(0.02, vParams.x));
         } else if (vShape > 2.5 && vShape < 3.5) {
           alpha = ring(vUv, clamp(vParams.x, 0.0, 0.99), vParams.y, vParams.z);
+        } else if (vShape < 0.5) {
+          alpha = rectCover(vUv);
         }
         if (useMap > 0.5 && vShape > 3.5) {
           vec2 uv = mix(vUvRect.xy, vUvRect.zw, vUv);
           sampleColor = texture2D(map, uv);
-          alpha *= sampleColor.a;
-          sampleColor.rgb *= sampleColor.a;
+          if (vParams.y > 0.5) {
+            alpha *= step(0.5, sampleColor.a);
+          } else {
+            float sd = sampleColor.a;
+            float w = max(0.02, fwidth(sd) * 0.75);
+            alpha *= smoothstep(0.5 - w, 0.5 + w, sd);
+          }
+          sampleColor.rgb *= alpha;
         }
         if (alpha < 0.01) discard;
         gl_FragColor = vec4(vColor * sampleColor.rgb, alpha * vParams.w);

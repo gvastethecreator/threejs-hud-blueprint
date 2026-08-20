@@ -100,15 +100,19 @@ export class Crosshair extends HudNode {
     this.sync();
   }
 
-  setHit(hit: boolean): void {
-    const fill = hit ? 0xff6688 : 0xe8f6ff;
+  setColor(fill: number): void {
     this.left.fill = fill;
     this.right.fill = fill;
     this.top.fill = fill;
     this.bottom.fill = fill;
     this.dot.fill = fill;
     this.ring.fill = fill;
-    this.markDirty(DirtyFlag.Style);
+    for (const bracket of this.brackets) bracket.fill = fill;
+    this.markDirty(DirtyFlag.Style | DirtyFlag.Queue);
+  }
+
+  setHit(hit: boolean): void {
+    this.setColor(hit ? 0xff6688 : 0xe8f6ff);
   }
 
   setSpread(spread: number): void {

@@ -1,14 +1,11 @@
 import {
   ClampToEdgeWrapping,
-  Color,
   DataTexture,
-  Group,
+  LinearFilter,
   Matrix4,
-  Mesh,
   MeshBasicMaterial,
   NearestFilter,
   OrthographicCamera,
-  PlaneGeometry,
   Quaternion,
   RGBAFormat,
   SRGBColorSpace,
@@ -28,6 +25,7 @@ import {
   resolveLayerViewport,
   type LayerViewportTransform,
 } from "../viewport/layerTransform.js";
+import { snapCssToDevicePixel } from "../viewport/resolveViewport.js";
 import type { HudFrameInfo, HudRendererAdapter } from "./contracts.js";
 import { intersectRects } from "./clip.js";
 import { encodeOverlayQueue } from "./encodeOverlayQueue.js";
@@ -52,13 +50,8 @@ import {
   createOverlayShaderMaterial,
   createTextMaterial,
 } from "./overlayMaterial.js";
-import {
-  ASCII_ATLAS_HEIGHT,
-  ASCII_ATLAS_WIDTH,
-  rasterAsciiAtlas,
-  rasterText,
-} from "../text/asciiAtlas.js";
-import type { HudDrawCommand, ShapeParams, TextDrawableCommand } from "./commands.js";
+import { ASCII_ATLAS_HEIGHT, ASCII_ATLAS_WIDTH, rasterAsciiAtlas } from "../text/asciiAtlas.js";
+import type { HudDrawCommand, ShapeParams } from "./commands.js";
 
 export type HudOverlayAdapterOptions = Readonly<{
   renderer: OverlayRendererLike;
@@ -92,7 +85,8 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
   const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 10);
   camera.position.z = 1;
   const owned: DisposableResource[] = [];
-  const atlas = own(createAtlasTexture());
+  const sdfAtlas = own(createAtlasTexture(true, LinearFilter));
+  const pixelAtlas = own(createAtlasTexture(false, NearestFilter));
   const webgpuSafe = profile === "webgpu";
   const shapeMaterial = own(
     webgpuSafe
@@ -104,16 +98,27 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
         })
       : createOverlayShaderMaterial(false),
   );
-  const textMaterial = own(
+  const sdfTextMaterial = own(
     webgpuSafe
       ? new MeshBasicMaterial({
-          map: atlas,
+          map: sdfAtlas,
           transparent: true,
           depthTest: OVERLAY_COLOR_POLICY.depthTest,
           depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
           toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
         })
-      : createTextMaterial(atlas),
+      : createTextMaterial(sdfAtlas),
+  );
+  const pixelTextMaterial = own(
+    webgpuSafe
+      ? new MeshBasicMaterial({
+          map: pixelAtlas,
+          transparent: true,
+          depthTest: OVERLAY_COLOR_POLICY.depthTest,
+          depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
+          toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
+        })
+      : createTextMaterial(pixelAtlas),
   );
   const pool = own(
     new HudResourcePool({ initialCapacity: 64, maxCapacity: 4096, material: shapeMaterial }),
@@ -124,23 +129,21 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     new HudResourcePool({
       initialCapacity: 64,
       maxCapacity: 4096,
-      material: textMaterial,
+      material: sdfTextMaterial,
     }),
   );
   textPool.mesh.renderOrder = 2;
-  textPool.mesh.visible = false;
   scene.add(textPool.mesh);
-  const labels = new Group();
-  labels.renderOrder = 3;
-  scene.add(labels);
-  const labelCache = new Map<
-    string,
-    { mesh: Mesh; texture: DataTexture; material: MeshBasicMaterial; key: string }
-  >();
-  const usedLabels = new Set<string>();
-  const labelGeometry = own(new PlaneGeometry(1, 1));
+  const pixelTextPool = own(
+    new HudResourcePool({
+      initialCapacity: 64,
+      maxCapacity: 4096,
+      material: pixelTextMaterial,
+    }),
+  );
+  pixelTextPool.mesh.renderOrder = 3;
+  scene.add(pixelTextPool.mesh);
   const rectMatrix = new Matrix4();
-  const labelColor = new Color();
   const position = new Vector3();
   const scale = new Vector3();
   const quaternion = new Quaternion();
@@ -231,7 +234,7 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
   function syncQueue(layers: readonly HudLayer[], queue: RenderQueueSnapshot): void {
     pool.beginFrame();
     textPool.beginFrame();
-    usedLabels.clear();
+    pixelTextPool.beginFrame();
     const hostViewport = cssViewport ?? readCssViewport(renderer);
     const dpr = renderer.getPixelRatio?.() ?? 1;
     const transforms = new Map<HudLayer, LayerViewportTransform>();
@@ -272,25 +275,25 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     }
     pool.endFrame();
     textPool.endFrame();
-    for (const [key, gpu] of labelCache) {
-      gpu.mesh.visible = usedLabels.has(key);
-    }
+    pixelTextPool.endFrame();
   }
 
   function writeCommand(command: HudDrawCommand, transform: LayerViewportTransform): void {
     if (command.kind === "text") {
+      const pixel = command.fontId === "pixel";
+      const glyphs = pixel ? pixelTextPool : textPool;
+      const snapTransform = pixel ? { ...transform, pixelSnap: true } : transform;
       for (const glyph of command.glyphs) {
         const visible = command.clip ? intersectRects(glyph, command.clip) : glyph;
         if (!visible) continue;
-        placeRect(visible, transform);
-        const slot = textPool.acquireSlot();
-        textPool.writeInstance(slot, rectMatrix, command.fill, {
+        placeRect(visible, snapTransform);
+        const slot = glyphs.acquireSlot();
+        glyphs.writeInstance(slot, rectMatrix, command.fill, {
           shape: SHAPE_TEXT,
-          params: [0, 0, 0, command.opacity],
+          params: [0, pixel ? 1 : 0, 0, command.opacity],
           uv: [glyph.u0, glyph.v0, glyph.u1, glyph.v1],
         });
       }
-      writeRasterLabel(command, transform);
       return;
     }
     if (command.kind === "image") {
@@ -352,73 +355,14 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     bounds: { x: number; y: number; width: number; height: number },
     transform: LayerViewportTransform,
   ): void {
+    const snapped = snapDrawBounds(bounds, transform);
     const clip = logicalToClip(
-      { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 },
+      { x: snapped.x + snapped.width / 2, y: snapped.y + snapped.height / 2 },
       transform,
     );
-    const clipSize = logicalSizeToClip({ width: bounds.width, height: bounds.height }, transform);
+    const clipSize = logicalSizeToClip({ width: snapped.width, height: snapped.height }, transform);
     rectMatrix.makeScale(clipSize.width, clipSize.height, 1);
     rectMatrix.setPosition(clip.x, clip.y, 0);
-  }
-
-  function writeRasterLabel(command: TextDrawableCommand, transform: LayerViewportTransform): void {
-    if (command.text.length === 0 || command.bounds.width <= 0 || command.bounds.height <= 0)
-      return;
-    const pixelSize = Math.max(2, Math.round(command.bounds.height / 8));
-    const key = `${command.sourceNodeId}|${command.text}|${command.fill}|${pixelSize}`;
-    usedLabels.add(key);
-    let gpu = labelCache.get(key);
-    if (!gpu) {
-      const raster = rasterText(command.text, 0xffffff, pixelSize);
-      const texture = new DataTexture(
-        raster.data,
-        raster.width,
-        raster.height,
-        RGBAFormat,
-        UnsignedByteType,
-      );
-      texture.magFilter = NearestFilter;
-      texture.minFilter = NearestFilter;
-      texture.wrapS = ClampToEdgeWrapping;
-      texture.wrapT = ClampToEdgeWrapping;
-      texture.colorSpace = SRGBColorSpace;
-      texture.needsUpdate = true;
-      texture.flipY = true;
-      const material = new MeshBasicMaterial({
-        map: texture,
-        color: 0xffffff,
-        transparent: true,
-        depthTest: OVERLAY_COLOR_POLICY.depthTest,
-        depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
-        toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
-        opacity: command.opacity,
-        alphaTest: 0.05,
-      });
-      labelColor.setHex(command.fill);
-      material.color.copy(labelColor);
-      const mesh = new Mesh(labelGeometry, material);
-      mesh.frustumCulled = false;
-      mesh.matrixAutoUpdate = false;
-      mesh.renderOrder = 3;
-      labels.add(mesh);
-      gpu = { mesh, texture, material, key };
-      labelCache.set(key, gpu);
-      own({
-        dispose() {
-          texture.dispose();
-          material.dispose();
-        },
-      });
-    }
-    const visible = command.clip ? intersectRects(command.bounds, command.clip) : command.bounds;
-    if (!visible) {
-      gpu.mesh.visible = false;
-      return;
-    }
-    placeRect(visible, transform);
-    gpu.mesh.matrix.copy(rectMatrix);
-    gpu.mesh.matrixWorldNeedsUpdate = true;
-    gpu.mesh.visible = true;
   }
 
   function placeLine(params: ShapeParams, transform: LayerViewportTransform): void {
@@ -467,8 +411,35 @@ function readCssViewport(renderer: OverlayRendererLike): ReadonlyRect | null {
   return { x: 0, y: 0, width: size.x, height: size.y };
 }
 
-function createAtlasTexture(): Texture {
-  const data = rasterAsciiAtlas(false);
+function snapDrawBounds(
+  bounds: { x: number; y: number; width: number; height: number },
+  transform: LayerViewportTransform,
+): { x: number; y: number; width: number; height: number } {
+  if (!transform.pixelSnap || transform.scaleX === 0 || transform.scaleY === 0) return bounds;
+  const dpr = transform.dpr;
+  const x0 = snapCssToDevicePixel(transform.offsetX + bounds.x * transform.scaleX, dpr);
+  const y0 = snapCssToDevicePixel(transform.offsetY + bounds.y * transform.scaleY, dpr);
+  const x1 = snapCssToDevicePixel(
+    transform.offsetX + (bounds.x + bounds.width) * transform.scaleX,
+    dpr,
+  );
+  const y1 = snapCssToDevicePixel(
+    transform.offsetY + (bounds.y + bounds.height) * transform.scaleY,
+    dpr,
+  );
+  return {
+    x: (x0 - transform.offsetX) / transform.scaleX,
+    y: (y0 - transform.offsetY) / transform.scaleY,
+    width: Math.max(0, x1 - x0) / transform.scaleX,
+    height: Math.max(0, y1 - y0) / transform.scaleY,
+  };
+}
+
+function createAtlasTexture(
+  sdf: boolean,
+  filter: typeof NearestFilter | typeof LinearFilter,
+): Texture {
+  const data = rasterAsciiAtlas(sdf);
   const texture = new DataTexture(
     data,
     ASCII_ATLAS_WIDTH,
@@ -476,8 +447,9 @@ function createAtlasTexture(): Texture {
     RGBAFormat,
     UnsignedByteType,
   );
-  texture.magFilter = NearestFilter;
-  texture.minFilter = NearestFilter;
+  texture.magFilter = filter;
+  texture.minFilter = filter;
+  texture.generateMipmaps = false;
   texture.wrapS = ClampToEdgeWrapping;
   texture.wrapT = ClampToEdgeWrapping;
   texture.colorSpace = SRGBColorSpace;

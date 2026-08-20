@@ -208,15 +208,25 @@ function alignLine(
   return offsetGlyphs(glyphs, dx);
 }
 
-export function createMonospaceFace(id: string, unitsPerEm = 1000, advance = 500): LayoutFontFace {
+export function createMonospaceFace(
+  id: string,
+  unitsPerEm = 1000,
+  advance = 500,
+  extents?: Readonly<{ ascender?: number; descender?: number; lineGap?: number }>,
+): LayoutFontFace {
   return {
     id,
     unitsPerEm,
-    ascender: 800,
-    descender: -200,
-    lineGap: 0,
+    ascender: extents?.ascender ?? 800,
+    descender: extents?.descender ?? -200,
+    lineGap: extents?.lineGap ?? 0,
     glyphId: (codePoint) => (codePoint === 32 ? 0 : codePoint),
     advance: () => advance,
     kerning: () => 0,
   };
+}
+
+/** 5×7 atlas face: one font-size unit is one glyph-row pixel. */
+export function createHudTypeFace(id: string): LayoutFontFace {
+  return createMonospaceFace(id, 7, 6, { ascender: 7, descender: 0, lineGap: 1 });
 }

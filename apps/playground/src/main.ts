@@ -1,21 +1,22 @@
 import {
+  Compass,
   Crosshair,
-  DEFAULT_THEME,
-  Gauge,
   HUD,
   Hotbar,
   HudNode,
   InventoryGrid,
   Label,
   LinearBar,
-  PIXEL_THEME,
+  MONOCHROME_INVERT_THEME,
+  MONOCHROME_THEME,
   Panel,
   RadialBar,
-  THREE_HUD_IMPLEMENTATION_STATUS,
   connectHudPointerEvents,
   createHudOverlayAdapter,
   probeRendererCapabilities,
   resolveViewport,
+  themeColor,
+  type HudTheme,
   type OverlayRendererLike,
 } from "@scope/three-hud";
 import { createWindfoilThreeSpike, preprocessWindfoilFace } from "@scope/three-hud/text/windfoil";
@@ -29,21 +30,30 @@ import {
   generateMaze,
   isBlocked,
   isWallCell,
+  mazeTour,
+  shortestTurn,
   turnIntent,
   worldToCell,
   yawToLook,
   yawToRight,
+  yawToward,
 } from "./maze.js";
 
 const STYLE_DIRTY = 1 << 2;
 const QUEUE_DIRTY = 1 << 7;
-const MOUSE_SENSITIVITY = 0.002;
-const TURN_RATE = 2.15;
-const PITCH_LIMIT = 1.15;
-const MOVE_ACCEL = 14;
+const MOUSE_SENSITIVITY = 0.00115;
+const TURN_RATE = 1.25;
+const PITCH_LIMIT = 1.05;
+const MOVE_ACCEL = 9;
+const LOOK_DAMP = 14;
+const SHAKE_POS = 0.012;
 const REF_W = 1920;
 const REF_H = 1080;
-const SAFE = 40;
+const SAFE_X = 24;
+const SAFE_TOP = 40;
+const SAFE_BOTTOM = 20;
+const SPACE = 12;
+const STATUS_H = 22;
 
 const hostElement = document.querySelector<HTMLDivElement>("#app");
 const statusElement = document.querySelector<HTMLDivElement>("#status");
@@ -60,11 +70,11 @@ host.append(renderer.domElement);
 renderer.domElement.tabIndex = 0;
 renderer.domElement.style.touchAction = "none";
 
-const fogColor = 0x100c0a;
+const fogColor = 0x000000;
 const gameScene = new THREE.Scene();
 gameScene.background = new THREE.Color(fogColor);
-gameScene.fog = new THREE.Fog(fogColor, 14, 48);
-const gameCamera = new THREE.PerspectiveCamera(62, 1, 0.08, 60);
+gameScene.fog = new THREE.Fog(fogColor, 22, 58);
+const gameCamera = new THREE.PerspectiveCamera(62, 1, 0.08, 80);
 const baseFov = 62;
 
 const maze = generateMaze(17, 17, 95);
@@ -84,63 +94,96 @@ gameCamera.position.set(player.x, player.y, player.z);
 const anisotropy =
   renderer instanceof THREE.WebGLRenderer ? renderer.capabilities.getMaxAnisotropy() : 8;
 const mazeScene = buildMazeScene(gameScene, maze, Math.min(8, anisotropy));
+const tour = mazeTour(maze);
+let tourIndex = 0;
+let autoNav = true;
 
 const overlay = createHudOverlayAdapter({
   renderer: renderer as unknown as OverlayRendererLike,
   clearDepth: false,
 });
 const hud = new HUD({ referenceSize: { width: REF_W, height: REF_H }, rendererAdapter: overlay });
-const layer = hud.createLayer({ id: "smooth-ui", scaleMode: "contain" });
+const layer = hud.createLayer({
+  id: "smooth-ui",
+  scaleMode: "contain",
+  safeInsets: { top: 24, right: 24, bottom: 24, left: 24 },
+});
+
+const starterTheme = MONOCHROME_THEME;
+const ink = themeColor(starterTheme, "text");
+const paper = themeColor(starterTheme, "panel");
+const track = themeColor(starterTheme, "track");
+const slotFill = themeColor(starterTheme, "slot");
 
 const title = new Label({
   id: "title",
   text: "3D MAZE",
-  fontSize: 22,
-  color: 0xe8f6ff,
+  fontSize: 21,
+  fontId: "pixel",
+  color: ink,
 });
-title.setPosition(SAFE, 48);
 const lookHint = new Label({
   id: "look-hint",
-  text: "CLICK LOOK - QE TURN - T THEME - F FONT",
-  fontSize: 12,
-  color: 0xb8c8d8,
+  text: "AUTO  WASD  P  T",
+  fontSize: 14,
+  fontId: "pixel",
+  color: ink,
 });
-lookHint.setPosition(SAFE, 76);
 
+const BAR_W = 220;
 const health = new LinearBar({
   id: "health",
-  width: 300,
-  height: 22,
+  width: BAR_W,
+  height: 16,
   value: 92,
-  fill: 0x102030,
+  fill: track,
   delayedValue: 92,
   label: "HP",
 });
 const stamina = new LinearBar({
   id: "stamina",
-  width: 300,
-  height: 18,
+  width: BAR_W,
+  height: 16,
   value: 100,
-  fill: 0x102030,
+  fill: track,
   segments: 5,
-  gap: 4,
+  gap: 3,
   label: "ST",
 });
-stamina.fillNode.fill = 0x4ec4ff;
-for (const segment of stamina.segmentFills) segment.fill = 0x4ec4ff;
+stamina.fillNode.fill = ink;
+for (const segment of stamina.segmentFills) segment.fill = ink;
+const explore = new LinearBar({
+  id: "explore",
+  width: BAR_W,
+  height: 14,
+  value: 1,
+  fill: track,
+  label: "MAP",
+});
+explore.fillNode.fill = ink;
+const speedBar = new LinearBar({
+  id: "speed",
+  width: BAR_W,
+  height: 14,
+  value: 0,
+  fill: track,
+  label: "SPD",
+});
+speedBar.fillNode.fill = ink;
 const ammo = new RadialBar({
   id: "ammo",
-  width: 76,
-  height: 76,
+  width: 52,
+  height: 52,
   value: 30,
   max: 30,
-  fill: 0x1c2c3c,
+  fill: track,
 });
 const ammoCaption = new Label({
   id: "ammo-caption",
-  text: "TORCH 30 OF 30",
-  fontSize: 13,
-  color: 0xd8e8f4,
+  text: "TORCH 30/30",
+  fontSize: 14,
+  fontId: "pixel",
+  color: ink,
 });
 
 const inventory = new InventoryGrid({
@@ -149,7 +192,7 @@ const inventory = new InventoryGrid({
   rows: 2,
   cellSize: 56,
   gap: 6,
-  fill: 0x1c3a58,
+  fill: slotFill,
   items: [
     { key: "empty-0", empty: true },
     { key: "empty-1", empty: true },
@@ -157,17 +200,15 @@ const inventory = new InventoryGrid({
     { key: "empty-3", empty: true },
   ],
 });
-const inventoryFills = [0x35506a, 0x35506a, 0x35506a, 0x35506a] as const;
-for (const [index, slot] of inventory.slots.entries()) {
-  const fill = inventoryFills[index] ?? 0x2a4058;
-  slot.fill = fill;
-  slot.frame.fill = fill;
+for (const slot of inventory.slots) {
+  slot.fill = slotFill;
+  slot.frame.fill = slotFill;
 }
 
 const hotbar = new Hotbar({
   id: "hotbar",
   cellSize: 58,
-  fill: 0x1c3a58,
+  fill: slotFill,
   slots: [
     { key: "torch" },
     { key: "map" },
@@ -178,51 +219,70 @@ const hotbar = new Hotbar({
   ],
   onActivate: (key) => activateTool(key),
 });
-hotbar.setPosition((REF_W - hotbar.size.width) / 2, REF_H - SAFE - hotbar.size.height);
-const hotbarFills = [0xd4a24a, 0x3d6d9e, 0x2f8a5a, 0x6a5a2a, 0x8a3a5a, 0x2a4058] as const;
+hotbar.fill = 0x000000;
+hotbar.setPosition((REF_W - hotbar.size.width) / 2, REF_H - SAFE_BOTTOM - hotbar.size.height);
+const HOT_MARKS = ["T", "M", "C", "B", "F", ""] as const;
+const hotMarks: Label[] = [];
 for (const [index, slot] of hotbar.slots.entries()) {
-  const fill = hotbarFills[index] ?? 0x2a4058;
-  slot.fill = fill;
-  slot.frame.fill = fill;
+  slot.fill = slotFill;
+  slot.frame.fill = slotFill;
+  const mark = new Label({
+    id: `hot-mark-${index}`,
+    text: HOT_MARKS[index] ?? "",
+    fontSize: 14,
+    fontId: "pixel",
+    color: ink,
+  });
+  slot.add(mark);
+  hotMarks.push(mark);
 }
+inventory.fill = 0x000000;
 
-inventory.setPosition(SAFE, hotbar.position.y - 14 - inventory.size.height);
-health.setPosition(SAFE, inventory.position.y - 12 - health.size.height - stamina.size.height);
-stamina.setPosition(SAFE, health.position.y + health.size.height + 6);
-ammo.setPosition(SAFE + health.size.width + 16, health.position.y - 8);
+inventory.setPosition(SAFE_X, hotbar.position.y - SPACE - inventory.size.height);
+stamina.setPosition(SAFE_X, inventory.position.y - SPACE - stamina.size.height);
+health.setPosition(SAFE_X, stamina.position.y - 8 - health.size.height);
+ammo.setPosition(
+  SAFE_X + health.size.width + SPACE,
+  health.position.y + (health.size.height + stamina.size.height + 8 - ammo.size.height) / 2,
+);
 ammoCaption.setPosition(ammo.position.x, ammo.position.y + ammo.size.height + 4);
 
 const panel = new Panel({
   id: "tray",
   width: 268,
   height: 292,
-  fill: 0x1c3a58,
+  fill: paper,
+  radius: 0,
   padding: { top: 10, right: 10, bottom: 10, left: 10 },
 });
-panel.setPosition(REF_W - SAFE - panel.size.width, 48);
+panel.setPosition(REF_W - SAFE_X - panel.size.width, SAFE_TOP);
 const trayTitle = new Label({
   id: "tray-title",
   text: "MAP",
-  fontSize: 16,
-  color: 0xe8f6ff,
+  fontSize: 14,
+  fontId: "pixel",
+  color: ink,
 });
 const trayPos = new Label({
   id: "tray-pos",
   text: "CELL 1 1",
-  fontSize: 13,
-  color: 0xd0e0ee,
+  fontSize: 14,
+  fontId: "pixel",
+  color: ink,
 });
 const trayHead = new Label({
   id: "tray-head",
   text: "FACE N",
-  fontSize: 13,
-  color: 0xd0e0ee,
+  fontSize: 14,
+  fontId: "pixel",
+  color: ink,
 });
 const trayHelp = new Label({
   id: "tray-help",
   text: "WASD  QE  SHIFT",
-  fontSize: 16,
-  color: 0xa8b8c8,
+  fontSize: 14,
+  fontId: "pixel",
+  color: ink,
 });
 const MAP_CELLS = 11;
 const MAP_DOT = 12;
@@ -240,39 +300,49 @@ for (let row = 0; row < MAP_CELLS; row += 1) {
       id: `map-${col}-${row}`,
       width: MAP_DOT,
       height: MAP_DOT,
-      fill: 0x1a120e,
+      fill: 0x111111,
     });
     dot.setPosition(col * (MAP_DOT + MAP_GAP), row * (MAP_DOT + MAP_GAP));
     mapRoot.add(dot);
     mapDots.push(dot);
   }
 }
-panel.content.add(trayTitle);
-panel.content.add(trayPos);
-panel.content.add(trayHead);
-panel.content.add(trayHelp);
 panel.content.add(mapRoot);
-panel.layoutChildren("vertical", 6);
 
-const compass = new Gauge({
-  id: "speed",
-  width: 112,
-  height: 112,
-  value: 0,
-  min: 0,
-  max: 360,
-  ticks: 4,
-  fill: 0x4aa3ff,
+const compass = new Compass({
+  id: "compass",
+  heading: spawnYaw,
+  fontId: "pixel",
 });
-compass.setPosition(
-  REF_W - SAFE - compass.size.width,
-  inventory.position.y + inventory.size.height - compass.size.height,
-);
-for (const label of compass.tickLabels) {
-  label.setText("");
-  label.visible = false;
+const LOG_CAP = 4;
+const logPanel = new Panel({
+  id: "log",
+  width: 248,
+  height: 86,
+  fill: paper,
+  radius: 0,
+  clip: true,
+  padding: { top: 6, right: 8, bottom: 6, left: 8 },
+});
+const logTitle = new Label({
+  id: "log-title",
+  text: "LOG",
+  fontSize: 14,
+  fontId: "pixel",
+  color: ink,
+});
+const logLabels: Label[] = [];
+for (let index = 0; index < LOG_CAP; index += 1) {
+  logLabels.push(
+    new Label({
+      id: `log-${index}`,
+      text: "",
+      fontSize: 14,
+      fontId: "pixel",
+      color: ink,
+    }),
+  );
 }
-compass.face.value = compass.max;
 
 const crosshair = new Crosshair({ id: "cross", dot: true, length: 10, gap: 5 });
 crosshair.setPosition(REF_W / 2 - crosshair.size.width / 2, REF_H / 2 - crosshair.size.height / 2);
@@ -281,36 +351,471 @@ layer.add(title);
 layer.add(lookHint);
 layer.add(health);
 layer.add(stamina);
+layer.add(explore);
+layer.add(speedBar);
 layer.add(ammo);
 layer.add(ammoCaption);
+layer.add(trayTitle);
+layer.add(trayPos);
+layer.add(trayHead);
+layer.add(trayHelp);
 layer.add(panel);
+layer.add(logPanel);
+layer.add(logTitle);
+for (const line of logLabels) layer.add(line);
 layer.add(compass);
 layer.add(crosshair);
 layer.add(inventory);
 layer.add(hotbar);
 await hud.initialize();
-let themeName: "default" | "pixel" = "default";
-let fontName: "ui" | "pixel" = "ui";
-const showcaseLabels = [title, lookHint, trayTitle, trayPos, trayHead, trayHelp, ammoCaption];
+let invertHud = false;
+let fontName: "ui" | "pixel" = "pixel";
+let compassOn = true;
+let mapOn = true;
+let inventoryOn = false;
+let viewYaw = player.yaw;
+let viewPitch = player.pitch;
+const showcaseLabels = [
+  title,
+  lookHint,
+  trayTitle,
+  trayPos,
+  trayHead,
+  trayHelp,
+  ammoCaption,
+  logTitle,
+  ...logLabels,
+];
+const reduceMotion =
+  typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+function damp(current: number, target: number, lambda: number, dt: number): number {
+  if (reduceMotion) return target;
+  return current + (target - current) * (1 - Math.exp(-lambda * dt));
+}
+function dampAngle(current: number, target: number, lambda: number, dt: number): number {
+  return current + shortestTurn(current, target) * (reduceMotion ? 1 : 1 - Math.exp(-lambda * dt));
+}
+const OPEN_CELLS = maze.walls.reduce((count, wall) => count + (wall ? 0 : 1), 0);
+const seenCells = new Set<string>([`${maze.start.x},${maze.start.z}`]);
+const logState: Array<{ text: string; opacity: number }> = [];
+let staminaShown = stamina.value;
+let exploreShown = 1;
+let speedShown = 0;
+let headingShown = player.yaw;
+let torchShown = 30;
 
-function applyShowcaseSkin(): void {
-  const theme = themeName === "pixel" ? PIXEL_THEME : DEFAULT_THEME;
-  const fill = Number(theme.colors["fill"]);
-  const panelFill = Number(theme.colors["panel"]);
-  const text = Number(theme.colors["text"]);
-  panel.fill = panelFill;
-  panel.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
-  health.fillNode.fill = fill;
-  health.fillNode.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
-  stamina.fillNode.fill = fill;
-  stamina.fillNode.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
-  for (const label of showcaseLabels) {
-    label.color = text;
-    label.setFontId(fontName);
+function pushLog(text: string): void {
+  logState.unshift({ text, opacity: 0 });
+  if (logState.length > LOG_CAP) logState.length = LOG_CAP;
+}
+
+let mapCellsShown = MAP_CELLS;
+
+function placeBarLabel(bar: LinearBar): void {
+  bar.labelNode.setPosition(
+    -bar.labelNode.size.width - 6,
+    Math.max(0, (bar.size.height - bar.labelNode.size.height) / 2),
+  );
+}
+
+function placeHotMarks(): void {
+  for (const [index, slot] of hotbar.slots.entries()) {
+    const mark = hotMarks[index];
+    if (!mark) continue;
+    mark.remeasure();
+    mark.setPosition(
+      Math.max(2, (slot.size.width - mark.size.width) / 2),
+      Math.max(2, (slot.size.height - mark.size.height) / 2 + 6),
+    );
   }
 }
 
+function sizeCompass(size: number): void {
+  compass.setSize(size, size);
+  compass.bezel.outerRadius = size / 2 - 1;
+  compass.bezel.innerRadius = size / 2 - 3;
+  compass.rose.outerRadius = Math.max(6, size / 2 - 8);
+  compass.rose.innerRadius = Math.max(4, size / 2 - 10);
+  compass.bezel.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
+  compass.rose.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
+  compass.syncMarks();
+}
+
+function sizeBars(barW: number): void {
+  const apply = (bar: LinearBar, height: number): void => {
+    const previous = bar.size.width;
+    bar.setSize(barW, height);
+    if (previous === barW) return;
+    const value = bar.value;
+    bar.value = value === bar.min ? bar.max : bar.min;
+    bar.setValue(value);
+  };
+  apply(health, 16);
+  apply(stamina, 16);
+  apply(explore, 14);
+  apply(speedBar, 14);
+}
+
+function fitMap(cells: number, dot: number, gap: number): number {
+  mapCellsShown = cells;
+  for (let row = 0; row < MAP_CELLS; row += 1) {
+    for (let col = 0; col < MAP_CELLS; col += 1) {
+      const node = mapDots[row * MAP_CELLS + col];
+      if (!node) continue;
+      const on = row < cells && col < cells;
+      node.visible = on;
+      if (!on) continue;
+      node.setSize(dot, dot);
+      node.setPosition(col * (dot + gap), row * (dot + gap));
+    }
+  }
+  const side = cells * dot + (cells - 1) * gap;
+  mapRoot.setSize(side, side);
+  return side;
+}
+
+function boxesOverlap(
+  a: { x: number; y: number; width: number; height: number },
+  b: { x: number; y: number; width: number; height: number },
+  pad = 4,
+): boolean {
+  return (
+    a.x < b.x + b.width + pad &&
+    a.x + a.width + pad > b.x &&
+    a.y < b.y + b.height + pad &&
+    a.y + a.height + pad > b.y
+  );
+}
+
+function paintChrome(): void {
+  const theme = activeTheme();
+  const ink = themeColor(theme, "text");
+  const paper = themeColor(theme, "panel");
+  const track = themeColor(theme, "track");
+  const muted = themeColor(theme, "muted");
+  const selected = themeColor(theme, "selected");
+  for (const [index, slot] of hotbar.slots.entries()) {
+    const on = index === hotbar.activeIndex;
+    paintFill(slot, on ? selected : track);
+    paintFill(slot.frame, on ? selected : muted);
+    const shortcut = hotbar.shortcuts[index];
+    if (shortcut) shortcut.color = on ? paper : ink;
+    const mark = hotMarks[index];
+    if (mark) mark.color = on ? paper : ink;
+  }
+  for (const slot of inventory.slots) {
+    const filled = slot.icon.opacity > 0;
+    paintFill(slot, filled ? selected : track);
+    paintFill(slot.frame, filled ? selected : muted);
+  }
+  paintFill(hotbar.selection, selected);
+}
+
+function hudScale(): number {
+  const width = Math.max(1, host.clientWidth);
+  const height = Math.max(1, host.clientHeight);
+  return resolveViewport({
+    referenceSize: layer.referenceSize,
+    viewport: { x: 0, y: 0, width, height },
+    mode: layer.scaleMode,
+    dpr: renderer.getPixelRatio(),
+    pixelSnap: layer.pixelSnap,
+  }).scaleX;
+}
+
+function crispPixelFontSize(desired: number, scale: number): number {
+  if (scale <= 0) return desired;
+  const texels = Math.max(1, Math.round((desired * scale) / 7));
+  return (texels * 7) / scale;
+}
+
+function layoutHud(): void {
+  const width = layer.referenceSize.width;
+  const height = layer.referenceSize.height;
+  const compact = width < 900;
+  const tiny = width < 420;
+  const short = height < 520;
+  const pad = tiny ? 8 : compact ? 10 : SAFE_X;
+  const top = STATUS_H + (tiny || short ? 6 : compact ? 8 : 12);
+  const gap = tiny || short ? 5 : compact ? 6 : 10;
+  const showInv = inventoryOn && !tiny && !short;
+  inventory.visible = showInv;
+  lookHint.visible = !compact && !short;
+  trayHelp.visible = false;
+  logPanel.visible = false;
+  logTitle.visible = !compact && !short;
+  trayTitle.visible = !tiny && !short;
+  trayHead.visible = !tiny && !short;
+  trayPos.visible = mapOn;
+  panel.visible = mapOn && !(short && tiny);
+  speedBar.visible = !short;
+  explore.visible = !short;
+
+  const compassSize = tiny ? 48 : compact ? 56 : 88;
+  sizeCompass(compassSize);
+  const mapSide = fitMap(tiny ? 7 : compact ? 9 : 11, tiny ? 7 : compact ? 8 : 10, 2);
+  mapRoot.setPosition(0, 0);
+  panel.setSize(mapSide + 12, mapSide + 12);
+  panel.background.setSize(panel.size.width, panel.size.height);
+  panel.content.setSize(mapSide, mapSide);
+  panel.content.setPosition(6, 6);
+
+  const trayItems = tiny ? [trayPos] : [trayTitle, trayPos, trayHead];
+  const right = width - pad;
+  const trayStack = trayItems.reduce((sum, node) => sum + node.size.height + 3, 0);
+  const labelMax = Math.max(...trayItems.map((node) => node.size.width));
+  const colW = Math.max(labelMax, mapOn ? panel.size.width : 0);
+  const colX = Math.round(right - colW);
+  if (mapOn) {
+    panel.setPosition(Math.round(right - panel.size.width), Math.round(top + trayStack + 2));
+  } else {
+    panel.setPosition(Math.round(right - panel.size.width), -panel.size.height);
+  }
+  let trayY = top;
+  for (const node of trayItems) {
+    node.setPosition(colX, Math.round(trayY));
+    trayY += node.size.height + 3;
+  }
+
+  const labelCol =
+    Math.max(
+      health.labelNode.size.width,
+      stamina.labelNode.size.width,
+      explore.labelNode.size.width,
+      speedBar.labelNode.size.width,
+      24,
+    ) + 6;
+  const torchGap = compact ? 8 : 12;
+  const maxBar = width - pad - labelCol - torchGap - ammo.size.width - pad;
+  const barW = Math.max(88, Math.min(tiny ? 148 : compact ? 176 : 200, maxBar));
+  sizeBars(barW);
+
+  const hotReserve = compact ? 0 : compassSize + gap;
+  const hotFit = Math.min(1, (width - pad * 2 - hotReserve) / Math.max(1, hotbar.size.width));
+  hotbar.scaleX = hotFit;
+  hotbar.scaleY = hotFit;
+  const hotW = hotbar.size.width * hotFit;
+  const hotH = hotbar.size.height * hotFit;
+  hotbar.setPosition(
+    Math.round(Math.max(pad, (width - hotW - hotReserve) / 2)),
+    Math.round(height - pad - hotH),
+  );
+
+  const invFit = showInv
+    ? Math.min(1, (compact ? 136 : inventory.size.width) / inventory.size.width)
+    : 1;
+  inventory.scaleX = invFit;
+  inventory.scaleY = invFit;
+  const invH = showInv ? inventory.size.height * invFit : 0;
+  if (showInv) inventory.setPosition(pad, Math.round(hotbar.position.y - gap - invH));
+
+  const stackBottom = showInv ? inventory.position.y : hotbar.position.y;
+  const barGap = short ? 4 : 5;
+  const barX = Math.round(pad + labelCol);
+  const vitals: LinearBar[] = [health, stamina];
+  if (explore.visible) vitals.push(explore);
+  if (speedBar.visible) vitals.push(speedBar);
+  let cursor = stackBottom;
+  for (let index = vitals.length - 1; index >= 0; index -= 1) {
+    const bar = vitals[index];
+    if (!bar) continue;
+    const step = index === vitals.length - 1 ? gap : barGap;
+    cursor = Math.round(cursor - step - bar.size.height);
+    bar.setPosition(barX, cursor);
+    placeBarLabel(bar);
+  }
+  const ammoX = Math.round(barX + barW + torchGap);
+  ammo.setPosition(
+    ammoX,
+    short
+      ? Math.round(stackBottom - gap - ammo.size.height)
+      : health.position.y,
+  );
+  if (boxesOverlap(ammo.worldBounds(), hotbar.worldBounds(), 4)) {
+    ammo.setPosition(
+      Math.round(Math.max(pad, hotbar.position.x - gap - ammo.size.width)),
+      Math.round(hotbar.position.y - gap - ammo.size.height),
+    );
+  }
+  ammoCaption.setPosition(ammo.position.x, Math.round(ammo.position.y + ammo.size.height + 2));
+  if (ammoCaption.position.y + ammoCaption.size.height > stackBottom - 2) {
+    ammoCaption.setPosition(
+      Math.round(ammo.position.x + ammo.size.width + 4),
+      Math.round(ammo.position.y + Math.max(0, (ammo.size.height - ammoCaption.size.height) / 2)),
+    );
+  }
+  ammoCaption.visible =
+    !short && ammoCaption.position.x + ammoCaption.size.width <= width - pad;
+
+  title.setPosition(pad, top);
+  title.visible =
+    !short && title.position.x + title.size.width < (mapOn ? panel.position.x : right) - 8;
+  lookHint.setPosition(pad, title.visible ? Math.round(title.position.y + title.size.height + 4) : top);
+  if (
+    lookHint.visible &&
+    lookHint.position.x + lookHint.size.width > (mapOn ? panel.position.x : right) - 8
+  ) {
+    lookHint.visible = false;
+  }
+  const logX = pad;
+  const logY =
+    (lookHint.visible
+      ? lookHint.position.y + lookHint.size.height
+      : title.visible
+        ? title.position.y + title.size.height
+        : top) + 8;
+  logTitle.setPosition(logX, logY);
+  let logLineY = logTitle.position.y + logTitle.size.height + 3;
+  for (const line of logLabels) {
+    line.setPosition(logX, logLineY);
+    logLineY += Math.max(12, line.size.height) + 2;
+  }
+
+  if (compact) {
+    const underMap = mapOn ? panel.position.y + panel.size.height + 12 : top;
+    compass.setPosition(Math.round(right - compassSize), Math.round(underMap));
+    compass.visible =
+      compassOn && compass.position.y + compassSize <= health.position.y - 8;
+  } else {
+    const y = Math.min(hotbar.position.y + hotH - compassSize, height - pad - compassSize);
+    compass.setPosition(
+      Math.round(right - compassSize),
+      Math.round(Math.max(mapOn ? panel.position.y + panel.size.height + 12 : top, y)),
+    );
+    compass.visible = compassOn;
+    if (
+      compass.visible &&
+      boxesOverlap(compass.worldBounds(), health.worldBounds(), 8)
+    ) {
+      compass.visible = false;
+    }
+  }
+  if (compass.visible && compass.position.y + compassSize > height - pad) {
+    compass.setPosition(compass.position.x, Math.round(height - pad - compassSize));
+  }
+  if (
+    compass.visible &&
+    boxesOverlap(compass.worldBounds(), hotbar.worldBounds(), 6)
+  ) {
+    compass.setPosition(compass.position.x, Math.round(hotbar.position.y - gap - compassSize));
+    if (compass.position.y < (mapOn ? panel.position.y + panel.size.height + 8 : top)) {
+      compass.visible = false;
+    }
+  }
+
+  placeHotMarks();
+  crosshair.setPosition(width / 2 - crosshair.size.width / 2, height / 2 - crosshair.size.height / 2);
+}
+
+function activeTheme(): HudTheme {
+  return invertHud ? MONOCHROME_INVERT_THEME : MONOCHROME_THEME;
+}
+
+function paintFill(node: { fill: number; markDirty: (flags: number) => void }, fill: number): void {
+  node.fill = fill;
+  node.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
+}
+
+function applyShowcaseSkin(): void {
+  const theme = activeTheme();
+  const fill = themeColor(theme, "fill");
+  const panelFill = themeColor(theme, "panel");
+  const text = themeColor(theme, "text");
+  const trackColor = themeColor(theme, "track");
+  const delayed = themeColor(theme, "delayed");
+  const pixel = fontName === "pixel";
+  const scale = hudScale();
+  const tiny = layer.referenceSize.width < 420;
+  const typeSize = pixel ? crispPixelFontSize(14, scale) : 14;
+  const titleSize = pixel ? crispPixelFontSize(tiny ? 14 : 21, scale) : tiny ? 14 : 21;
+  layer.pixelSnap = pixel;
+  if (gameScene.background instanceof THREE.Color) gameScene.background.set(panelFill);
+  if (gameScene.fog) gameScene.fog.color.set(panelFill);
+  mazeScene.setInk(text, themeColor(theme, "muted"), panelFill);
+  paintFill(panel, panelFill);
+  paintFill(panel.background, panelFill);
+  panel.background.setRadius(Number(theme.radii["panel"] ?? 0));
+  paintFill(health, trackColor);
+  paintFill(health.fillNode, fill);
+  paintFill(health.delayedNode, delayed);
+  paintFill(stamina, trackColor);
+  paintFill(stamina.fillNode, fill);
+  paintFill(stamina.delayedNode, delayed);
+  for (const segment of stamina.segmentFills) paintFill(segment, fill);
+  paintFill(ammo.track, trackColor);
+  paintFill(ammo.fillRing, fill);
+  ammo.label.color = text;
+  ammo.label.setFontId(fontName);
+  ammo.label.setFontSize(Math.min(typeSize, 12));
+  ammo.label.remeasure();
+  paintFill(explore, trackColor);
+  paintFill(explore.fillNode, fill);
+  paintFill(speedBar, trackColor);
+  paintFill(speedBar.fillNode, fill);
+  compass.setColor(text, themeColor(theme, "muted"));
+  compass.headingLabel.setFontId(fontName);
+  compass.headingLabel.setFontSize(typeSize);
+  for (const mark of compass.marks) {
+    mark.setFontId(fontName);
+    mark.setFontSize(Math.max(7, typeSize - 2));
+  }
+  compass.syncMarks();
+  paintFill(logPanel, panelFill);
+  paintFill(logPanel.background, panelFill);
+  paintFill(logPanel.content, panelFill);
+  paintFill(panel.content, panelFill);
+  crosshair.setColor(themeColor(theme, "crosshair"));
+  paintFill(mapRoot, trackColor);
+  title.setFontSize(titleSize);
+  title.remeasure();
+  for (const label of showcaseLabels) {
+    label.color = text;
+    label.setFontId(fontName);
+    if (label !== title) label.setFontSize(typeSize);
+    label.remeasure();
+  }
+  health.labelNode.setFontId(fontName);
+  health.labelNode.setFontSize(Math.min(typeSize, health.size.height - 2));
+  health.labelNode.remeasure();
+  health.labelNode.color = text;
+  stamina.labelNode.setFontId(fontName);
+  stamina.labelNode.setFontSize(Math.min(typeSize, stamina.size.height - 2));
+  stamina.labelNode.remeasure();
+  stamina.labelNode.color = text;
+  explore.labelNode.setFontId(fontName);
+  explore.labelNode.setFontSize(Math.min(typeSize, explore.size.height - 2));
+  explore.labelNode.remeasure();
+  explore.labelNode.color = text;
+  speedBar.labelNode.setFontId(fontName);
+  speedBar.labelNode.setFontSize(Math.min(typeSize, speedBar.size.height - 2));
+  speedBar.labelNode.remeasure();
+  speedBar.labelNode.color = text;
+  for (const slot of hotbar.slots) slot.setTheme(theme);
+  for (const shortcut of hotbar.shortcuts) {
+    shortcut.setFontId(fontName);
+    shortcut.setFontSize(Math.max(7, typeSize - 4));
+    shortcut.remeasure();
+  }
+  for (const mark of hotMarks) {
+    mark.setFontId(fontName);
+    mark.setFontSize(Math.max(10, typeSize));
+    mark.remeasure();
+  }
+  for (const slot of inventory.slots) slot.setTheme(theme);
+  const paperCss = `#${panelFill.toString(16).padStart(6, "0")}`;
+  const inkCss = `#${text.toString(16).padStart(6, "0")}`;
+  const muteCss = `#${themeColor(theme, "muted").toString(16).padStart(6, "0")}`;
+  status.style.background = paperCss;
+  status.style.color = inkCss;
+  status.style.borderBottomColor = muteCss;
+  document.documentElement.style.background = paperCss;
+  document.body.style.background = paperCss;
+  paintChrome();
+  layoutHud();
+}
+
 applyShowcaseSkin();
+pushLog("TOUR START");
 const connected = connectHudPointerEvents(hud, renderer.domElement, hud.pointer);
 hud.pointer.addListener(hotbar, (event) => {
   if (event.type === "click" && (event.phase === "target" || event.phase === "bubble")) {
@@ -325,6 +830,7 @@ hud.pointer.addListener(hotbar, (event) => {
     });
     if (index >= 0) {
       hotbar.activate(index);
+      paintChrome();
       writeStatus();
     }
   }
@@ -359,7 +865,7 @@ const preprocess = preprocessWindfoilFace({
 const windfoilSpike = createWindfoilThreeSpike({ capability: capability.windfoil, preprocess });
 const windfoilDraw = windfoilSpike.draw([
   { glyphId: 0, x: 0, y: 0, scale: 1, color: [1, 1, 1, 1] },
-  { glyphId: 0, x: 12, y: 0, scale: 1, color: [0.2, 1, 0.8, 1] },
+  { glyphId: 0, x: 12, y: 0, scale: 1, color: [0.55, 0.55, 0.55, 1] },
 ]);
 if (windfoilSpike.mesh && capability.windfoil.supported) {
   windfoilSpike.mesh.position.set(start.x, 1.6, start.z - 0.4);
@@ -389,6 +895,28 @@ const diagnostics = {
   get pointerLocked(): boolean {
     return pointerLocked;
   },
+  boxes: (): Record<string, { x: number; y: number; w: number; h: number; v: boolean }> => {
+    const take = (node: HudNode): { x: number; y: number; w: number; h: number; v: boolean } => {
+      const box = node.worldBounds();
+      return { x: box.x, y: box.y, w: box.width, h: box.height, v: node.visible };
+    };
+    return {
+      title: take(title),
+      hint: take(lookHint),
+      log: take(logTitle),
+      health: take(health),
+      stamina: take(stamina),
+      explore: take(explore),
+      ammo: take(ammo),
+      ammoCap: take(ammoCaption),
+      inventory: take(inventory),
+      hotbar: take(hotbar),
+      compass: take(compass),
+      speed: take(speedBar),
+      map: take(panel),
+      tray: take(trayTitle),
+    };
+  },
 };
 (globalThis as { __PLAYGROUND__?: typeof diagnostics }).__PLAYGROUND__ = diagnostics;
 
@@ -401,16 +929,21 @@ function activateTool(key: string): void {
   if (key === "torch") tools.torch = !tools.torch;
   if (key === "map") {
     tools.map = !tools.map;
+    mapOn = tools.map;
     setHudVisible(panel, tools.map);
   }
   if (key === "compass") {
     tools.compass = !tools.compass;
+    compassOn = tools.compass;
     setHudVisible(compass, tools.compass);
   }
   if (key === "boots") tools.boots = !tools.boots;
   if (key === "flare") tools.flare = 2.4;
   mazeScene.torch.intensity = tools.torch ? 22 : 4;
   trayTitle.setText(tools.map ? "MAP" : "TRAY");
+  pushLog(`${key.toUpperCase()} ${key === "torch" ? (tools.torch ? "ON" : "OFF") : "OK"}`);
+  paintChrome();
+  layoutHud();
   writeStatus();
 }
 
@@ -430,27 +963,38 @@ function pickupIfClose(): void {
     inventory.setItems(bag);
     const painted = inventory.slots[slot];
     if (painted) {
-      painted.fill = 0xd4a24a;
-      painted.frame.fill = 0xd4a24a;
+      const itemFill = themeColor(activeTheme(), "fill");
+      painted.fill = itemFill;
+      painted.frame.fill = itemFill;
     }
+    pushLog(`GOT ${key.toUpperCase()}`);
+    inventoryOn = bag.some((item) => item.empty !== true);
+    paintChrome();
+    layoutHud();
     shake = Math.min(1, shake + 0.18);
   }
 }
 
 function refreshMinimap(): void {
   const here = worldToCell(maze, player.x, player.z);
-  const radius = (MAP_CELLS - 1) / 2;
-  for (let row = 0; row < MAP_CELLS; row += 1) {
-    for (let col = 0; col < MAP_CELLS; col += 1) {
+  const radius = (mapCellsShown - 1) / 2;
+  const theme = activeTheme();
+  const paper = themeColor(theme, "panel");
+  const hereFill = themeColor(theme, "fill");
+  const loot = themeColor(theme, "selected");
+  const floor = themeColor(theme, "muted");
+  const wall = themeColor(theme, "track");
+  for (let row = 0; row < mapCellsShown; row += 1) {
+    for (let col = 0; col < mapCellsShown; col += 1) {
       const dot = mapDots[row * MAP_CELLS + col];
       if (!dot) continue;
       const mx = here.x + col - radius;
       const mz = here.z + row - radius;
-      let fill = 0x0c0806;
-      if (mx === here.x && mz === here.z) fill = 0xe8c547;
-      else if (pickupKeys.has(`${mx},${mz}`) && !isWallCell(maze, mx, mz)) fill = 0x5fcde4;
-      else if (!isWallCell(maze, mx, mz)) fill = 0x6a5340;
-      else fill = 0x1a120e;
+      let fill = paper;
+      if (mx === here.x && mz === here.z) fill = hereFill;
+      else if (pickupKeys.has(`${mx},${mz}`) && !isWallCell(maze, mx, mz)) fill = loot;
+      else if (!isWallCell(maze, mx, mz)) fill = floor;
+      else fill = wall;
       if (dot.fill === fill) continue;
       dot.fill = fill;
       dot.markDirty(STYLE_DIRTY);
@@ -461,23 +1005,14 @@ function refreshMinimap(): void {
 function writeStatus(): void {
   const width = Math.max(1, host.clientWidth);
   const height = Math.max(1, host.clientHeight);
-  const viewport = resolveViewport({
-    referenceSize: hud.referenceSize,
-    viewport: { x: 0, y: 0, width, height },
-    mode: "contain",
-    dpr: renderer.getPixelRatio(),
-  });
   status.textContent = [
-    `package: ${THREE_HUD_IMPLEMENTATION_STATUS}`,
-    `overlay: encodeOverlayQueue shapes + 5x7 atlas text after the game scene`,
-    `HUD: title + health + ammo + inventory + hotbar + crosshair`,
-    `renderer: ${useWebgpu ? "WebGPURenderer" : "WebGLRenderer"} ${capability.kind}/${capability.backend}`,
-    `viewport: ${width}×${height} css px / DPR ${renderer.getPixelRatio()} / contain ${viewport.scaleX.toFixed(3)}`,
-    `theme: ${themeName}`,
-    `font: ${fontName}`,
-    `hotbar: slot ${hotbar.activeIndex + 1} (${hotbar.slots[hotbar.activeIndex]?.key ?? "none"})`,
-    `windfoil: ${capability.windfoil.supported ? "supported" : "unsupported"}  spike=${windfoilDraw.status}`,
-  ].join(" · ");
+    useWebgpu ? "webgpu" : "webgl",
+    `${width}x${height}`,
+    invertHud ? "invert" : "night",
+    fontName,
+    autoNav && !pointerLocked ? "auto" : "manual",
+    `slot ${hotbar.activeIndex + 1}`,
+  ].join("   ");
 }
 
 function resize(): void {
@@ -486,8 +1021,11 @@ function resize(): void {
   renderer.setSize(width, height, false);
   gameCamera.aspect = width / height;
   gameCamera.updateProjectionMatrix();
+  layer.scaleMode = "native";
+  layer.setReferenceSize(width, height);
   writeStatus();
   hud.resize();
+  if (hud.state === "ready") applyShowcaseSkin();
 }
 
 const observer = new ResizeObserver(resize);
@@ -514,13 +1052,20 @@ function onKey(event: KeyboardEvent, down: boolean): void {
     writeStatus();
   }
   if (event.code === "KeyT") {
-    themeName = themeName === "pixel" ? "default" : "pixel";
+    invertHud = !invertHud;
     applyShowcaseSkin();
+    pushLog(invertHud ? "INK INVERT" : "INK NIGHT");
     writeStatus();
   }
   if (event.code === "KeyF") {
     fontName = fontName === "pixel" ? "ui" : "pixel";
     applyShowcaseSkin();
+    writeStatus();
+  }
+  if (event.code === "KeyP") {
+    autoNav = !autoNav;
+    lookHint.setText(autoNav ? "AUTO  WASD  P  T" : "P  WASD  T");
+    pushLog(autoNav ? "TOUR ON" : "TOUR PAUSE");
     writeStatus();
   }
 }
@@ -534,7 +1079,7 @@ function onMouseMove(event: MouseEvent): void {
 
 function onPointerLockChange(): void {
   pointerLocked = document.pointerLockElement === renderer.domElement;
-  lookHint.setText(pointerLocked ? "ESC UNLOCK LOOK" : "CLICK LOOK - QE TURN");
+  lookHint.setText(pointerLocked ? "ESC" : autoNav ? "AUTO  WASD  P  T" : "P  WASD  T");
 }
 
 function onCanvasClick(event: MouseEvent): void {
@@ -580,12 +1125,35 @@ function frame(now: number): void {
     ) *
     TURN_RATE *
     delta;
-  const forward =
+  let forward =
     (held.has("KeyW") || held.has("ArrowUp") ? 1 : 0) -
     (held.has("KeyS") || held.has("ArrowDown") ? 1 : 0);
   const strafe = (held.has("KeyD") ? 1 : 0) - (held.has("KeyA") ? 1 : 0);
+  const manualTurn =
+    held.has("KeyQ") || held.has("ArrowLeft") || held.has("KeyE") || held.has("ArrowRight");
+  const autoActive = autoNav && !pointerLocked && forward === 0 && strafe === 0 && !manualTurn;
+  if (autoActive && tour.length > 0) {
+    let steps = 0;
+    while (steps < 8) {
+      const waypoint = tour[tourIndex];
+      if (!waypoint) break;
+      const dest = cellCenter(maze, waypoint.x, waypoint.z);
+      if (Math.hypot(dest.x - player.x, dest.z - player.z) >= 0.34) break;
+      tourIndex = (tourIndex + 1) % tour.length;
+      steps += 1;
+    }
+    const waypoint = tour[tourIndex];
+    if (waypoint) {
+      const dest = cellCenter(maze, waypoint.x, waypoint.z);
+      const turn = shortestTurn(player.yaw, yawToward(dest.x - player.x, dest.z - player.z));
+      player.yaw += Math.sign(turn) * Math.min(Math.abs(turn), 1.8 * delta);
+      if (Math.abs(turn) < 0.55) forward = 1;
+    }
+  }
   const pace =
-    (canSprint && tools.boots ? 4.6 : canSprint ? 3.35 : 2.2) * (tools.flare > 0 ? 1.08 : 1);
+    (canSprint && tools.boots ? 4.6 : canSprint ? 3.35 : 2.2) *
+    (tools.flare > 0 ? 1.08 : 1) *
+    (autoActive ? 0.92 : 1);
   const look = yawToLook(player.yaw);
   const right = yawToRight(player.yaw);
   const wishX = (look.x * forward + right.x * strafe) * pace;
@@ -599,28 +1167,32 @@ function frame(now: number): void {
   const blockedX = isBlocked(maze, nx, player.z);
   diagnostics.last = { forward, wishX, delta, blockedX };
   if (!blockedX) player.x = nx;
-  else {
-    player.vx = 0;
-    bumped = true;
-  }
+  else bumped = true;
   if (!isBlocked(maze, player.x, nz)) player.z = nz;
-  else {
-    player.vz = 0;
-    bumped = true;
-  }
-  if (bumped) shake = Math.min(1, shake + (canSprint ? 0.28 : 0.12));
-  shake = Math.max(0, shake - 1.6 * delta);
+  else bumped = true;
+  if (bumped) shake = Math.min(1, shake + (canSprint ? 0.1 : 0.05));
+  shake = Math.max(0, shake - 2.4 * delta);
+  const lookBlend = 1 - Math.exp(-LOOK_DAMP * delta);
+  viewYaw += (player.yaw - viewYaw) * lookBlend;
+  viewPitch += (player.pitch - viewPitch) * lookBlend;
+  const lookPitched = yawToLook(viewYaw, viewPitch);
+  const rightView = yawToRight(viewYaw);
   const shakeAmt = shake * shake;
-  const lookPitched = yawToLook(player.yaw, player.pitch);
+  const sLat = Math.sin(now * 0.007) * SHAKE_POS * shakeAmt;
+  const sUp = Math.sin(now * 0.009) * SHAKE_POS * 0.55 * shakeAmt;
   gameCamera.position.set(
-    player.x + Math.sin(now * 0.031) * 0.04 * shakeAmt,
-    player.y + Math.sin(now * 0.037) * 0.03 * shakeAmt,
-    player.z + Math.cos(now * 0.029) * 0.04 * shakeAmt,
+    player.x + rightView.x * sLat,
+    player.y + sUp,
+    player.z + rightView.z * sLat,
   );
-  gameCamera.lookAt(player.x + lookPitched.x, player.y + lookPitched.y, player.z + lookPitched.z);
+  gameCamera.lookAt(
+    player.x + lookPitched.x + rightView.x * sLat,
+    player.y + lookPitched.y + sUp,
+    player.z + lookPitched.z + rightView.z * sLat,
+  );
   const moving = forward !== 0 || strafe !== 0;
   fovPunch =
-    canSprint && moving ? Math.min(6, fovPunch + 18 * delta) : fovPunch * Math.exp(-delta / 0.18);
+    canSprint && moving ? Math.min(2.4, fovPunch + 8 * delta) : fovPunch * Math.exp(-delta / 0.22);
   gameCamera.fov = baseFov + fovPunch;
   gameCamera.updateProjectionMatrix();
   mazeScene.torch.position.set(player.x, 1.32, player.z);
@@ -644,19 +1216,51 @@ function frame(now: number): void {
   renderer.render(gameScene, gameCamera);
   if (hud.state !== "ready") return;
   try {
-    stamina.setValue(
-      Math.max(8, Math.min(100, stamina.value + (canSprint && moving ? -32 : 16) * delta)),
+    const staminaTarget = Math.max(
+      8,
+      Math.min(100, staminaShown + (canSprint && moving ? -32 : 16) * delta),
     );
+    staminaShown = damp(staminaShown, staminaTarget, 10, delta);
+    stamina.setValue(staminaShown);
     health.setDelayedValue(Math.min(100, health.value + 6 * delta));
-    const torchFuel = Math.max(0, ammo.value - (tools.torch ? 0.28 : 0.03) * delta);
-    ammo.setValue(Math.round(torchFuel));
-    ammoCaption.setText(`TORCH ${Math.round(torchFuel)} OF 30`);
-    const heading = ((player.yaw * 180) / Math.PI + 3600) % 360;
-    compass.setValue(Math.round(heading));
+    const torchFuel = Math.max(0, torchShown - (tools.torch ? 0.28 : 0.03) * delta);
+    torchShown = damp(torchShown, torchFuel, 8, delta);
+    ammo.setValue(Math.round(torchShown));
+    ammoCaption.setText(
+      layer.referenceSize.width < 900
+        ? `${Math.round(torchShown)}/30`
+        : `TORCH ${Math.round(torchShown)}/30`,
+    );
+    headingShown = dampAngle(headingShown, player.yaw, 12, delta);
+    compass.setHeading(headingShown);
+    const speedTarget = Math.min(100, Math.hypot(player.vx, player.vz) * 22);
+    speedShown = damp(speedShown, speedTarget, 8, delta);
+    speedBar.setValue(Math.round(speedShown));
     const cell = worldToCell(maze, player.x, player.z);
-    trayPos.setText(`CELL ${cell.x} ${cell.z}`);
-    trayHead.setText(`FACE ${facingCardinal(player.yaw)}`);
-    compass.face.value = compass.max;
+    seenCells.add(`${cell.x},${cell.z}`);
+    const exploreTarget = OPEN_CELLS <= 0 ? 0 : (seenCells.size / OPEN_CELLS) * 100;
+    exploreShown = damp(exploreShown, exploreTarget, 6, delta);
+    explore.setValue(exploreShown);
+    if (layer.referenceSize.width < 420) {
+      trayPos.setText(`${cell.x} ${cell.z} ${facingCardinal(player.yaw)}`);
+    } else {
+      trayPos.setText(`CELL ${cell.x} ${cell.z}`);
+      trayHead.setText(`FACE ${facingCardinal(player.yaw)}`);
+    }
+    const logFade = reduceMotion ? 40 : 9;
+    for (const [index, entry] of logState.entries()) {
+      entry.opacity = damp(entry.opacity, Math.max(0.35, 1 - index * 0.15), logFade, delta);
+      const line = logLabels[index];
+      if (!line) continue;
+      line.setText(entry.text);
+      line.opacity = entry.opacity;
+      line.visible = layer.referenceSize.width >= 900;
+    }
+    for (let index = logState.length; index < logLabels.length; index += 1) {
+      const line = logLabels[index];
+      if (line) line.visible = false;
+    }
+    crosshair.setSpread(shake * 10);
     refreshMinimap();
     const info = hud.update(delta);
     hud.render(info);
@@ -690,8 +1294,8 @@ hot?.dispose(shutdown);
 
 function configureRenderer(target: THREE.WebGLRenderer | WebGPURenderer): void {
   target.outputColorSpace = THREE.SRGBColorSpace;
-  target.toneMapping = THREE.ACESFilmicToneMapping;
-  target.toneMappingExposure = 1.08;
+  target.toneMapping = THREE.NoToneMapping;
+  target.toneMappingExposure = 1;
 }
 
 function createWebGlRenderer(): THREE.WebGLRenderer {

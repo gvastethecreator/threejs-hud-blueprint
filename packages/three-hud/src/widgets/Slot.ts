@@ -2,7 +2,12 @@ import { HudNode, type HudNodeOptions } from "../core/HudNode.js";
 import { DirtyFlag } from "../core/DirtyFlags.js";
 import { HudImage, type HudTextureHandle } from "../primitives/Image.js";
 import { Ring } from "../primitives/Ring.js";
-import { applyStyle, DEFAULT_THEME, resolveWidgetStyle } from "../theme/theme.js";
+import {
+  applyStyle,
+  DEFAULT_THEME,
+  resolveWidgetStyle,
+  type HudTheme,
+} from "../theme/theme.js";
 import { Label } from "./Label.js";
 
 export type SlotData = Readonly<{
@@ -14,18 +19,22 @@ export type SlotData = Readonly<{
   texture?: HudTextureHandle;
 }>;
 
+export type SlotOptions = HudNodeOptions & SlotData & { size?: number; theme?: HudTheme };
+
 export class Slot extends HudNode {
   key: string;
   selected = false;
+  theme: HudTheme;
   readonly icon: HudImage;
   readonly quantity: Label;
   readonly cooldown: Ring;
   readonly frame: HudNode;
 
-  constructor(options: HudNodeOptions & SlotData & { size?: number } = { key: "empty" }) {
+  constructor(options: SlotOptions = { key: "empty" }) {
     const size = options.size ?? 48;
     super({ width: size, height: size, fill: options.fill ?? 0x1c2c3c, ...options });
     this.key = options.key;
+    this.theme = options.theme ?? DEFAULT_THEME;
     this.frame = this.add(
       new HudNode({
         id: `${this.id}-frame`,
@@ -67,21 +76,31 @@ export class Slot extends HudNode {
     if (options.empty === true) this.icon.opacity = 0;
   }
 
+  setTheme(theme: HudTheme): void {
+    this.theme = theme;
+    this.applyFrameStyle();
+    this.markDirty(DirtyFlag.Style);
+  }
+
   setSelected(selected: boolean): void {
     if (this.selected === selected) {
       this.markDirty(DirtyFlag.None);
       return;
     }
     this.selected = selected;
+    this.applyFrameStyle();
+    this.markDirty(DirtyFlag.Style);
+  }
+
+  private applyFrameStyle(): void {
     applyStyle(
       this.frame,
-      resolveWidgetStyle(DEFAULT_THEME, "Slot", {
-        selected,
+      resolveWidgetStyle(this.theme, "Slot", {
+        selected: this.selected,
         hovered: false,
         disabled: this.disabled,
       }),
     );
-    this.markDirty(DirtyFlag.Style);
   }
 
   setData(data: SlotData): void {

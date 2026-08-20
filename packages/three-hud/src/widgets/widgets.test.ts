@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_THEME, PIXEL_THEME } from "../theme/theme.js";
+import { Compass } from "./Compass.js";
 import { Crosshair } from "./Crosshair.js";
 import { Gauge } from "./Gauge.js";
 import { Hotbar } from "./Hotbar.js";
@@ -29,6 +30,7 @@ describe("widgets", () => {
       new LinearBar({ id: "hp", value: 10 }),
       new RadialBar({ id: "ammo", value: 4, max: 10 }),
       new Gauge({ id: "g", value: 3 }),
+      new Compass({ id: "cmp" }),
       new Crosshair({ id: "c" }),
       new Slot({ id: "s", key: "gun" }),
       new InventoryGrid({ id: "inv", columns: 2, rows: 1 }),

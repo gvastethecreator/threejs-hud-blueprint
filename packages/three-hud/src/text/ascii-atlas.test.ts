@@ -5,6 +5,7 @@ import { encodeOverlayQueue } from "../render/encodeOverlayQueue.js";
 import {
   ASCII_ATLAS_CELL,
   ASCII_ATLAS_COLUMNS,
+  ASCII_ATLAS_HEIGHT,
   ASCII_ATLAS_WIDTH,
   atlasUv,
   rasterAsciiAtlas,
@@ -31,6 +32,15 @@ function cellInk(code: number): boolean[][] {
 }
 
 describe("ascii-atlas", () => {
+  it("stores a slash and a W with distinct ink, not a blank cell", () => {
+    const slash = cellInk(47);
+    const w = cellInk(87);
+    const v = cellInk(86);
+    expect(slash.flat().filter(Boolean).length).toBeGreaterThan(4);
+    expect(w.flat().filter(Boolean).length).toBeGreaterThan(8);
+    expect(w.flat().filter(Boolean).length).not.toBe(v.flat().filter(Boolean).length);
+  });
+
   it("stores a T as a full top bar plus a stem, not an O", () => {
     const t = cellInk(84);
     const o = cellInk(79);
@@ -40,6 +50,30 @@ describe("ascii-atlas", () => {
     expect(tInk).not.toBe(oInk);
     const top = t[1] ?? [];
     expect(top.slice(1, 6).every(Boolean)).toBe(true);
+  });
+
+  it("maps atlas UVs to the 5x7 ink, not the 8x8 padded cell", () => {
+    const uv = atlasUv(84);
+    const cell = 1 / ASCII_ATLAS_COLUMNS;
+    expect(uv.u1 - uv.u0).toBeCloseTo((5 / 8) * cell, 5);
+    expect(uv.v1 - uv.v0).toBeCloseTo(7 / ASCII_ATLAS_HEIGHT, 5);
+    expect(uv.u1 - uv.u0).toBeLessThan(cell);
+  });
+
+  it("places Label glyphs on a 5:7 pixel aspect", () => {
+    const hud = new HUD({ referenceSize: { width: 200, height: 100 } });
+    const layer = hud.createLayer({ id: "ui", scaleMode: "native" });
+    layer.add(new Label({ id: "a", text: "A", fontSize: 14, color: 0xffffff }));
+    const queue = encodeOverlayQueue([layer], "webgl").snapshot();
+    const command = queue.commands.find((item) => item.kind === "text");
+    expect(command?.kind).toBe("text");
+    if (command?.kind !== "text") return;
+    const glyph = command.glyphs[0];
+    expect(glyph).toBeTruthy();
+    if (!glyph) return;
+    expect(glyph.width / glyph.height).toBeCloseTo(5 / 7, 5);
+    expect(glyph.height).toBeCloseTo(14);
+    hud.dispose();
   });
 
   it("encodes Label text T with the T atlas cell UVs", () => {

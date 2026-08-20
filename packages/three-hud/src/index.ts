@@ -89,7 +89,8 @@ export { Crosshair, Reticle, type CrosshairOptions } from "./widgets/Crosshair.j
 export { Label, type LabelOptions } from "./widgets/Label.js";
 export { IconLabel, type IconLabelOptions } from "./widgets/IconLabel.js";
 export { Gauge, type GaugeOptions } from "./widgets/Gauge.js";
-export { Slot, type SlotData } from "./widgets/Slot.js";
+export { Compass, type CompassOptions } from "./widgets/Compass.js";
+export { Slot, type SlotData, type SlotOptions } from "./widgets/Slot.js";
 export { InventoryGrid, type InventoryGridOptions } from "./widgets/InventoryGrid.js";
 export { Hotbar, type HotbarOptions } from "./widgets/Hotbar.js";
 export { hitTest, isEligible } from "./input/hitTest.js";
@@ -111,12 +112,17 @@ export {
 export { connectHudPointerEvents, type ConnectedPointer } from "./input/connectPointer.js";
 export {
   DEFAULT_THEME,
+  MONOCHROME_INVERT_THEME,
+  MONOCHROME_THEME,
   PIXEL_THEME,
   THEME_PRECEDENCE,
   applyStyle,
+  createMonochromeTheme,
+  isGrayscaleColor,
   resolveToken,
   resolveWidgetStyle,
   serializeTheme,
+  themeColor,
   type HudTheme,
   type InteractionState,
   type TokenRef,
@@ -260,6 +266,7 @@ export {
   type MeasurementCacheStats,
 } from "./text/measurementCache.js";
 export {
+  createHudTypeFace,
   createMonospaceFace,
   layoutText,
   type LayoutFontFace,
