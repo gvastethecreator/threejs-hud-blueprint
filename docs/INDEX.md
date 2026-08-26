@@ -9,6 +9,7 @@
 
 ## Product
 
+- `product/EXECUTIVE_SUMMARY.md` — short product intent, v0.1 in/out, current status.
 - `product/PRODUCT_SPEC.md` — problem, audience, scope, non-goals, release definition.
 - `product/REQUIREMENTS.md` — versioned functional/non-functional requirements and ticket traceability.
 - `product/USER_STORIES.md` — primary jobs and acceptance narratives.

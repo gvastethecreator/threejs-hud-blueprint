@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es" data-theme="dark">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -709,118 +709,118 @@
           </div>
         </div>
         <div class="top-actions">
-          <button class="button ghost" id="theme"><span>Tema</span> ◐</button>
-          <button class="button" id="export"><span>Exportar filtro</span> ↓</button>
-          <a class="button primary" href="README.md"><span>Abrir índice</span> ↗</a>
+          <button class="button ghost" id="theme"><span>Switch theme</span> ◐</button>
+          <button class="button" id="export"><span>Export filter</span> ↓</button>
+          <a class="button primary" href="README.md"><span>Open README</span> ↗</a>
         </div>
       </header>
       <div class="grid">
         <main class="main">
           <section class="panel hero">
             <div class="eyebrow">Portable-first architecture · Windfoil-first validation</div>
-            <h2>HUD canvas-native, retained-mode y tipografía multi-backend para Three.js.</h2>
+            <h2>Canvas-native retained HUD and multi-backend text for Three.js.</h2>
             <p>
-              Este explorador resume el blueprint completo. El paquete v0.1 mantiene el loop,
-              renderer y estado bajo autoridad del host; separa layout tipográfico de
-              Windfoil/SDF/bitmap; y convierte compatibilidad, memoria y rendimiento en evidencia
-              ejecutable.
+              This explorer summarizes the full blueprint. The v0.1 package leaves the loop,
+              renderer, and game state with the host. Text layout stays separate from
+              Windfoil, SDF, and bitmap. Compatibility, memory, and performance are executable
+              evidence.
             </p>
             <div class="statusline">
-              <span class="pill"><i class="dot"></i> Blueprint completo</span
-              ><span class="pill"><i class="dot warn"></i> Runtime no implementado</span
-              ><span class="pill">Sin fuentes redistribuidas</span
-              ><span class="pill">DAG de dependencias validado</span>
+              <span class="pill"><i class="dot"></i> Blueprint complete</span
+              ><span class="pill"><i class="dot warn"></i> npm publish blocked</span
+              ><span class="pill">No bundled fonts</span
+              ><span class="pill">Dependency DAG valid</span>
             </div>
           </section>
           <section class="stats" id="stats"></section>
           <div class="section-head">
             <div>
-              <h3>Arquitectura esperada</h3>
-              <p>Seleccioná un módulo para filtrar su track de implementación.</p>
+              <h3>Target architecture</h3>
+              <p>Select a module to filter its implementation track.</p>
             </div>
-            <button class="button ghost" id="clear-architecture">Limpiar filtro</button>
+            <button class="button ghost" id="clear-architecture">Clear filter</button>
           </div>
           <section class="panel architecture"><div class="flow" id="architecture"></div></section>
           <div class="section-head">
             <div>
-              <h3>Programa de construcción</h3>
-              <p><span class="kbd">/</span> buscar · <span class="kbd">Esc</span> cerrar detalle</p>
+              <h3>Construction program</h3>
+              <p><span class="kbd">/</span> search · <span class="kbd">Esc</span> close detail</p>
             </div>
           </div>
           <section class="panel filters">
             <input
               class="input search"
               id="search"
-              placeholder="Buscar ticket, outcome, scope o label…"
+              placeholder="Search ticket, outcome, scope, or label"
             />
             <select class="select" id="epic">
-              <option value="">Todos los epics</option>
+              <option value="">All epics</option>
             </select>
             <select class="select" id="milestone">
-              <option value="">Todos los milestones</option>
+              <option value="">All milestones</option>
             </select>
             <select class="select" id="priority">
-              <option value="">Prioridad</option>
+              <option value="">Priority</option>
               <option>P0</option>
               <option>P1</option>
               <option>P2</option>
             </select>
             <select class="select" id="type">
-              <option value="">Tipo</option>
+              <option value="">Type</option>
             </select>
             <select class="select" id="sort">
-              <option value="id">Orden: ID</option>
-              <option value="priority">Prioridad</option>
+              <option value="id">Sort: ID</option>
+              <option value="priority">Priority</option>
               <option value="milestone">Milestone</option>
-              <option value="dependencies">Dependencias</option>
+              <option value="dependencies">Dependencies</option>
             </select>
           </section>
           <div class="filter-summary">
-            <span id="summary"></span><button class="button ghost" id="reset">Restablecer</button>
+            <span id="summary"></span><button class="button ghost" id="reset">Reset filters</button>
           </div>
           <section class="ticket-list" id="tickets"></section>
         </main>
         <aside class="side">
           <section class="panel side-section">
-            <h3>Milestones de evidencia</h3>
+            <h3>Evidence milestones</h3>
             <div id="milestones"></div>
           </section>
           <section class="panel side-section">
-            <h3>Decisiones que gobiernan v0.1</h3>
+            <h3>Decisions that govern v0.1</h3>
             <div class="decision">
-              <b>Un paquete publicable</b>
+              <b>One publishable package</b>
               <p>
-                Workspace pequeño; los backends salen por subpaths, no como monorepo de
-                micro-paquetes.
+                Keep the workspace small. Backends ship as subpaths, not as a micro-package
+                monorepo.
               </p>
             </div>
             <div class="decision">
-              <b>GlyphRun canónico</b>
-              <p>Layout, fallback y medición no pertenecen a Windfoil, SDF ni bitmap.</p>
+              <b>Canonical GlyphRun</b>
+              <p>Layout, fallback, and measurement do not belong to Windfoil, SDF, or bitmap.</p>
             </div>
             <div class="decision">
-              <b>Windfoil gated</b>
-              <p>HUD-011 decide producción, experimental o bloqueado según evidencia real.</p>
+              <b>Windfoil is gated</b>
+              <p>HUD-011 sets production, experimental, or blocked from measured evidence.</p>
             </div>
             <div class="decision">
-              <b>Pixel es una política distinta</b>
-              <p>Native size + nearest + integer layer; no se fuerza por el camino smooth.</p>
+              <b>Pixel is a separate policy</b>
+              <p>Native size, nearest filtering, and an integer layer. Do not force the smooth path.</p>
             </div>
             <div class="decision">
-              <b>Loop y renderer son del host</b>
-              <p>El HUD restaura estado y libera sólo recursos propios.</p>
+              <b>Loop and renderer belong to the host</b>
+              <p>The HUD restores state and releases only resources it owns.</p>
             </div>
             <div class="decision">
-              <b>Publicación probada desde tarball</b>
-              <p>SSR import, exports y consumer externo son gates, no tareas posteriores.</p>
+              <b>Publish from a proven tarball</b>
+              <p>SSR import, exports, and the external consumer are gates, not later chores.</p>
             </div>
           </section>
           <section class="panel side-section">
-            <h3>Cómo leer el backlog</h3>
+            <h3>How to read the backlog</h3>
             <p style="font-size: 11px; color: var(--muted); line-height: 1.6; margin: 0">
-              Los tickets son briefs ejecutables: outcome, scope, aceptación, comandos, evidencia,
-              riesgos y no-objetivos. GitHub toma el estado vivo después de la importación; los
-              archivos locales conservan el detalle técnico.
+              Tickets are executable briefs: outcome, scope, acceptance, commands, evidence,
+              risks, and non-goals. GitHub holds live state after import. Local files keep the
+              technical detail.
             </p>
           </section>
         </aside>
@@ -832,7 +832,7 @@
     <div class="drawer" id="drawer">
       <div class="scrim" data-close></div>
       <article class="drawer-card" id="drawer-card">
-        <button class="button drawer-close" data-close>Cerrar ×</button>
+        <button class="button drawer-close" data-close>Close</button>
         <div id="detail"></div>
       </article>
     </div>
@@ -4513,9 +4513,9 @@
           [tickets.length, "tickets"],
           [DATA.epics.length, "epics"],
           [DATA.milestones.length, "milestones"],
-          [acceptance, "criterios"],
+          [acceptance, "acceptance"],
           [DATA.adrs, "ADRs"],
-          [roots, "tickets raíz"],
+          [roots, "root tickets"],
         ];
         $("#stats").innerHTML = values
           .map(([v, l]) => `<div class="panel stat"><b>${v}</b><span>${l}</span></div>`)
@@ -4534,7 +4534,7 @@
         $("#milestones").innerHTML = DATA.milestones
           .map(
             (m) =>
-              `<div class="milestone"><div class="milestone-head"><span>${m.id} · ${escapeHtml(m.title)}</span><b>${m.count}</b></div><p>${escapeHtml(m.exit)}</p><div class="bar" title="Volumen relativo de tickets"><i style="--w:${Math.max(6, (m.count / max) * 100)}%"></i></div></div>`,
+              `<div class="milestone"><div class="milestone-head"><span>${m.id} · ${escapeHtml(m.title)}</span><b>${m.count}</b></div><p>${escapeHtml(m.exit)}</p><div class="bar" title="Relative ticket volume"><i style="--w:${Math.max(6, (m.count / max) * 100)}%"></i></div></div>`,
           )
           .join("");
       }
@@ -4563,15 +4563,15 @@
       function render() {
         const out = filtered();
         $("#summary").textContent =
-          `${out.length} de ${tickets.length} tickets · ${out.reduce((n, t) => n + t.acceptance_count, 0)} criterios visibles`;
+          `${out.length} of ${tickets.length} tickets · ${out.reduce((n, t) => n + t.acceptance_count, 0)} acceptance items visible`;
         $("#tickets").innerHTML = out.length
           ? out
               .map(
                 (t) =>
-                  `<article class="ticket" style="--hue:${epicHue(t.epic)}" data-ticket="${t.id}"><div class="ticket-id">${t.id}</div><div><div class="ticket-title">${escapeHtml(t.title)}</div><div class="ticket-meta"><span class="tag ${t.priority.toLowerCase()}">${t.priority}</span><span class="tag">${t.epic}</span><span class="tag">${t.milestone}</span><span class="tag">${escapeHtml(t.type)}</span><span class="tag">${t.size}</span>${!t.blocked_by.length ? '<span class="tag root">raíz</span>' : ""}</div></div><div class="ticket-count">${t.acceptance_count} AC<br>${t.blocked_by.length} deps</div></article>`,
+                  `<article class="ticket" style="--hue:${epicHue(t.epic)}" data-ticket="${t.id}"><div class="ticket-id">${t.id}</div><div><div class="ticket-title">${escapeHtml(t.title)}</div><div class="ticket-meta"><span class="tag ${t.priority.toLowerCase()}">${t.priority}</span><span class="tag">${t.epic}</span><span class="tag">${t.milestone}</span><span class="tag">${escapeHtml(t.type)}</span><span class="tag">${t.size}</span>${!t.blocked_by.length ? '<span class="tag root">root</span>' : ""}</div></div><div class="ticket-count">${t.acceptance_count} AC<br>${t.blocked_by.length} deps</div></article>`,
               )
               .join("")
-          : '<div class="empty">No hay tickets para este filtro.</div>';
+          : '<div class="empty">No tickets match this filter.</div>';
         syncControls();
       }
       function openTicket(id, push = true) {
@@ -4581,7 +4581,7 @@
         const next = dependents.get(id) || [];
         $("#drawer-card").style.setProperty("--hue", epicHue(t.epic));
         $("#detail").innerHTML =
-          `<div class="eyebrow">${t.id} · ${t.epic} · ${t.milestone}</div><h2>${escapeHtml(t.title)}</h2><div class="ticket-meta"><span class="tag ${t.priority.toLowerCase()}">${t.priority}</span><span class="tag">${t.type}</span><span class="tag">size ${t.size}</span><span class="tag">${t.status}</span></div><p class="outcome">${escapeHtml(t.outcome)}</p><div class="detail-grid"><div class="detail-box"><h4>Scope</h4>${list(t.scope)}</div><div class="detail-box"><h4>Acceptance</h4>${list(t.acceptance)}</div></div><section class="drawer-section"><h4>Verification</h4>${list(t.verification)}</section><section class="drawer-section"><h4>Evidence</h4>${list(t.evidence)}</section>${t.risks.length ? `<section class="drawer-section"><h4>Risks</h4>${list(t.risks)}</section>` : ""}<section class="drawer-section"><h4>Out of scope</h4>${list(t.out_of_scope)}</section><section class="drawer-section"><h4>Blocked by</h4><div class="deps">${dep.length ? dep.map((d) => depButton(d)).join("") : '<span class="pill">Sin dependencias</span>'}</div></section><section class="drawer-section"><h4>Unlocks</h4><div class="deps">${next.length ? next.map((d) => depButton(d)).join("") : '<span class="pill">No desbloquea tickets directos</span>'}</div></section><section class="drawer-section"><a class="button primary" href="${escapeAttr(t.path)}">Abrir brief Markdown ↗</a> <a class="button" href="${escapeAttr(t.issue_body_path)}">Abrir body GitHub ↗</a></section>`;
+          `<div class="eyebrow">${t.id} · ${t.epic} · ${t.milestone}</div><h2>${escapeHtml(t.title)}</h2><div class="ticket-meta"><span class="tag ${t.priority.toLowerCase()}">${t.priority}</span><span class="tag">${t.type}</span><span class="tag">size ${t.size}</span><span class="tag">${t.status}</span></div><p class="outcome">${escapeHtml(t.outcome)}</p><div class="detail-grid"><div class="detail-box"><h4>Scope</h4>${list(t.scope)}</div><div class="detail-box"><h4>Acceptance</h4>${list(t.acceptance)}</div></div><section class="drawer-section"><h4>Verification</h4>${list(t.verification)}</section><section class="drawer-section"><h4>Evidence</h4>${list(t.evidence)}</section>${t.risks.length ? `<section class="drawer-section"><h4>Risks</h4>${list(t.risks)}</section>` : ""}<section class="drawer-section"><h4>Out of scope</h4>${list(t.out_of_scope)}</section><section class="drawer-section"><h4>Blocked by</h4><div class="deps">${dep.length ? dep.map((d) => depButton(d)).join("") : '<span class="pill">No blockers</span>'}</div></section><section class="drawer-section"><h4>Unlocks</h4><div class="deps">${next.length ? next.map((d) => depButton(d)).join("") : '<span class="pill">No direct dependents</span>'}</div></section><section class="drawer-section"><a class="button primary" href="${escapeAttr(t.path)}">Open ticket brief ↗</a> <a class="button" href="${escapeAttr(t.issue_body_path)}">Open GitHub body ↗</a></section>`;
         $("#drawer").classList.add("open");
         document.body.style.overflow = "hidden";
         if (push) history.replaceState(null, "", `#${id}`);

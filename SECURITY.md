@@ -8,7 +8,7 @@ Before `v1`, only the latest published minor receives fixes. A release note can 
 
 ## Reporting
 
-Use a private GitHub security advisory for the configured repository. Do not open a public issue that contains exploit details or credentials.
+Use a private GitHub security advisory for this repository. Do not open a public issue that contains exploit details or credentials.
 
 ## Design expectations
 

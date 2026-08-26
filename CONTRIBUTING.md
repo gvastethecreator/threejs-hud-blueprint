@@ -10,7 +10,7 @@
 
 ## Pull requests
 
-A pull request covers one ticket or one documented slice. Include:
+A pull request covers one ticket or one documented slice. Include this information:
 
 - the ticket ID
 - the outcome

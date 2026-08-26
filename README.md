@@ -1,8 +1,8 @@
 # Three HUD
 
 **Working identifier:** `three-hud`  
-**Package name:** `@scope/three-hud`. If you publish, replace the `@scope` placeholder.  
-**Status:** v0.1 code exists in this workspace. Public publish is blocked. `releaseReady` is false.
+**Package name:** `@scope/three-hud`. Replace the `@scope` placeholder before you publish.  
+**Status:** v0.1 code exists in this workspace. Public npm publish is blocked. `releaseReady` is false.
 
 Three HUD is a retained-mode HUD library for vanilla Three.js. It draws game UI inside the Three.js canvas: text, bars, gauges, inventories, hotbars, crosshairs, panels, and icons.
 
@@ -16,12 +16,12 @@ v0.1 has three text paths:
 
 ## Start here
 
-1. Read `RESUMEN_EJECUTIVO_ES.md` for a Spanish summary.
-2. Read `docs/product/PRODUCT_SPEC.md` for product scope.
-3. Read `docs/api/GETTING_STARTED.md` to host a HUD overlay.
-4. Read `docs/api/KNOWN_LIMITATIONS.md` for v0.1 limits and rollback.
+1. Read [the executive summary](docs/product/EXECUTIVE_SUMMARY.md) for product intent.
+2. Read [the product spec](docs/product/PRODUCT_SPEC.md) for v0.1 scope.
+3. Read [getting started](docs/api/GETTING_STARTED.md) to host a HUD overlay.
+4. Read [known limitations](docs/api/KNOWN_LIMITATIONS.md) for v0.1 limits and rollback.
 5. Open `architecture-explorer.html` for the ticket and architecture dashboard.
-6. Run the playground with the command below.
+6. Run the playground with the commands below.
 
 ## Run the playground
 
@@ -34,13 +34,14 @@ Open `http://127.0.0.1:4174/`. Add `/?webgpu=1` for the WebGPU renderer path.
 
 Playground keys:
 
-- The maze walks a wireframe tour. Press `P` to pause it.
-- `W` `A` `S` `D` move. `Q` `E` turn. `Shift` sprint.
-- `1` through `6` hotbar slots.
-- `T` invert the monochrome HUD.
-- `F` switch `ui`/`pixel` font.
+- The maze walks a wireframe tour. Press `P` to pause or resume it.
+- Press `W` `A` `S` `D` to move. Press `Q` `E` to turn. Hold `Shift` to sprint.
+- Click the canvas to lock look. This also pauses the tour.
+- Press `1` through `6` to activate a hotbar slot.
+- Press `I` to invert the monochrome HUD. `T` is the torch hotbar mark, not invert.
+- Press `F` to switch the `ui` font and the `pixel` font.
 
-In VS Code, run **🚀 Dev** from the task list. Other common tasks: **📦 Build**, **✅ Test**, **⚡ Fast**.
+In VS Code, run **Dev** from the task list. Other common tasks: **Build**, **Test**, **Fast**.
 
 ## Shape
 

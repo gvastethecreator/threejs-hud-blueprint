@@ -2,18 +2,18 @@
 
 ## Product statement
 
-Three HUD is a retained-mode library for building game HUDs and compact interfaces entirely inside a Three.js canvas. It gives vanilla Three.js applications a logical screen-coordinate system, independent HUD layers, scalable and pixel-perfect typography, layout primitives, pointer interaction, themes, and common game widgets without recreating the browser DOM/CSS model.
+Three HUD is a retained-mode library for game HUDs and compact interfaces inside a Three.js canvas. Vanilla Three.js apps get logical screen coordinates, independent HUD layers, and scalable or pixel-perfect text. They also get layout primitives, pointer input, themes, and common game widgets. The library does not recreate the browser DOM or CSS model.
 
 ## Problem
 
-Three.js applications frequently solve HUDs through one of four compromises:
+Three.js apps often solve HUDs with one of four compromises:
 
-1. HTML/CSS overlays that are disconnected from the render canvas and its scaling/capture pipeline.
-2. bespoke sprites and meshes with no reusable layout, input, theme, or typography contract;
-3. general UI frameworks that are larger or more CSS-like than a game HUD needs;
-4. one text technology chosen globally, forcing smooth vector-like labels and pixel fonts through the same incompatible scaling policy.
+1. HTML/CSS overlays that sit apart from the render canvas and its scale or capture path.
+2. One-off sprites and meshes with no reusable layout, input, theme, or typography contract.
+3. General UI frameworks that are larger, or more CSS-like, than a game HUD needs.
+4. One global text technology, so smooth labels and pixel fonts share an incompatible scale policy.
 
-The product exists to make the canvas-native route coherent and reusable while staying much smaller than a browser UI engine.
+The product makes the canvas-native path coherent and reusable. It stays much smaller than a browser UI engine.
 
 ## Primary users
 
