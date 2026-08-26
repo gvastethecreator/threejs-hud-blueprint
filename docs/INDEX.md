@@ -59,6 +59,12 @@
 - `quality/EVIDENCE_MODEL.md`
 - `quality/VALIDATION.md` — current validation note. Not a release claim.
 
+## Agent contracts
+
+- `agents/issue-tracker.md` — GitHub Project 15 plus `.scratch/three-hud/` mirrors.
+- `agents/triage-labels.md` — category and triage label map.
+- `agents/domain.md` — which domain docs to read, and which stay local.
+
 ## Operations
 
 - `operations/GITHUB_PROJECT.md`

@@ -123,4 +123,4 @@ This repository does not bundle third-party font binaries. The host supplies fon
 - 73 tickets
 - 16 architecture decisions
 
-Ticket briefs live in `planning/tickets/`. Live status belongs in GitHub when that tracker is connected.
+Ticket briefs live in `planning/tickets/`. Live status belongs in GitHub Issues and [Project 15](https://github.com/users/gvastethecreator/projects/15).

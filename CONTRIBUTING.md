@@ -2,8 +2,8 @@
 
 ## Before you start
 
-1. Read `AGENTS.md`.
-2. Read the active `HUD-###` ticket.
+1. Read `AGENTS.md` and `docs/agents/issue-tracker.md`.
+2. Read the active `HUD-###` ticket under `planning/tickets/`.
 3. Make sure that blockers and out-of-scope items are clear.
 4. Use the public contracts and the module direction in `docs/architecture/`.
 5. If you change a durable architectural decision, open an ADR first.

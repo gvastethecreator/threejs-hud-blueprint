@@ -372,9 +372,19 @@
       "description": "Execution priority"
     },
     {
+      "name": "priority:P2",
+      "color": "fbca04",
+      "description": "Execution priority"
+    },
+    {
       "name": "risk:high",
       "color": "ededed",
       "description": "Project label"
+    },
+    {
+      "name": "size:XS",
+      "color": "c5def5",
+      "description": "Estimated implementation size"
     },
     {
       "name": "size:L",
@@ -450,6 +460,21 @@
       "name": "type:task",
       "color": "bfd4f2",
       "description": "Ticket work type"
+    },
+    {
+      "name": "needs-info",
+      "color": "fbca04",
+      "description": "Waiting for missing information"
+    },
+    {
+      "name": "spec",
+      "color": "5319e7",
+      "description": "Parent specification for executable tickets"
+    },
+    {
+      "name": "wayfinder:map",
+      "color": "5319e7",
+      "description": "Decision map for a large effort"
     }
   ]
 }

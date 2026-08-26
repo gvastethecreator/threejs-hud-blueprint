@@ -104,3 +104,17 @@ Prefer focused tests during iteration. A broad change is not complete without fr
 - Do not weaken budgets or visual thresholds without a linked decision and measured reason.
 - Do not print credentials, full private text content, or machine-specific secrets into evidence.
 - Do not publish or create remote GitHub resources unless the user explicitly requests the write.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues and GitHub Project 15 hold live state. `.scratch/three-hud/` holds synchronized local mirrors. Seed briefs stay in `planning/tickets/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Category: `bug` or `enhancement`. Triage: `status:needs-triage`, `needs-info`, `status:ready`, `status:needs-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md`, `docs/adrs/`, and `docs/architecture/`. See `docs/agents/domain.md`.
