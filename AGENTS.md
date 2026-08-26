@@ -11,14 +11,14 @@ Before broad work, read:
 3. `docs/architecture/ARCHITECTURE.md`
 4. `docs/architecture/MODULE_CONTRACTS.md`
 5. the relevant ADRs
-6. the active ticket brief under `planning/tickets/`
+6. the GitHub issue for the work, if one exists
 
 Before text work, also read:
 
 - `docs/architecture/TEXT_SYSTEM.md`
 - the selected backend spec
 - `docs/operations/FONT_AND_LICENSE_POLICY.md`
-- `docs/research/WINDFOIL_RESEARCH.md`
+- `docs/architecture/WINDFOIL_BACKEND.md`
 
 Before render or viewport work, also read:
 
@@ -37,17 +37,16 @@ Before release work, also read:
 - Requirements and ticket traceability: `docs/product/REQUIREMENTS.md`.
 - System shape: `docs/architecture/`.
 - Durable decisions: `docs/adrs/`.
-- Construction program: `planning/`.
 - GitHub Issues/Project: live status, dependencies, assignment, comments, and closure.
 - Local `.scratch/three-hud/`: synchronized expanded evidence and handoff notes.
 - Public TypeScript declarations: implemented API truth once code exists.
 - Compatibility and performance claims: generated evidence only.
 
-Do not turn `CONTEXT.md`, `ROADMAP.md`, or `planning/BACKLOG.md` into append-only implementation diaries.
+Do not turn `CONTEXT.md` or `ROADMAP.md` into append-only implementation diaries.
 
 ## Hard boundaries
 
-- Package code must never import playground, fixture, e2e, docs, planning, or `.scratch` code.
+- Package code must never import playground, fixture, e2e, docs, or `.scratch` code.
 - The playground consumes declared package exports only; no deep source imports.
 - Widgets may depend on primitives, layout, themes, input contracts, and canonical text contracts; they may not import Windfoil, SDF, or bitmap implementation modules.
 - Text backends may not import widgets or input.
@@ -91,7 +90,6 @@ pnpm run validate:fast
 pnpm run validate:full
 pnpm run validate:release
 pnpm run architecture:verify
-pnpm run tickets:validate
 pnpm run docs:check
 ```
 
@@ -104,3 +102,17 @@ Prefer focused tests during iteration. A broad change is not complete without fr
 - Do not weaken budgets or visual thresholds without a linked decision and measured reason.
 - Do not print credentials, full private text content, or machine-specific secrets into evidence.
 - Do not publish or create remote GitHub resources unless the user explicitly requests the write.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues and GitHub Project 15 hold live state. `.scratch/three-hud/` holds synchronized local mirrors. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Category: `bug` or `enhancement`. Triage: `status:needs-triage`, `needs-info`, `status:ready`, `status:needs-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md`, `docs/adrs/`, and `docs/architecture/`. See `docs/agents/domain.md`.

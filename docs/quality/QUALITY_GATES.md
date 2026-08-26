@@ -5,7 +5,6 @@
 | Gate                    | Command                        | Authority                                 |
 | ----------------------- | ------------------------------ | ----------------------------------------- |
 | Workspace shape         | `pnpm run workspace:check`     | required roots and package metadata       |
-| Ticket integrity        | `pnpm run tickets:validate`    | ticket IDs, fields, dependencies, DAG     |
 | Documentation links     | `pnpm run docs:check`          | local relative links and referenced files |
 | Architecture boundaries | `pnpm run architecture:verify` | forbidden imports and module direction    |
 | Type contracts          | `pnpm run typecheck`           | TS project references and declarations    |
@@ -22,7 +21,7 @@
 
 ## Gate implementation state
 
-Workspace, ticket, docs, architecture, type, unit, build, package, visual, performance, and memory commands exist as named scripts. `validate:release` still fails while `release-status.json` has `releaseReady: false`. Do not treat a local ticket closeout as a published registry release.
+Workspace, docs, architecture, type, unit, build, package, visual, performance, and memory commands exist as named scripts. `validate:release` still fails while `release-status.json` has `releaseReady: false`. Do not treat a local closeout as a published registry release.
 
 ## Closeout evidence schema
 

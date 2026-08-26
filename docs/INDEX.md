@@ -9,6 +9,7 @@
 
 ## Product
 
+- `product/EXECUTIVE_SUMMARY.md` — short product intent, v0.1 in/out, current status.
 - `product/PRODUCT_SPEC.md` — problem, audience, scope, non-goals, release definition.
 - `product/REQUIREMENTS.md` — versioned functional/non-functional requirements and ticket traceability.
 - `product/USER_STORIES.md` — primary jobs and acceptance narratives.
@@ -32,20 +33,10 @@
 - `architecture/RESOURCE_LIFECYCLE.md` — ownership, cancellation, failure, disposal.
 - `architecture/ERRORS_AND_DIAGNOSTICS.md` — public errors and observable evidence.
 - `architecture/PACKAGE_AND_EXPORTS.md` — workspace, package, subpaths, consumer fixture.
-- `architecture/CODEMAP.md` — original target tree. Live source is `packages/three-hud/src`.
 
 ## Decisions
 
 `adrs/` contains bounded architecture decisions. Proposed decisions become accepted only through their named gate.
-
-## Research
-
-- `research/REFERENCE_PROJECT_AUDIT.md` — patterns extracted from the author's other repositories.
-- `research/WINDFOIL_RESEARCH.md` — upstream facts, integration questions, and spike evidence plan.
-- `research/TEXT_BACKEND_COMPARISON.md` — analytic, SDF, and bitmap trade-offs.
-- `research/SOURCES.md` — external source inventory.
-- `research/THREEJS_R185_RENDERER_CAPABILITY_PROBE.md` — Three.js 0.185 backend detection facts for HUD-006.
-- `research/WINDFOIL_PREPROCESS_PROVENANCE.md` — HUD-008 preprocess provenance and cubic policy.
 
 ## Quality
 
@@ -59,17 +50,17 @@
 - `quality/EVIDENCE_MODEL.md`
 - `quality/VALIDATION.md` — current validation note. Not a release claim.
 
+## Agent contracts
+
+- `agents/issue-tracker.md` — GitHub Project 15 plus `.scratch/three-hud/` mirrors.
+- `agents/triage-labels.md` — category and triage label map.
+- `agents/domain.md` — which domain docs to read, and which stay local.
+
 ## Operations
 
-- `operations/GITHUB_PROJECT.md`
 - `operations/FONT_AND_LICENSE_POLICY.md`
 - `operations/DEPENDENCY_POLICY.md`
 - `operations/RELEASE_PROCESS.md`
 - `operations/MAINTENANCE.md`
 
-## Planning
 
-- `../planning/BACKLOG.md`
-- `../planning/EPICS.md`
-- `../planning/MILESTONES.md`
-- `../planning/tickets/`

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { walkFiles, toPosix } from "./lib/tickets.mjs";
+import { walkFiles, toPosix } from "./lib/walk-files.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ignoredDocRoots = [

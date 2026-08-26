@@ -31,7 +31,5 @@ ehthumbs.db
 /maze-quality*.png
 /playground-*.png
 /scratch-playground-*.png
-evidence/tickets/
-evidence/performance/raw/
-evidence/visual/current/
+evidence/
 release/

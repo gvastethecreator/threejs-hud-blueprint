@@ -6,23 +6,9 @@ A claim is releasable only when it is derived from an executable scenario with a
 
 ## Directory model
 
-```text
-evidence/
-├─ manifests/
-│  ├─ latest.json
-│  └─ releases/<version>.json
-├─ tickets/HUD-###/
-│  ├─ closeout.json
-│  ├─ commands/
-│  ├─ screenshots/
-│  └─ reports/
-├─ compatibility/
-├─ performance/
-├─ visual/
-└─ package/
-```
+`evidence/` is local and CI-only. It is gitignored.
 
-Generated evidence is normally CI artifact output and need not all be committed. Small manifests, accepted baselines, and release summaries may be committed according to the repository policy.
+Generated evidence is CI artifact output. Visual baselines that the package needs stay under `fixtures/visual/`.
 
 ## Claim states
 

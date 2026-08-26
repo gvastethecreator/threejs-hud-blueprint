@@ -2,7 +2,7 @@
   "name": "three-hud-workspace",
   "version": "0.0.0",
   "private": true,
-  "description": "Architecture, execution blueprint, and implementation workspace for a canvas-native Three.js HUD library.",
+  "description": "Canvas-native retained HUD library for vanilla Three.js.",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -26,10 +26,6 @@
     "workspace:check": "node scripts/workspace-check.mjs",
     "architecture:verify": "node scripts/check-boundaries.mjs",
     "api:check": "node scripts/api-check.mjs",
-    "tickets:validate": "node scripts/validate-tickets.mjs",
-    "tickets:index": "node scripts/generate-ticket-index.mjs",
-    "tickets:index:check": "node scripts/generate-ticket-index.mjs --check",
-    "tickets:github:dry": "node scripts/create-github-issues.mjs",
     "docs:check": "node scripts/check-doc-links.mjs",
     "package:inspect": "pnpm --filter @scope/three-hud pack --dry-run",
     "package:verify": "node scripts/package-verify.mjs",
@@ -71,11 +67,10 @@
     "release:verify-registry": "node scripts/release-verify-registry.mjs",
     "licenses:fonts": "tsx scripts/licenses-fonts.ts",
     "licenses:verify": "node scripts/licenses-verify.mjs",
-    "validate:structure": "pnpm run workspace:check && pnpm run tickets:validate && pnpm run tickets:index:check && pnpm run architecture:verify && pnpm run docs:check",
+    "validate:structure": "pnpm run workspace:check && pnpm run architecture:verify && pnpm run docs:check",
     "validate:fast": "pnpm run validate:structure && pnpm run typecheck && pnpm run test:unit",
     "validate:full": "pnpm run validate:fast && pnpm run lint && pnpm run fmt:check && pnpm run build && pnpm run test:ssr-import",
-    "validate:release": "pnpm run validate:full && pnpm run test:e2e && pnpm run visual:verify && pnpm run perf:verify && pnpm run memory:verify && pnpm run package:verify && pnpm run test:consumer && pnpm run licenses:verify && node scripts/assert-release-ready.mjs",
-    "github:metadata:dry": "node scripts/bootstrap-github-metadata.mjs"
+    "validate:release": "pnpm run validate:full && pnpm run test:e2e && pnpm run visual:verify && pnpm run perf:verify && pnpm run memory:verify && pnpm run package:verify && pnpm run test:consumer && pnpm run licenses:verify && node scripts/assert-release-ready.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.62.1",

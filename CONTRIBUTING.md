@@ -2,15 +2,15 @@
 
 ## Before you start
 
-1. Read `AGENTS.md`.
-2. Read the active `HUD-###` ticket.
+1. Read `AGENTS.md` and `docs/agents/issue-tracker.md`.
+2. Read the GitHub issue for the change. If there is none, read `docs/product/PRODUCT_SPEC.md`.
 3. Make sure that blockers and out-of-scope items are clear.
 4. Use the public contracts and the module direction in `docs/architecture/`.
 5. If you change a durable architectural decision, open an ADR first.
 
 ## Pull requests
 
-A pull request covers one ticket or one documented slice. Include:
+A pull request covers one ticket or one documented slice. Include this information:
 
 - the ticket ID
 - the outcome

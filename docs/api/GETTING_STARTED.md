@@ -69,11 +69,12 @@ Then open `http://127.0.0.1:4174/`. Add `/?webgpu=1` for the WebGPU renderer pat
 Playground keys:
 
 - The maze walks a wireframe tour until you take over.
-- `P` pause or resume the tour.
-- `W` `A` `S` `D` move. `Q` `E` turn. `Shift` sprint.
-- `1` through `6` hotbar slots.
-- `T` invert the monochrome HUD (black paper or white paper).
-- `F` switch `ui`/`pixel` font.
+- Press `P` to pause or resume the tour.
+- Press `W` `A` `S` `D` to move. Press `Q` `E` to turn. Hold `Shift` to sprint.
+- Click the canvas to lock look. This also pauses the tour.
+- Press `1` through `6` to activate a hotbar slot.
+- Press `I` to invert the monochrome HUD. `T` is the torch hotbar mark, not invert.
+- Press `F` to switch the `ui` font and the `pixel` font.
 
 Start a black-and-white HUD with `createMonochromeTheme()`:
 

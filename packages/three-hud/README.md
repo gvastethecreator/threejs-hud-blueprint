@@ -2,7 +2,7 @@
 
 Canvas-native retained HUD for Three.js 0.185.
 
-The host owns the renderer, the animation loop, the game state, and the canvas size. The HUD draws after the game scene and then restores renderer state.
+The host owns the renderer, the animation loop, the game state, and the canvas size. The HUD draws after the game scene, then restores renderer state.
 
 ```ts
 import { HUD, LinearBar, createHudOverlayAdapter } from "@scope/three-hud";

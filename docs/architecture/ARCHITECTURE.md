@@ -2,7 +2,7 @@
 
 ## 1. Architectural objective
 
-Three HUD must feel like a small game-HUD toolkit, not a browser embedded in Three.js. Its architecture therefore separates:
+Three HUD must feel like a small game-HUD toolkit, not a browser embedded in Three.js. The architecture separates:
 
 - **authored semantics** — nodes, layout, text, widgets, themes, interaction;
 - **canonical render intent** — draw commands, glyph runs, clips, batches;
@@ -51,8 +51,7 @@ fixtures/external-consumer installs the freshly packed tarball
 e2e                        browser integration and visual tests
 benchmarks                 deterministic performance scenarios
 docs                       product/architecture/quality truth
-planning                   ticket briefs and generated indexes
-scripts                    boundaries, docs, package, ticket, evidence gates
+scripts                    boundaries, docs, package, and evidence gates
 ```
 
 The workspace exists to test package boundaries; it is not an excuse to publish many packages prematurely.
