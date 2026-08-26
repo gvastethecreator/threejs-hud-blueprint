@@ -285,12 +285,14 @@ export {
 } from "./text/textBackendConformance.js";
 export {
   FontRegistry,
+  defaultHudFonts,
   defaultFontLoad,
   type FontHandle,
   type FontHandleState,
   type FontLifecycleEvent,
   type FontLoadFn,
   type FontRegistryOptions,
+  type HudTextBackendId,
   type ParsedFontFace,
 } from "./text/fontRegistry.js";
 export {

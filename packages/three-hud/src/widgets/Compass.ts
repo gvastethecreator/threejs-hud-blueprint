@@ -107,6 +107,22 @@ export class Compass extends HudNode {
     this.markDirty(DirtyFlag.Transform | DirtyFlag.Style);
   }
 
+  override setSize(
+    width: number,
+    height: number,
+    dirty: DirtyFlag = DirtyFlag.Layout | DirtyFlag.Geometry,
+  ): void {
+    super.setSize(width, height, dirty);
+    const size = Math.min(width, height);
+    this.bezel.outerRadius = size / 2 - 1;
+    this.bezel.innerRadius = size / 2 - 3;
+    this.rose.outerRadius = Math.max(6, size / 2 - 8);
+    this.rose.innerRadius = Math.max(4, size / 2 - 10);
+    this.bezel.setSize(size, size);
+    this.rose.setSize(size, size);
+    this.sync();
+  }
+
   setColor(ink: number, muted = 0x888888): void {
     this.bezel.fill = ink;
     this.rose.fill = muted;

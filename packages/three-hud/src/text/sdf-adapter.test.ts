@@ -28,7 +28,8 @@ describe("sdf-adapter", () => {
     expect(prepared.glyphCount).toBe(4);
     expect(prepared.atlasWidth).toBeGreaterThan(0);
     expect(prepared.atlasHeight).toBeGreaterThan(0);
-    expect(prepared.sdf).toBe(true);
+    expect(prepared.sdf).toBe(false);
+    expect(again.capabilities.scalableCoverage).toBe(false);
     expect(prepared.atlas.length).toBeGreaterThan(0);
     expect(prepared.glyphs).toHaveLength(4);
     expect(prepared.glyphs[0]?.u1).toBeGreaterThan(prepared.glyphs[0]?.u0 ?? 1);
@@ -37,8 +38,10 @@ describe("sdf-adapter", () => {
     again.dispose();
   });
 
-  it("stores a signed-distance field a consumer can tell from the 5x7 bitmap atlas", () => {
+  it("does not advertise scalable SDF coverage for the ASCII atlas", () => {
     const backend = createSdfTextBackend();
+    expect(backend.capabilities.scalableCoverage).toBe(false);
+    expect(backend.capabilities.pixelPerfect).toBe(false);
     const run = createGlyphRun({
       fontId: "ui",
       text: "A",
@@ -48,16 +51,11 @@ describe("sdf-adapter", () => {
     });
     const prepared = backend.prepare(run);
     const binary = rasterAsciiAtlas(false);
+    expect(prepared.sdf).toBe(false);
+    expect(prepared.atlas).toEqual(binary);
     expect(prepared.atlas.length).toBe(binary.length);
     const onIndex = (17 * ASCII_ATLAS_WIDTH + 10) * 4 + 3;
-    const farIndex = 3;
-    expect(binary[onIndex]).toBe(255);
-    expect(binary[farIndex]).toBe(0);
-    const on = prepared.atlas[onIndex] ?? 0;
-    const far = prepared.atlas[farIndex] ?? 0;
-    expect(on).toBeGreaterThan(128);
-    expect(on).toBeLessThan(255);
-    expect(far).toBeLessThan(128);
+    expect(prepared.atlas[onIndex]).toBe(255);
     backend.disposePrepared(prepared);
     backend.dispose();
   });

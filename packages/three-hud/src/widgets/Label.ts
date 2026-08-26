@@ -1,6 +1,11 @@
 import { HudNode, type HudNodeOptions } from "../core/HudNode.js";
 import { DirtyFlag } from "../core/DirtyFlags.js";
-import { createHudTypeFace, layoutText, type LayoutTextResult } from "../text/layoutText.js";
+import {
+  defaultHudFonts,
+  type FontRegistry,
+  type HudTextBackendId,
+} from "../text/fontRegistry.js";
+import { layoutText, type LayoutTextResult } from "../text/layoutText.js";
 
 export type LabelOptions = HudNodeOptions &
   Readonly<{
@@ -8,12 +13,15 @@ export type LabelOptions = HudNodeOptions &
     fontId?: string;
     color?: number;
     fontSize?: number;
+    fonts?: FontRegistry;
   }>;
 
 export class Label extends HudNode {
   readonly primitive = "text" as const;
+  readonly fonts: FontRegistry;
   text: string;
   fontId: string;
+  backendId: HudTextBackendId;
   color: number;
   layout: LayoutTextResult;
 
@@ -25,14 +33,16 @@ export class Label extends HudNode {
       fill: 0x000000,
     });
     this.opacity = options.opacity ?? 1;
+    this.fonts = options.fonts ?? defaultHudFonts;
     this.text = options.text ?? "";
     this.fontId = options.fontId ?? "ui";
+    this.backendId = this.fonts.textBackendId(this.fontId);
     this.color = options.color ?? 0xe8f6ff;
     if (options.fontSize !== undefined) this.fontSize = options.fontSize;
     this.layout = layoutText(
       this.text,
-      { font: this.fontId, size: this.fontSize },
-      createHudTypeFace(this.fontId),
+      { font: this.fontId, size: this.fontSize, backend: this.backendId },
+      this.fonts.layoutFace(this.fontId),
     );
     this.remeasure();
   }
@@ -48,6 +58,7 @@ export class Label extends HudNode {
       return;
     }
     this.fontId = fontId;
+    this.backendId = this.fonts.textBackendId(fontId);
     this.remeasure();
     this.markDirty(DirtyFlag.Text | DirtyFlag.Layout | DirtyFlag.Geometry);
   }
@@ -65,8 +76,8 @@ export class Label extends HudNode {
   remeasure(): void {
     this.layout = layoutText(
       this.text,
-      { font: this.fontId, size: this.fontSize },
-      createHudTypeFace(this.fontId),
+      { font: this.fontId, size: this.fontSize, backend: this.backendId },
+      this.fonts.layoutFace(this.fontId),
     );
     this.setSize(
       this.layout.width,

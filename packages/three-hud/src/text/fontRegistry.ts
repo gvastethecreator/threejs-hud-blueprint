@@ -8,6 +8,9 @@ import {
   type FontMetadata,
   type FontRegistration,
 } from "./contracts.js";
+import { createHudTypeFace, type LayoutFontFace } from "./layoutText.js";
+
+export type HudTextBackendId = "bitmap" | "sdf";
 
 export type FontHandleState = "loading" | "ready" | "failed" | "disposed";
 
@@ -70,6 +73,14 @@ export class FontRegistry {
   constructor(options: FontRegistryOptions = {}) {
     this.load = options.load ?? defaultFontLoad;
     this.onDiagnostic = options.onDiagnostic;
+  }
+
+  layoutFace(fontId: string): LayoutFontFace {
+    return createHudTypeFace(fontId);
+  }
+
+  textBackendId(fontId: string): HudTextBackendId {
+    return fontId === "pixel" ? "bitmap" : "sdf";
   }
 
   events(): readonly FontLifecycleEvent[] {
@@ -252,6 +263,8 @@ export class FontRegistry {
     if (this.disposed) throw new HudError("RESOURCE_DISPOSED", "FontRegistry is disposed.");
   }
 }
+
+export const defaultHudFonts = new FontRegistry();
 
 export async function defaultFontLoad(
   registration: FontRegistration,

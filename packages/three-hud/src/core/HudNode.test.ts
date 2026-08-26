@@ -51,6 +51,26 @@ describe("HudNode", () => {
     expect(child.worldBounds()).toEqual({ x: 105, y: 27, width: 40, height: 10 });
   });
 
+  it("composes ancestor scale and rotation into world bounds", () => {
+    const root = new HudNode({ id: "root", width: 50, height: 50 });
+    const child = root.add(new HudNode({ id: "child", width: 10, height: 10 }));
+    root.setPosition(100, 20);
+    root.scaleX = 2;
+    root.scaleY = 2;
+    child.setPosition(5, 7);
+    expect(child.worldBounds()).toEqual({ x: 110, y: 34, width: 20, height: 20 });
+
+    const spun = new HudNode({ id: "spun", width: 20, height: 20 });
+    const tip = spun.add(new HudNode({ id: "tip", width: 4, height: 4 }));
+    tip.setPosition(10, 0);
+    spun.rotation = Math.PI / 2;
+    const bounds = tip.worldBounds();
+    expect(bounds.x).toBeCloseTo(-4);
+    expect(bounds.y).toBeCloseTo(10);
+    expect(bounds.width).toBeCloseTo(4);
+    expect(bounds.height).toBeCloseTo(4);
+  });
+
   it("disposes descendants idempotently", () => {
     const root = new HudNode();
     const child = root.add(new HudNode());

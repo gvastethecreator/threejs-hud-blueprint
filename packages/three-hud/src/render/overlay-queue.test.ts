@@ -178,7 +178,7 @@ describe("overlay-queue", () => {
     });
     expect(prepared.atlasWidth).toBeGreaterThan(0);
     expect(prepared.glyphs[0]?.u1).toBeGreaterThan(prepared.glyphs[0]?.u0 ?? 1);
-    expect(prepared.sdf).toBe(true);
+    expect(prepared.sdf).toBe(false);
     backend.dispose();
   });
 });

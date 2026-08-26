@@ -19,11 +19,14 @@ Open `http://127.0.0.1:4174/?webgpu=1` for the WebGPU renderer path.
 - Press `W` `A` `S` `D` to take over move. Press `Q` `E` to turn. Hold `Shift` to sprint.
 - Click the canvas to lock look. This also pauses the tour.
 - Press `1` through `6` to activate a hotbar slot.
-- Press `T` to invert the monochrome HUD (black paper or white paper).
+- Press `I` to invert the monochrome HUD (black paper or white paper). Key `T` is the torch hotbar mark, not invert.
 - Press `F` to switch the `ui` (SDF) font and the `pixel` (nearest 5×7) font.
+- Click the canvas to lock look. Hint and status both name this before lock.
 
 Use `MONOCHROME_THEME` from `@scope/three-hud` as the starter HUD skin.
 
+`/?webgpu=1` uses WebGPURenderer. The HUD overlay reports `overlay-limited` and does not submit `ShaderMaterial` (Windfoil spike and custom overlay shaders stay off).
+
 ## Note
 
-Dev Vite maps the public package name to `packages/three-hud/src`. That alias is for local labs. Packed-consumer proof is `fixtures/external-consumer`, not this alias.
+Dev Vite maps the public package name `@scope/three-hud` to `packages/three-hud/src`. That alias is **lab-only**. Packed-consumer proof is `fixtures/external-consumer`, not this alias.

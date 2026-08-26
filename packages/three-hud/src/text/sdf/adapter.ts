@@ -23,7 +23,7 @@ export type PreparedSdfText = Readonly<{
   clip: boolean;
   atlasWidth: number;
   atlasHeight: number;
-  sdf: true;
+  sdf: boolean;
   atlas: Uint8Array;
   glyphs: readonly PreparedSdfGlyph[];
 }>;
@@ -43,7 +43,7 @@ type MutablePrepared = {
   clip: boolean;
   atlasWidth: number;
   atlasHeight: number;
-  sdf: true;
+  sdf: boolean;
   atlas: Uint8Array;
   glyphs: PreparedSdfGlyph[];
 };
@@ -64,7 +64,7 @@ export class SdfTextBackend implements TextBackend {
     this.capabilities = Object.freeze({
       id: this.id,
       rendererKinds,
-      scalableCoverage: true,
+      scalableCoverage: false,
       pixelPerfect: false,
       dynamicGlyphs: true,
       colorGlyphs: false,
@@ -91,9 +91,9 @@ export class SdfTextBackend implements TextBackend {
       clip: false,
       atlasWidth: ASCII_ATLAS_WIDTH,
       atlasHeight: ASCII_ATLAS_HEIGHT,
-      sdf: true,
+      sdf: false,
       glyphs,
-      atlas: rasterAsciiAtlas(true),
+      atlas: rasterAsciiAtlas(false),
     };
     this.nextId += 1;
     this.prepared.set(record.id, record);

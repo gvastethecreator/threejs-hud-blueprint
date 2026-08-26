@@ -10,12 +10,15 @@ describe("label", () => {
     expect(width).toBeGreaterThan(0);
     expect(label.primitive).toBe("text");
     expect(label.fontId).toBe("ui");
+    expect(label.backendId).toBe("sdf");
+    expect(label.fonts.layoutFace("ui").id).toBe("ui");
+    expect(label.layout.run.fontId).toBe("ui");
     label.setText("HEALTH");
     expect(label.size.width).toBeGreaterThan(width);
     label.setFontId("pixel");
     expect(label.fontId).toBe("pixel");
+    expect(label.backendId).toBe("bitmap");
     expect(label.text).toBe("HEALTH");
-    expect("backend" in label).toBe(false);
   });
 
   it("encodes glyphs through the shared overlay queue without a widget renderer", () => {

@@ -83,6 +83,11 @@ export function createOverlayShaderMaterial(textured = false): ShaderMaterial {
       void main() {
         float alpha = 1.0;
         vec4 sampleColor = vec4(1.0);
+        if (vShape < 4.5) {
+          if (vUv.x < vUvRect.x || vUv.y < vUvRect.y || vUv.x > vUvRect.z || vUv.y > vUvRect.w) {
+            discard;
+          }
+        }
         if (vShape > 0.5 && vShape < 1.5) {
           alpha = rounded(vUv, max(0.02, vParams.x));
         } else if (vShape > 2.5 && vShape < 3.5) {

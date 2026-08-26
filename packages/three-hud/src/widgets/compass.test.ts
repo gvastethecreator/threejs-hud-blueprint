@@ -14,6 +14,9 @@ describe("compass", () => {
     compass.setColor(0xffffff, 0x666666);
     expect(compass.bezel.fill).toBe(0xffffff);
     expect(compass.rose.fill).toBe(0x666666);
+    compass.setSize(80, 80);
+    expect(compass.size.width).toBe(80);
+    expect(compass.bezel.outerRadius).toBe(39);
     compass.dispose();
   });
 

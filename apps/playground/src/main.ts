@@ -124,7 +124,7 @@ const title = new Label({
 });
 const lookHint = new Label({
   id: "look-hint",
-  text: "AUTO  WASD  P  T",
+  text: "CLICK LOOK  WASD  P  I  F  1-6",
   fontSize: 14,
   fontId: "pixel",
   color: ink,
@@ -372,7 +372,7 @@ let invertHud = false;
 let fontName: "ui" | "pixel" = "pixel";
 let compassOn = true;
 let mapOn = true;
-let inventoryOn = false;
+let inventoryOn = true;
 let viewYaw = player.yaw;
 let viewPitch = player.pitch;
 const showcaseLabels = [
@@ -432,12 +432,6 @@ function placeHotMarks(): void {
 
 function sizeCompass(size: number): void {
   compass.setSize(size, size);
-  compass.bezel.outerRadius = size / 2 - 1;
-  compass.bezel.innerRadius = size / 2 - 3;
-  compass.rose.outerRadius = Math.max(6, size / 2 - 8);
-  compass.rose.innerRadius = Math.max(4, size / 2 - 10);
-  compass.bezel.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
-  compass.rose.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
   compass.syncMarks();
 }
 
@@ -542,7 +536,7 @@ function layoutHud(): void {
   inventory.visible = showInv;
   lookHint.visible = !compact && !short;
   trayHelp.visible = false;
-  logPanel.visible = false;
+  logPanel.visible = !compact && !short;
   logTitle.visible = !compact && !short;
   trayTitle.visible = !tiny && !short;
   trayHead.visible = !tiny && !short;
@@ -670,16 +664,20 @@ function layoutHud(): void {
     line.setPosition(logX, logLineY);
     logLineY += Math.max(12, line.size.height) + 2;
   }
+  logPanel.setSize(248, Math.max(86, logLineY - logY + 16));
+  logPanel.background.setSize(logPanel.size.width, logPanel.size.height);
+  logPanel.setPosition(logX, logY);
 
+  const compassX = Math.round(Math.max(pad, Math.min(right - compassSize, width - pad - compassSize)));
   if (compact) {
     const underMap = mapOn ? panel.position.y + panel.size.height + 12 : top;
-    compass.setPosition(Math.round(right - compassSize), Math.round(underMap));
+    compass.setPosition(compassX, Math.round(underMap));
     compass.visible =
       compassOn && compass.position.y + compassSize <= health.position.y - 8;
   } else {
     const y = Math.min(hotbar.position.y + hotH - compassSize, height - pad - compassSize);
     compass.setPosition(
-      Math.round(right - compassSize),
+      compassX,
       Math.round(Math.max(mapOn ? panel.position.y + panel.size.height + 12 : top, y)),
     );
     compass.visible = compassOn;
@@ -693,6 +691,10 @@ function layoutHud(): void {
   if (compass.visible && compass.position.y + compassSize > height - pad) {
     compass.setPosition(compass.position.x, Math.round(height - pad - compassSize));
   }
+  if (compass.visible && compass.position.x + compassSize > width - pad) {
+    compass.setPosition(Math.round(width - pad - compassSize), compass.position.y);
+  }
+  if (compass.visible && compass.position.x < pad) compass.visible = false;
   if (
     compass.visible &&
     boxesOverlap(compass.worldBounds(), hotbar.worldBounds(), 6)
@@ -735,23 +737,16 @@ function applyShowcaseSkin(): void {
   paintFill(panel, panelFill);
   paintFill(panel.background, panelFill);
   panel.background.setRadius(Number(theme.radii["panel"] ?? 0));
-  paintFill(health, trackColor);
-  paintFill(health.fillNode, fill);
-  paintFill(health.delayedNode, delayed);
-  paintFill(stamina, trackColor);
-  paintFill(stamina.fillNode, fill);
-  paintFill(stamina.delayedNode, delayed);
-  for (const segment of stamina.segmentFills) paintFill(segment, fill);
+  health.setFills({ track: trackColor, value: fill, delayed, label: text });
+  stamina.setFills({ track: trackColor, value: fill, delayed, label: text });
   paintFill(ammo.track, trackColor);
   paintFill(ammo.fillRing, fill);
   ammo.label.color = text;
   ammo.label.setFontId(fontName);
   ammo.label.setFontSize(Math.min(typeSize, 12));
   ammo.label.remeasure();
-  paintFill(explore, trackColor);
-  paintFill(explore.fillNode, fill);
-  paintFill(speedBar, trackColor);
-  paintFill(speedBar.fillNode, fill);
+  explore.setFills({ track: trackColor, value: fill, label: text });
+  speedBar.setFills({ track: trackColor, value: fill, label: text });
   compass.setColor(text, themeColor(theme, "muted"));
   compass.headingLabel.setFontId(fontName);
   compass.headingLabel.setFontSize(typeSize);
@@ -777,19 +772,19 @@ function applyShowcaseSkin(): void {
   health.labelNode.setFontId(fontName);
   health.labelNode.setFontSize(Math.min(typeSize, health.size.height - 2));
   health.labelNode.remeasure();
-  health.labelNode.color = text;
   stamina.labelNode.setFontId(fontName);
   stamina.labelNode.setFontSize(Math.min(typeSize, stamina.size.height - 2));
   stamina.labelNode.remeasure();
-  stamina.labelNode.color = text;
   explore.labelNode.setFontId(fontName);
   explore.labelNode.setFontSize(Math.min(typeSize, explore.size.height - 2));
   explore.labelNode.remeasure();
-  explore.labelNode.color = text;
   speedBar.labelNode.setFontId(fontName);
   speedBar.labelNode.setFontSize(Math.min(typeSize, speedBar.size.height - 2));
   speedBar.labelNode.remeasure();
-  speedBar.labelNode.color = text;
+  health.setFills({ label: text });
+  stamina.setFills({ label: text });
+  explore.setFills({ label: text });
+  speedBar.setFills({ label: text });
   for (const slot of hotbar.slots) slot.setTheme(theme);
   for (const shortcut of hotbar.shortcuts) {
     shortcut.setFontId(fontName);
@@ -862,15 +857,31 @@ const preprocess = preprocessWindfoilFace({
     },
   ],
 });
-const windfoilSpike = createWindfoilThreeSpike({ capability: capability.windfoil, preprocess });
+const windfoilCapability = useWebgpu
+  ? {
+      ...capability.windfoil,
+      supported: false,
+      status: "unsupported" as const,
+      reasons: [
+        ...capability.windfoil.reasons,
+        {
+          code: "WINDFOIL_RENDERER_KIND_UNSUPPORTED" as const,
+          message: "ShaderMaterial spike is not submitted to WebGPURenderer.",
+        },
+      ],
+    }
+  : capability.windfoil;
+const windfoilSpike = createWindfoilThreeSpike({ capability: windfoilCapability, preprocess });
 const windfoilDraw = windfoilSpike.draw([
   { glyphId: 0, x: 0, y: 0, scale: 1, color: [1, 1, 1, 1] },
   { glyphId: 0, x: 12, y: 0, scale: 1, color: [0.55, 0.55, 0.55, 1] },
 ]);
-if (windfoilSpike.mesh && capability.windfoil.supported) {
+if (windfoilSpike.mesh && windfoilCapability.supported) {
   windfoilSpike.mesh.position.set(start.x, 1.6, start.z - 0.4);
   windfoilSpike.mesh.scale.set(0.8, 0.25, 1);
   gameScene.add(windfoilSpike.mesh);
+} else {
+  windfoilSpike.dispose();
 }
 
 const held = new Set<string>();
@@ -982,8 +993,8 @@ function refreshMinimap(): void {
   const paper = themeColor(theme, "panel");
   const hereFill = themeColor(theme, "fill");
   const loot = themeColor(theme, "selected");
-  const floor = themeColor(theme, "muted");
-  const wall = themeColor(theme, "track");
+  const floor = invertHud ? 0xb4b4b4 : 0x7a7a7a;
+  const wall = invertHud ? 0x2a2a2a : 0x141414;
   for (let row = 0; row < mapCellsShown; row += 1) {
     for (let col = 0; col < mapCellsShown; col += 1) {
       const dot = mapDots[row * MAP_CELLS + col];
@@ -1006,13 +1017,18 @@ function writeStatus(): void {
   const width = Math.max(1, host.clientWidth);
   const height = Math.max(1, host.clientHeight);
   status.textContent = [
-    useWebgpu ? "webgpu" : "webgl",
+    "v0.1.0",
+    "package:@scope/three-hud",
+    useWebgpu ? "webgpu overlay-limited" : "webgl",
     `${width}x${height}`,
     invertHud ? "invert" : "night",
     fontName,
+    pointerLocked ? "LOOK LOCKED" : "CLICK LOOK",
     autoNav && !pointerLocked ? "auto" : "manual",
     `slot ${hotbar.activeIndex + 1}`,
-  ].join("   ");
+    "WASD P I F 1-6",
+    "health + ammo + inventory + hotbar",
+  ].join("  ");
 }
 
 function resize(): void {
@@ -1051,7 +1067,7 @@ function onKey(event: KeyboardEvent, down: boolean): void {
     hotbar.activate(digit - 1);
     writeStatus();
   }
-  if (event.code === "KeyT") {
+  if (event.code === "KeyI") {
     invertHud = !invertHud;
     applyShowcaseSkin();
     pushLog(invertHud ? "INK INVERT" : "INK NIGHT");
@@ -1064,7 +1080,7 @@ function onKey(event: KeyboardEvent, down: boolean): void {
   }
   if (event.code === "KeyP") {
     autoNav = !autoNav;
-    lookHint.setText(autoNav ? "AUTO  WASD  P  T" : "P  WASD  T");
+    lookHint.setText(pointerLocked ? "ESC" : "CLICK LOOK  WASD  P  I  F  1-6");
     pushLog(autoNav ? "TOUR ON" : "TOUR PAUSE");
     writeStatus();
   }
@@ -1079,7 +1095,8 @@ function onMouseMove(event: MouseEvent): void {
 
 function onPointerLockChange(): void {
   pointerLocked = document.pointerLockElement === renderer.domElement;
-  lookHint.setText(pointerLocked ? "ESC" : autoNav ? "AUTO  WASD  P  T" : "P  WASD  T");
+  lookHint.setText(pointerLocked ? "ESC" : "CLICK LOOK  WASD  P  I  F  1-6");
+  writeStatus();
 }
 
 function onCanvasClick(event: MouseEvent): void {

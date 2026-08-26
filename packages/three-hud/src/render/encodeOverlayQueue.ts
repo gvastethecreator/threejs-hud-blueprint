@@ -107,16 +107,6 @@ function shapeOf(node: { primitive?: string }): "rect" | "rounded-rect" | "line"
   return "rect";
 }
 
-function ancestorOrigin(node: HudNode): { x: number; y: number } {
-  let x = 0;
-  let y = 0;
-  for (let current = node.parent; current; current = current.parent) {
-    x += current.position.x;
-    y += current.position.y;
-  }
-  return { x, y };
-}
-
 function shapeParams(node: unknown): ShapeParams | undefined {
   if (typeof node !== "object" || node === null) return undefined;
   const record = node as {
@@ -139,12 +129,19 @@ function shapeParams(node: unknown): ShapeParams | undefined {
     return { radius: record.radius };
   }
   if (record.primitive === "line") {
-    const origin = ancestorOrigin(record as HudNode);
+    const line = record as HudNode;
+    const parent = line.parent;
+    const x1 = numberOr(record.x1, 0);
+    const y1 = numberOr(record.y1, 0);
+    const x2 = numberOr(record.x2, 0);
+    const y2 = numberOr(record.y2, 0);
+    const start = parent ? parent.localToWorld(x1, y1) : { x: x1, y: y1 };
+    const end = parent ? parent.localToWorld(x2, y2) : { x: x2, y: y2 };
     return {
-      x1: numberOr(record.x1, 0) + origin.x,
-      y1: numberOr(record.y1, 0) + origin.y,
-      x2: numberOr(record.x2, 0) + origin.x,
-      y2: numberOr(record.y2, 0) + origin.y,
+      x1: start.x,
+      y1: start.y,
+      x2: end.x,
+      y2: end.y,
       strokeWidth: numberOr(record.strokeWidth, 1),
     };
   }

@@ -96,6 +96,34 @@ export class LinearBar extends HudNode {
     this.syncFill();
   }
 
+  setFills(
+    colors: Readonly<{
+      track?: number;
+      value?: number;
+      delayed?: number;
+      label?: number;
+    }>,
+  ): void {
+    if (colors.track !== undefined) {
+      this.fill = colors.track;
+      this.markDirty(DirtyFlag.Style | DirtyFlag.Queue);
+    }
+    if (colors.value !== undefined) {
+      this.fillNode.fill = colors.value;
+      this.fillNode.markDirty(DirtyFlag.Style | DirtyFlag.Queue);
+      for (const segment of this.segmentFills) {
+        segment.fill = colors.value;
+        segment.markDirty(DirtyFlag.Style | DirtyFlag.Queue);
+      }
+    }
+    if (colors.delayed !== undefined) {
+      this.delayedNode.fill = colors.delayed;
+      this.delayedNode.markDirty(DirtyFlag.Style | DirtyFlag.Queue);
+    }
+    if (colors.label !== undefined) this.labelNode.color = colors.label;
+    this.markDirty(DirtyFlag.Style | DirtyFlag.Queue);
+  }
+
   private syncFill(): void {
     const span = this.max - this.min;
     const ratio = span === 0 ? 0 : (this.value - this.min) / span;

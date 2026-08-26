@@ -14,6 +14,16 @@ describe("hit-test", () => {
     expect(hitTest(root, 10, 10)?.id).toBe("root");
   });
 
+  it("hits a child using ancestor scale in world bounds", () => {
+    const root = new HudNode({ id: "root", width: 50, height: 50 });
+    const child = root.add(new HudNode({ id: "child", width: 10, height: 10 }));
+    root.scaleX = 2;
+    root.scaleY = 2;
+    child.setPosition(5, 5);
+    expect(hitTest(root, 15, 15)?.id).toBe("child");
+    expect(hitTest(root, 5, 5)?.id).toBe("root");
+  });
+
   it("ignores debug overlays even when they cover the point", () => {
     const root = new HudNode({ id: "root", width: 40, height: 40 });
     const overlay = root.add(

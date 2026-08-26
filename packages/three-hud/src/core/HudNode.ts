@@ -184,40 +184,39 @@ export class HudNode {
     return opacity;
   }
 
-  worldBounds(): ReadonlyRect {
-    const width = this.size.width * this.scaleX;
-    const height = this.size.height * this.scaleY;
-    let x = this.position.x - this.pivot.x * this.scaleX;
-    let y = this.position.y - this.pivot.y * this.scaleY;
-    for (let current = this.parent; current; current = current.parent) {
+  localToWorld(localX: number, localY: number): ReadonlyPoint {
+    let x = localX;
+    let y = localY;
+    for (let current: HudNode | null = this; current; current = current.parent) {
+      x -= current.pivot.x;
+      y -= current.pivot.y;
+      x *= current.scaleX;
+      y *= current.scaleY;
+      if (current.rotation !== 0) {
+        const cos = Math.cos(current.rotation);
+        const sin = Math.sin(current.rotation);
+        const rotatedX = x * cos - y * sin;
+        const rotatedY = x * sin + y * cos;
+        x = rotatedX;
+        y = rotatedY;
+      }
       x += current.position.x;
       y += current.position.y;
     }
-    if (this.rotation === 0) return { x, y, width, height };
-    const cx = x + this.pivot.x * this.scaleX;
-    const cy = y + this.pivot.y * this.scaleY;
-    const cos = Math.cos(this.rotation);
-    const sin = Math.sin(this.rotation);
-    const corners = [
-      { x, y },
-      { x: x + width, y },
-      { x: x + width, y: y + height },
-      { x, y: y + height },
-    ];
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    for (const corner of corners) {
-      const dx = corner.x - cx;
-      const dy = corner.y - cy;
-      const rx = cx + dx * cos - dy * sin;
-      const ry = cy + dx * sin + dy * cos;
-      minX = Math.min(minX, rx);
-      minY = Math.min(minY, ry);
-      maxX = Math.max(maxX, rx);
-      maxY = Math.max(maxY, ry);
-    }
+    return { x, y };
+  }
+
+  worldBounds(): ReadonlyRect {
+    const width = this.size.width;
+    const height = this.size.height;
+    const c0 = this.localToWorld(0, 0);
+    const c1 = this.localToWorld(width, 0);
+    const c2 = this.localToWorld(width, height);
+    const c3 = this.localToWorld(0, height);
+    const minX = Math.min(c0.x, c1.x, c2.x, c3.x);
+    const minY = Math.min(c0.y, c1.y, c2.y, c3.y);
+    const maxX = Math.max(c0.x, c1.x, c2.x, c3.x);
+    const maxY = Math.max(c0.y, c1.y, c2.y, c3.y);
     return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
   }
 

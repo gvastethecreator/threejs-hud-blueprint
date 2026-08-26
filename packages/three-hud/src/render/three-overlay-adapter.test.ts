@@ -178,7 +178,7 @@ describe("three-overlay-adapter", () => {
     hud.dispose();
   });
 
-  it("draws a clipped rect at the clip size, not full worldBounds", async () => {
+  it("keeps authored instance scale and stores clip as local UV, not AABB squash", async () => {
     const renderer = createHostRenderer("webgl");
     const adapter = createHudOverlayAdapter({ renderer });
     const hud = new HUD({ referenceSize: { width: 100, height: 100 }, rendererAdapter: adapter });
@@ -189,9 +189,36 @@ describe("three-overlay-adapter", () => {
     await hud.initialize();
     hud.render({ deltaSeconds: 0, elapsedSeconds: 0, frame: 1 });
     const scale = adapter.debugInstanceScale(0);
-    expect(scale.x).toBeCloseTo(0.2);
+    expect(scale.x).toBeCloseTo(0.8);
     expect(scale.y).toBeCloseTo(0.4);
-    expect(scale.x).not.toBeCloseTo(0.8);
+    expect(scale.x).not.toBeCloseTo(0.2);
+    const uv = adapter.debugShapeUv(0);
+    expect(uv[0]).toBeCloseTo(0);
+    expect(uv[1]).toBeCloseTo(0);
+    expect(uv[2]).toBeCloseTo(0.25);
+    expect(uv[3]).toBeCloseTo(1);
+    hud.dispose();
+  });
+
+  it("maps a HUD y-down top-half clip onto PlaneGeometry v-up", async () => {
+    const renderer = createHostRenderer("webgl");
+    const adapter = createHudOverlayAdapter({ renderer });
+    const hud = new HUD({ referenceSize: { width: 100, height: 100 }, rendererAdapter: adapter });
+    const layer = hud.createLayer({ id: "main" });
+    const panel = layer.add(new HudNode({ id: "panel", width: 40, height: 20, fill: 0x33ffaa }));
+    panel.setPosition(8, 4);
+    panel.setClip({ x: 8, y: 4, width: 40, height: 10 });
+    await hud.initialize();
+    hud.render({ deltaSeconds: 0, elapsedSeconds: 0, frame: 1 });
+    const scale = adapter.debugInstanceScale(0);
+    expect(scale.x).toBeCloseTo(0.8);
+    expect(scale.y).toBeCloseTo(0.4);
+    const uv = adapter.debugShapeUv(0);
+    expect(uv[0]).toBeCloseTo(0);
+    expect(uv[2]).toBeCloseTo(1);
+    expect(uv[1]).toBeCloseTo(0.5);
+    expect(uv[3]).toBeCloseTo(1);
+    expect(uv[1]).not.toBeCloseTo(0);
     hud.dispose();
   });
 
@@ -208,7 +235,8 @@ describe("three-overlay-adapter", () => {
     const contain = hud.createLayer({ id: "contain", scaleMode: "contain" });
     const native = hud.createLayer({ id: "native", scaleMode: "native" });
     contain.add(new HudNode({ id: "contain-rect", width: 80, height: 40, fill: 0xff3344 }));
-    native.add(new HudNode({ id: "native-rect", width: 80, height: 40, fill: 0x33ff44 }));
+    const nest = native.add(new HudNode({ id: "native-host", width: 80, height: 40 }));
+    nest.add(new HudNode({ id: "native-rect", width: 80, height: 40, fill: 0x33ff44 }));
     await hud.initialize();
     hud.render({ deltaSeconds: 0, elapsedSeconds: 0, frame: 1 });
     const containScale = adapter.debugInstanceScale(0);

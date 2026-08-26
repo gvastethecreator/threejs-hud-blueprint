@@ -69,6 +69,7 @@ export type HudOverlayAdapter = HudRendererAdapter & {
   debugInstanceUv(index: number): readonly [number, number, number, number];
   debugInstanceShape(index: number): number;
   debugInstanceScale(index: number): { x: number; y: number };
+  debugShapeUv(index: number): readonly [number, number, number, number];
   debugTextInstanceShape(index: number): number;
   debugShapeMaterial(): unknown;
   debugTextMaterial(): unknown;
@@ -177,6 +178,9 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
       const base = index * 16;
       return { x: Number(array[base] ?? 0), y: Number(array[base + 5] ?? 0) };
     },
+    debugShapeUv(index: number) {
+      return pool.instanceUv(index);
+    },
     debugTextInstanceShape(index: number) {
       return textPool.instanceShape(index);
     },
@@ -235,21 +239,29 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     pool.beginFrame();
     textPool.beginFrame();
     pixelTextPool.beginFrame();
+    if (layers.length === 0 || queue.commands.length === 0) {
+      pool.endFrame();
+      textPool.endFrame();
+      pixelTextPool.endFrame();
+      return;
+    }
     const hostViewport = cssViewport ?? readCssViewport(renderer);
     const dpr = renderer.getPixelRatio?.() ?? 1;
     const transforms = new Map<HudLayer, LayerViewportTransform>();
-    const layerOf = (sourceNodeId: string): HudLayer => {
-      for (const layer of layers) {
-        if (!layer.enabled) continue;
-        const match = findLayer(layer, sourceNodeId);
-        if (match) return match;
-      }
-      const fallback = layers.find((layer) => layer.enabled) ?? layers[0];
-      if (!fallback) throw new Error("HUD overlay has no layer.");
-      return fallback;
-    };
+    const layerByNodeId = new Map<string, HudLayer>();
+    for (const layer of layers) {
+      if (!layer.enabled) continue;
+      indexLayerNodes(layer, layer, layerByNodeId);
+    }
+    const fallback = layers.find((layer) => layer.enabled) ?? layers[0];
+    if (!fallback) {
+      pool.endFrame();
+      textPool.endFrame();
+      pixelTextPool.endFrame();
+      return;
+    }
     for (const command of queue.commands) {
-      const layer = layerOf(command.sourceNodeId);
+      const layer = layerByNodeId.get(command.sourceNodeId) ?? fallback;
       let transform = transforms.get(layer);
       if (!transform) {
         const viewport = hostViewport ?? {
@@ -280,13 +292,13 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
 
   function writeCommand(command: HudDrawCommand, transform: LayerViewportTransform): void {
     if (command.kind === "text") {
+      if (webgpuSafe) return;
       const pixel = command.fontId === "pixel";
       const glyphs = pixel ? pixelTextPool : textPool;
       const snapTransform = pixel ? { ...transform, pixelSnap: true } : transform;
       for (const glyph of command.glyphs) {
-        const visible = command.clip ? intersectRects(glyph, command.clip) : glyph;
-        if (!visible) continue;
-        placeRect(visible, snapTransform);
+        if (command.clip && !intersectRects(glyph, command.clip)) continue;
+        placeRect(glyph, snapTransform);
         const slot = glyphs.acquireSlot();
         glyphs.writeInstance(slot, rectMatrix, command.fill, {
           shape: SHAPE_TEXT,
@@ -297,17 +309,23 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
       return;
     }
     if (command.kind === "image") {
-      const visible = command.clip ? intersectRects(command.bounds, command.clip) : command.bounds;
-      if (!visible) return;
-      placeRect(visible, transform);
+      if (command.clip && !intersectRects(command.bounds, command.clip)) return;
+      placeRect(command.bounds, transform);
       const slot = pool.acquireSlot();
       pool.writeInstance(slot, rectMatrix, command.tint, {
         shape: SHAPE_IMAGE,
         params: [0, 0, 0, command.opacity],
+        uv: clipToUv(command.bounds, command.clip),
       });
       return;
     }
     if (command.kind !== "shape") return;
+    if (
+      webgpuSafe &&
+      (command.shape === "line" || command.shape === "ring" || command.shape === "rounded-rect")
+    ) {
+      return;
+    }
     const params = command.shapeParams;
     if (command.shape === "line" && params) {
       placeLine(params, transform);
@@ -318,10 +336,10 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
       });
       return;
     }
-    const visible = command.clip ? intersectRects(command.bounds, command.clip) : command.bounds;
-    if (!visible) return;
-    placeRect(visible, transform);
+    if (command.clip && !intersectRects(command.bounds, command.clip)) return;
+    placeRect(command.bounds, transform);
     const slot = pool.acquireSlot();
+    const clipUv = clipToUv(command.bounds, command.clip);
     if (command.shape === "ring") {
       const inner = params?.innerRadius ?? 0;
       const outer = params?.outerRadius ?? 1;
@@ -333,6 +351,7 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
           params?.sweep ?? Math.PI * 2,
           command.opacity,
         ],
+        uv: clipUv,
       });
       return;
     }
@@ -342,12 +361,14 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
       pool.writeInstance(slot, rectMatrix, command.fill, {
         shape: SHAPE_ROUNDED,
         params: [minSide <= 0 ? 0 : Math.min(0.5, radius / minSide), 0, 0, command.opacity],
+        uv: clipUv,
       });
       return;
     }
     pool.writeInstance(slot, rectMatrix, command.fill, {
       shape: SHAPE_RECT,
       params: [0, 0, 0, command.opacity],
+      uv: clipUv,
     });
   }
 
@@ -383,16 +404,30 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
   }
 }
 
-function findLayer(root: HudLayer, sourceNodeId: string): HudLayer | null {
-  return containsNode(root, sourceNodeId) ? root : null;
+function indexLayerNodes(
+  layer: HudLayer,
+  node: HudNode,
+  into: Map<string, HudLayer>,
+): void {
+  into.set(node.id, layer);
+  for (const child of node.children) indexLayerNodes(layer, child, into);
 }
 
-function containsNode(node: HudNode, sourceNodeId: string): boolean {
-  if (node.id === sourceNodeId) return true;
-  for (const child of node.children) {
-    if (containsNode(child, sourceNodeId)) return true;
-  }
-  return false;
+function clipToUv(
+  bounds: { x: number; y: number; width: number; height: number },
+  clip: { x: number; y: number; width: number; height: number } | null | undefined,
+): readonly [number, number, number, number] {
+  if (!clip || bounds.width === 0 || bounds.height === 0) return [0, 0, 1, 1];
+  const u0 = (clip.x - bounds.x) / bounds.width;
+  const u1 = (clip.x + clip.width - bounds.x) / bounds.width;
+  const vHud0 = (clip.y - bounds.y) / bounds.height;
+  const vHud1 = (clip.y + clip.height - bounds.y) / bounds.height;
+  return [
+    Math.min(1, Math.max(0, u0)),
+    Math.min(1, Math.max(0, 1 - vHud1)),
+    Math.min(1, Math.max(0, u1)),
+    Math.min(1, Math.max(0, 1 - vHud0)),
+  ];
 }
 
 function readCssViewport(renderer: OverlayRendererLike): ReadonlyRect | null {
