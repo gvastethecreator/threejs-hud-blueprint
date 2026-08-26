@@ -2,7 +2,7 @@
 
 GitHub Issues: one category label and one triage label. Local mirrors record the same values.
 
-This repository keeps the `status:*` labels from `planning/github/labels.json`. Do not also create `needs-triage`, `ready-for-agent`, or `ready-for-human`.
+This repository keeps the `status:*` labels on GitHub. Do not also create `needs-triage`, `ready-for-agent`, or `ready-for-human`.
 
 ## Categories
 
@@ -43,4 +43,4 @@ Local `Execution:` is separate from triage `Status:`. Use `queued`, `active`, `b
 - `spec`: parent specification for implementation tickets.
 - `wayfinder:map`: parent decision map.
 
-Area, epic, milestone, priority, size, backend, and `type:*` labels stay in `planning/github/labels.json`. Apply those from ticket metadata. Do not invent a second vocabulary.
+Area, epic, milestone, priority, size, backend, and `type:*` labels already exist on GitHub. Apply those from issue metadata. Do not invent a second vocabulary.

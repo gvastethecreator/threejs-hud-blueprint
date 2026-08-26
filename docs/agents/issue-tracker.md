@@ -14,8 +14,7 @@ GitHub Issues and the linked GitHub Project hold live work state. Local Markdown
 ## Authority
 
 - GitHub owns open or closed state, assignees, comments, native dependencies, labels, and Project field values.
-- `planning/tickets/` owns the v0.1 seed briefs. Do not recreate those 73 tickets as open GitHub Issues unless a later import is approved.
-- `.scratch/three-hud/` owns expanded evidence, handoff notes, and mirrors for work created after tracker setup.
+- `.scratch/three-hud/` owns expanded evidence, handoff notes, and mirrors for new work.
 - Shared fields must match: title, category, triage state, execution state, source, dependencies, acceptance criteria, and outcome.
 - Do not copy the full GitHub comment history into local files. Add durable decisions and proof to `## Sync log`.
 

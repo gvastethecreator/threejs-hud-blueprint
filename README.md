@@ -20,8 +20,7 @@ v0.1 has three text paths:
 2. Read [the product spec](docs/product/PRODUCT_SPEC.md) for v0.1 scope.
 3. Read [getting started](docs/api/GETTING_STARTED.md) to host a HUD overlay.
 4. Read [known limitations](docs/api/KNOWN_LIMITATIONS.md) for v0.1 limits and rollback.
-5. Open `architecture-explorer.html` for the ticket and architecture dashboard.
-6. Run the playground with the commands below.
+5. Run the playground with the commands below.
 
 ## Run the playground
 
@@ -117,11 +116,6 @@ These are the current pinned latest **stable** versions. Pre-release tags are no
 
 This repository does not bundle third-party font binaries. The host supplies fonts, or a licensed fixture supplies them. Each redistributed font needs a provenance and license record.
 
-## Program size
+## Tracker
 
-- 12 epics
-- 6 evidence milestones
-- 73 tickets
-- 16 architecture decisions
-
-Ticket briefs live in `planning/tickets/`. Live status belongs in GitHub Issues and [Project 15](https://github.com/users/gvastethecreator/projects/15).
+Live work belongs in GitHub Issues and [Project 15](https://github.com/users/gvastethecreator/projects/15). Architecture decisions live in `docs/adrs/`.

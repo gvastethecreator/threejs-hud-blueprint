@@ -51,8 +51,8 @@ Windfoil is the highest-risk text path. It ships as an experimental adapter on n
 
 v0.1 code exists in this workspace. HUD-073 is closed locally. npm publish is blocked: the name is still `@scope/three-hud`, and registry auth is missing.
 
-The next program is a quality review of each implementation ticket against its acceptance criteria and evidence. Then replace `@scope` and run `pnpm run validate:release`.
+The next work is a quality review of the v0.1 implementation against acceptance criteria and evidence. Then replace `@scope` and run `pnpm run validate:release`.
 
 ## How work is organized
 
-There are 73 tickets, 12 epics, and 6 evidence gates (M0 through M5). Briefs live in `planning/tickets/`. Live status belongs in GitHub Issues and [Project 15](https://github.com/users/gvastethecreator/projects/15). The publish closeout ticket is `HUD-073`.
+Live status belongs in GitHub Issues and [Project 15](https://github.com/users/gvastethecreator/projects/15). Architecture decisions live in `docs/adrs/`.

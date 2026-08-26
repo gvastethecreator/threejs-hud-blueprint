@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { walkFiles, toPosix } from "./lib/tickets.mjs";
+import { walkFiles, toPosix } from "./lib/walk-files.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourceRoot = path.join(repoRoot, "packages", "three-hud", "src");
@@ -55,9 +55,9 @@ for (const file of walkFiles(path.join(repoRoot, "packages", "three-hud"), (valu
 )) {
   const source = stripComments(fs.readFileSync(file, "utf8"));
   for (const specifier of importSpecifiers(source)) {
-    if (/(?:^|\/)(?:apps|fixtures|e2e|planning|docs)(?:\/|$)/.test(specifier)) {
+    if (/(?:^|\/)(?:apps|fixtures|e2e|docs)(?:\/|$)/.test(specifier)) {
       errors.push(
-        `Public package imports repository consumer/planning code: ${toPosix(path.relative(repoRoot, file))} -> ${specifier}.`,
+        `Public package imports repository consumer or docs code: ${toPosix(path.relative(repoRoot, file))} -> ${specifier}.`,
       );
     }
   }

@@ -8,15 +8,15 @@ How engineering skills consume this repo's domain docs when exploring.
 - `docs/product/PRODUCT_SPEC.md` for product scope.
 - `docs/adrs/` for durable decisions that touch the area.
 - `docs/architecture/` for system shape. CONTRIBUTING names this as the public module direction.
-- The active ticket under `planning/tickets/` when the work has a `HUD-###` brief.
+- The GitHub issue for the work, if one exists.
 
 If a listed file does not exist, proceed from the files that do exist.
 
 ## Public vs local
 
 - Public product and API docs: `docs/product/`, `docs/api/`, `README.md`, `SECURITY.md`, `CONTRIBUTING.md`.
-- Public architecture and ADRs: `docs/architecture/`, `docs/adrs/`. This blueprint keeps them in the tracked tree on purpose.
-- Seed construction briefs: `planning/tickets/`. Live GitHub state is in Issues and Project 15.
+- Public architecture and ADRs: `docs/architecture/`, `docs/adrs/`.
+- Live GitHub state is in Issues and Project 15.
 - New tickets never go under `docs/`. Local mirrors: `.scratch/three-hud/issues/`.
 - Operator spikes and audits: `.scratch/architecture/`.
 - Hygiene leftovers: `.scratch/archive/`.
@@ -33,7 +33,6 @@ Single-context repo:
 ├── docs/adrs/
 ├── docs/architecture/
 ├── docs/product/
-├── planning/tickets/
 └── packages/three-hud/src/
 ```
 

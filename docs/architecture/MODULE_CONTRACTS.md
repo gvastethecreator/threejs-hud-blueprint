@@ -94,7 +94,6 @@ packages/three-hud/**
   !-> apps/**
   !-> fixtures/**
   !-> e2e/**
-  !-> planning/**
   !-> docs/**
 
 apps/playground/**

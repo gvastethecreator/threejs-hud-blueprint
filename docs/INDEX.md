@@ -33,20 +33,10 @@
 - `architecture/RESOURCE_LIFECYCLE.md` — ownership, cancellation, failure, disposal.
 - `architecture/ERRORS_AND_DIAGNOSTICS.md` — public errors and observable evidence.
 - `architecture/PACKAGE_AND_EXPORTS.md` — workspace, package, subpaths, consumer fixture.
-- `architecture/CODEMAP.md` — original target tree. Live source is `packages/three-hud/src`.
 
 ## Decisions
 
 `adrs/` contains bounded architecture decisions. Proposed decisions become accepted only through their named gate.
-
-## Research
-
-- `research/REFERENCE_PROJECT_AUDIT.md` — patterns extracted from the author's other repositories.
-- `research/WINDFOIL_RESEARCH.md` — upstream facts, integration questions, and spike evidence plan.
-- `research/TEXT_BACKEND_COMPARISON.md` — analytic, SDF, and bitmap trade-offs.
-- `research/SOURCES.md` — external source inventory.
-- `research/THREEJS_R185_RENDERER_CAPABILITY_PROBE.md` — Three.js 0.185 backend detection facts for HUD-006.
-- `research/WINDFOIL_PREPROCESS_PROVENANCE.md` — HUD-008 preprocess provenance and cubic policy.
 
 ## Quality
 
@@ -68,15 +58,9 @@
 
 ## Operations
 
-- `operations/GITHUB_PROJECT.md`
 - `operations/FONT_AND_LICENSE_POLICY.md`
 - `operations/DEPENDENCY_POLICY.md`
 - `operations/RELEASE_PROCESS.md`
 - `operations/MAINTENANCE.md`
 
-## Planning
 
-- `../planning/BACKLOG.md`
-- `../planning/EPICS.md`
-- `../planning/MILESTONES.md`
-- `../planning/tickets/`

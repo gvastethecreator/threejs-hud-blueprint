@@ -6,7 +6,7 @@ The roadmap is organized by evidence gates rather than dates. Ticket dependencie
 
 Local v0.1 code exists. Public publish is blocked by the `@scope` placeholder and missing registry auth.
 
-The next program is a quality review of every implementation ticket against its acceptance criteria and evidence. Then replace `@scope` and run `pnpm run validate:release` from a clean commit.
+The next work is a quality review of the v0.1 implementation against its evidence. Then replace `@scope` and run `pnpm run validate:release` from a clean commit.
 
 ## M0: Architecture proof
 

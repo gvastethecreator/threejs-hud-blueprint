@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { walkFiles } from "./lib/tickets.mjs";
+import { walkFiles } from "./lib/walk-files.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const required = [
@@ -16,7 +16,6 @@ const required = [
   "apps/playground/package.json",
   "apps/playground/src/main.ts",
   "fixtures/external-consumer/package.json",
-  "planning/ticket-index.json",
 ];
 const errors = [];
 for (const relative of required)
