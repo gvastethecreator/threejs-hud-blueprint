@@ -37,18 +37,29 @@ run(["auth", "status"]);
 
 if (!milestonesOnly) {
   for (const label of labels) {
-    run([
-      "label",
-      "create",
-      label.name,
-      "--repo",
-      repository,
-      "--color",
-      label.color,
-      "--description",
-      label.description,
-      "--force",
-    ]);
+    const result = spawnSync(
+      "gh",
+      [
+        "label",
+        "create",
+        label.name,
+        "--repo",
+        repository,
+        "--color",
+        label.color,
+        "--description",
+        label.description,
+      ],
+      { encoding: "utf8", shell: process.platform === "win32" },
+    );
+    if (result.status === 0) continue;
+    const err = `${result.stderr ?? ""}${result.stdout ?? ""}`;
+    if (/already exists/i.test(err)) {
+      console.log(`label exists: ${label.name}`);
+      continue;
+    }
+    process.stderr.write(err);
+    process.exit(result.status ?? 1);
   }
 }
 

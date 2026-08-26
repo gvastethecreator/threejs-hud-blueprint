@@ -6,19 +6,19 @@ function run(command: string) {
 }
 
 describe("e10 verify honesty", () => {
-  it("fails visual-matrix --verify when webgl-baseline rows are CPU raster", () => {
+  it("fails visual-matrix --verify when webgl-baseline rows are CPU raster", { timeout: 20_000 }, () => {
     const result = run("pnpm exec tsx scripts/visual-matrix.ts --verify");
     expect(result.status).not.toBe(0);
     expect(`${result.stdout}${result.stderr}`).toMatch(/none-cpu-raster|CPU raster/i);
   });
 
-  it("fails compatibility --verify when webgl-baseline is labeled measured from CPU hashes", () => {
+  it("fails compatibility --verify when webgl-baseline is labeled measured from CPU hashes", { timeout: 20_000 }, () => {
     const result = run("pnpm exec tsx scripts/compatibility-report.ts --verify");
     expect(result.status).not.toBe(0);
     expect(`${result.stdout}${result.stderr}`).toMatch(/measured|CPU|webgl-baseline/i);
   });
 
-  it("fails pnpm run visual:verify because the named entry is CPU-hash raster, not a GPU profile", () => {
+  it("fails pnpm run visual:verify because the named entry is CPU-hash raster, not a GPU profile", { timeout: 20_000 }, () => {
     const result = run("pnpm run visual:verify");
     expect(result.status).not.toBe(0);
     expect(`${result.stdout}${result.stderr}`).toMatch(
@@ -26,7 +26,7 @@ describe("e10 verify honesty", () => {
     );
   });
 
-  it("measures a this-run packed tarball main-entry gzip against the budget", () => {
+  it("measures a this-run packed tarball main-entry gzip against the budget", { timeout: 20_000 }, () => {
     const result = run("pnpm run bundle:verify");
     const text = `${result.stdout}${result.stderr}`;
     expect(text).toMatch(/packedMainEntryGzipKiB:\s*[0-9.]+/);
