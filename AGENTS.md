@@ -31,6 +31,10 @@ Before release work, also read:
 - `docs/quality/COMPATIBILITY_MATRIX.md`
 - `docs/operations/RELEASE_PROCESS.md`
 
+## Code map
+
+Module graph for this workspace: `docs/codemap/codemap.md`. HTML: `docs/codemap/codemap.html`. Refresh after module-boundary or export changes. Do not hand-edit published artifacts.
+
 ## Sources of truth
 
 - Product and v0.1 scope: `docs/product/PRODUCT_SPEC.md`.

@@ -2,9 +2,10 @@
 
 ## Unreleased
 
-- Toolchain pins: pnpm 11.22.0, Vitest 4.1.11, oxlint 1.79.0, oxfmt 0.64.0.
-- Keep Three.js 0.185.1, TypeScript 7.0.2, Vite 8.2.1, and Playwright 1.62.1 (already latest stable).
-- Skip Vitest 5 RC, pnpm 12 RC, TypeScript 7.1-dev, Playwright 1.63 alpha, and unpublished Three.js r186.
+- Toolchain pins: pnpm 12.0.0, Vitest 5.0.0, Vite 8.2.2, oxlint 1.80.0, oxfmt 0.65.0.
+- Keep Three.js 0.185.1, TypeScript 7.0.2, and Playwright 1.62.1.
+- Skip TypeScript 7.1-dev, Playwright 1.63 alpha, and unpublished Three.js r186.
+- GitHub Pages deploys the playground demo (`PLAYGROUND_BASE=/threejs-hud-blueprint/`).
 
 ## 0.1.0
 

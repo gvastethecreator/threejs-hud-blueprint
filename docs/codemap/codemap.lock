@@ -1,0 +1,1699 @@
+{
+  "schema_version": 2,
+  "source_commit": "433f5c42922ab5a61942055d47e28398af3241e4",
+  "working_tree_dirty": true,
+  "generated_at": "2026-09-19T06:55:38Z",
+  "generation_id": "52605e54d3245b4ac4be01e28f21f31f4bf21a1ea45feb06eb43941a9ef2bec5",
+  "analysis": {
+    "version": "syntax-1",
+    "digest": "277e322054c030f72811f774ad4e959bcf8d1244bfb70c076e298cf824ccdc3c"
+  },
+  "inventory": {
+    "policy": {
+      "inventory": "working-tree",
+      "scope": [
+        "."
+      ],
+      "exclude": [
+        ".agents",
+        ".cache",
+        ".git",
+        ".hg",
+        ".next",
+        ".nuxt",
+        ".obsidian",
+        ".scratch",
+        ".svn",
+        ".turbo",
+        ".venv",
+        ".vscode",
+        "__pycache__",
+        "build",
+        "coverage",
+        "dist",
+        "docs/codemap",
+        "generated",
+        "node_modules",
+        "out",
+        "target",
+        "vendor",
+        "venv"
+      ],
+      "config_digest": "9a1dea987d3e995b6a17cac16f1edefcb4862de858a92bbf0befb5c4d460182c"
+    },
+    "files": [
+      {
+        "path": "apps/playground/package.json",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "0a31aa5beb626059b648295b40dbf2c7a36539c52a32ea5056443bb321cb5587",
+        "size": 407
+      },
+      {
+        "path": "apps/playground/src/labs/capability.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "4e67088949ddf44ffa5c1a57fb25ef06db91ebbca85f1aec553de5c601729f03",
+        "size": 1000
+      },
+      {
+        "path": "apps/playground/src/main.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "48fd91354b923b31d921b59c227cd6652aadeeb7fce5506ce9d408046aeba15f",
+        "size": 43310
+      },
+      {
+        "path": "apps/playground/src/maze.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d4a501162502e505e666dfa9816cdf1f1322e34bca41d1a4c806730f04cec8f4",
+        "size": 15983
+      },
+      {
+        "path": "apps/playground/tsconfig.json",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "ce22def32bb11ac723868cce4c49e151d8c682a4d961c5227dab19bc9f477602",
+        "size": 166
+      },
+      {
+        "path": "apps/playground/vite.config.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "054e47cf0717f8ce672e6fd206f091058aa80bbf330a26b4c5c506669054f219",
+        "size": 845
+      },
+      {
+        "path": "e2e/context-loss.spec.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "0dfa675844de39ed7437c8e1aa7b546d78ef71e228ebd4a4e55e0ba88ffc997b",
+        "size": 349
+      },
+      {
+        "path": "e2e/hud-improve.spec.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "22dcd02b4fdf0f853f82b98f720a93235d3f4cfbebbb372e1075446be6cace51",
+        "size": 2438
+      },
+      {
+        "path": "e2e/input.spec.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "bfbdae83459e1eace829f8931d15055fa2edce9602101fdbedd70fc00e155af4",
+        "size": 312
+      },
+      {
+        "path": "e2e/inventory.spec.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "f8d29a25661c37b85f8806b87b47e5b770d8fb52d61b2cc94be061f0b39a7396",
+        "size": 239
+      },
+      {
+        "path": "e2e/labs.spec.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "8351d85d598b5f30e6ea66f0189c1d157206d9689ea0785ebd1c5e2911548e8a",
+        "size": 269
+      },
+      {
+        "path": "e2e/overlay-state.spec.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d7a554be3c39724454b8718017bd615b94a8bc0730641533d08f59cb300437cf",
+        "size": 2099
+      },
+      {
+        "path": "e2e/showcase.spec.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "ae3095638166e54d9ca2f4a8803bbb9911977efae953da347a7ab56d7080fbd1",
+        "size": 572
+      },
+      {
+        "path": "e2e/smoke.spec.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "aac27fe82f7df3f66ed66c016c8b3eb2c4f51468eca65596a8ad62cd3bd4e11a",
+        "size": 266
+      },
+      {
+        "path": "fixtures/external-consumer/package.json",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "aa8ef77cae36cd422951a8ebc3c3d4c337db5ad34a11773322ee8c17bd6e2af6",
+        "size": 400
+      },
+      {
+        "path": "fixtures/external-consumer/src/index.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "bb5bc8c6ebb1e3b9ef1322febfe56646dbf22ed5d6473c03c29b261ef8501238",
+        "size": 1152
+      },
+      {
+        "path": "fixtures/external-consumer/tsconfig.json",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5fe56f272116d64cd807c6626d66b4a0f11dff147efa80e6613e56c206d64f90",
+        "size": 420
+      },
+      {
+        "path": "package.json",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "ff5f9ea1e085e33bcecb8c74e6eca9a0c023b09927e2747dc63cd55fadf80955",
+        "size": 5128
+      },
+      {
+        "path": "packages/three-hud/package.json",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a60d7fec8119a1d9247cadf798e12f3d5e35ad8ea542d64215d0c5546c723c15",
+        "size": 1756
+      },
+      {
+        "path": "packages/three-hud/src/contracts/capabilities.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d665343eda9a9c529d0707d27c10d7bf79250bf38d74548e63e3d6d83ac60383",
+        "size": 2136
+      },
+      {
+        "path": "packages/three-hud/src/contracts/diagnostics.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "8a5f80c65b0edfec18f2ddbbc97b3a1d868a7d089b3af5302286437f5535bdcc",
+        "size": 540
+      },
+      {
+        "path": "packages/three-hud/src/contracts/errors.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "1cd211382994f13150f6668f1268be9c34b555445a5ac9d02ab0987ac8cf4d5c",
+        "size": 960
+      },
+      {
+        "path": "packages/three-hud/src/contracts/geometry.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "975b6d2c9ed3d40f7999eb9042ec7227fd9252c362eb7354e8f3a52b1dbb7ae0",
+        "size": 978
+      },
+      {
+        "path": "packages/three-hud/src/contracts/moduleContracts.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "0c3e56c24b5bb5fd167f63132797cad0afdcf6e3b5916bb32681cc90ef70be72",
+        "size": 1790
+      },
+      {
+        "path": "packages/three-hud/src/contracts/public-contracts.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "b2e8db64e6e4d60934c3d19c2fc34ef8ff87be7d4454993705a33f17678e3cc3",
+        "size": 1933
+      },
+      {
+        "path": "packages/three-hud/src/contracts/version.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "33cdd165309f2a02c2c71fc4de47a96920af9d548e123038a31b551406d34bd0",
+        "size": 200
+      },
+      {
+        "path": "packages/three-hud/src/core/DirtyFlags.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "b444c16056fe36b20b851871ace307cc140063acb2f48d19a5d7fb22279249eb",
+        "size": 1293
+      },
+      {
+        "path": "packages/three-hud/src/core/HUD.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5ed66cd166fb4bbb7cdca502f5338398de1b675e0fae0b7b56e1c9533413005a",
+        "size": 5928
+      },
+      {
+        "path": "packages/three-hud/src/core/HudLayer.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d338a22c4f67725463eb200a2f78c6103599c7f4f4cf6fb34129bdf19fc2fb42",
+        "size": 2695
+      },
+      {
+        "path": "packages/three-hud/src/core/HudNode.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "795f0a501b28eaec3e94be036c4f960e4576d2ab731625348e9f8e4dbd67a5ef",
+        "size": 3027
+      },
+      {
+        "path": "packages/three-hud/src/core/HudNode.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "4d6109cc4490f552906338845b10bf79b24e0d68a57edc803a33b52b5514ccc4",
+        "size": 11480
+      },
+      {
+        "path": "packages/three-hud/src/core/deterministic-order.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "fd5c121e6a18c0cc5e25108f417dafa7ea1aaef8a198ccb51b8f5a53d6ade99e",
+        "size": 5517
+      },
+      {
+        "path": "packages/three-hud/src/core/hud-layer.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "42e06b65a1d37fb28c2a5b690a6c039633de3819b7a54f97790f6b830292ac47",
+        "size": 3922
+      },
+      {
+        "path": "packages/three-hud/src/core/hud-lifecycle.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5b3ff40fe28ba33cc73c2576c085a7d5d70f2d79782da932a40d7a618f0a5d1c",
+        "size": 3213
+      },
+      {
+        "path": "packages/three-hud/src/core/invalidation.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "776e525080e6df43e9bf02d3928316cc34124147864ac42af1b155778c54bf11",
+        "size": 5249
+      },
+      {
+        "path": "packages/three-hud/src/core/order.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "987836ad2c377a3d9480d5d4cf4090f65a15123a050ae34698cc5a481ec78574",
+        "size": 2786
+      },
+      {
+        "path": "packages/three-hud/src/core/snapshot.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "086597c7535b071600fd39db7cce46776baa494a8f01418d1c674aa4ca9877e1",
+        "size": 4722
+      },
+      {
+        "path": "packages/three-hud/src/index.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "3a2a2551cb7b1d8edb7ca9baf5f834645b390ebd43f5114f343341e68afed6dc",
+        "size": 8797
+      },
+      {
+        "path": "packages/three-hud/src/input/connectPointer.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "1a8d1665823673c946b0068e729c442ddf8bbe52850d4fd808b8c4f677c5f6ed",
+        "size": 1857
+      },
+      {
+        "path": "packages/three-hud/src/input/dispatcher.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5593cc21cf1161748d5903bbd4cd7d0ea931dc706049dca20467c6fc6b1b3fe8",
+        "size": 8729
+      },
+      {
+        "path": "packages/three-hud/src/input/hitTest.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "aa72a3f649d42b142de301fb516d1afb80d00fcd39ef5c490249b818d284d762",
+        "size": 2067
+      },
+      {
+        "path": "packages/three-hud/src/input/hitTest.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "818888786fc54b253b580c52136bf8dda8669c7fa4e4128321dbe8741cf00fa5",
+        "size": 1432
+      },
+      {
+        "path": "packages/three-hud/src/input/interaction-state.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "b4a5bfd1a3423c97aca98bb5fdde0be4953dadfe40c2f812acd1bee5c07d3356",
+        "size": 1410
+      },
+      {
+        "path": "packages/three-hud/src/input/pointer-events.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "b65033781f3e1c21264a065a8c44430217be7ac17f8db1f09f4db6281eab2bc9",
+        "size": 6875
+      },
+      {
+        "path": "packages/three-hud/src/input/pointer-mapping.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "323b4800cda3f4604b36b3d6881c981b8fe3246d9283cc056b18027355db05ef",
+        "size": 1354
+      },
+      {
+        "path": "packages/three-hud/src/input/pointer-policy.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "fca150998e32780631edfdc8b1105ee03f2d604b957c1eade26fa8071aa1382e",
+        "size": 1410
+      },
+      {
+        "path": "packages/three-hud/src/input/pointerMap.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "2c68bb27cb0957486f83b20c25403867165279e80f2979175a38fa5d3346e979",
+        "size": 2326
+      },
+      {
+        "path": "packages/three-hud/src/layout/absolute-layout.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "13bd3130dec9995d81f51be82c31e4767013c3c8ace8b47f1019dd3513a49231",
+        "size": 3819
+      },
+      {
+        "path": "packages/three-hud/src/layout/absolute.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "51bcb919c67db3b89af1096e22ca6e3fa5547c4155a076d49ee662c1c1d73a83",
+        "size": 3506
+      },
+      {
+        "path": "packages/three-hud/src/layout/anchors.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "f892e3980ab092f3ae4bcb95d82c94bfdb61cae570253a4bffda935c4a853fde",
+        "size": 413
+      },
+      {
+        "path": "packages/three-hud/src/layout/box.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "8c9319b8c28ee92cd3880750e68750d4361074d0fd01318657c13d0ae8f3652d",
+        "size": 8084
+      },
+      {
+        "path": "packages/three-hud/src/layout/constraints.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "24cd01743c1df2977808d1855fb330af32687ea11fdd6301f4a4c75dae76b7ce",
+        "size": 873
+      },
+      {
+        "path": "packages/three-hud/src/layout/debug.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d45626f1d30a653cce00d4e9cc143535ae625466d34d7201d510682de176b802",
+        "size": 1370
+      },
+      {
+        "path": "packages/three-hud/src/layout/grid-layout.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a8c1f8984405dc103a298cb72c228e5de9186f817eab8b0a1f05ce46ec3c12fa",
+        "size": 2609
+      },
+      {
+        "path": "packages/three-hud/src/layout/grid.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "eeb2c8e1df27ab812e5bbe7f937cfd36b4972c1b1d1db0561f4175693f823710",
+        "size": 4464
+      },
+      {
+        "path": "packages/three-hud/src/layout/layout-measure.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "32b12479bd7b23440c1661e6b178360883e44f5c39bd885d525877b71eedabed",
+        "size": 2660
+      },
+      {
+        "path": "packages/three-hud/src/layout/layout-regression.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "2899c13066f5c984b9f64dcd2d70c2291eb8b3a9c5fd487c73c42d7f1f80205f",
+        "size": 2296
+      },
+      {
+        "path": "packages/three-hud/src/layout/path.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "61b1c3becae4c15fade7df54d272db1173b3b896f87cfa9db363ce222b44f16a",
+        "size": 269
+      },
+      {
+        "path": "packages/three-hud/src/layout/stack.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "4953cf99db4b6e5c52951a9750a78026522c721018ae24a5db2cd9a9745e045f",
+        "size": 2962
+      },
+      {
+        "path": "packages/three-hud/src/layout/stack.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "7157c9e5a5a1a4fdb6afca28b83d17d3a30cc6c6da62e6a87e71586325815d5a",
+        "size": 6468
+      },
+      {
+        "path": "packages/three-hud/src/primitives/Image.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "02d91156535dff0d7fdebd10e563227f76216068e85f509529b82079373b00fc",
+        "size": 1936
+      },
+      {
+        "path": "packages/three-hud/src/primitives/Line.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5d643b719d80b4ef1d49fb3d62925a0d14014e37b9401b85dd5da0f161542321",
+        "size": 2109
+      },
+      {
+        "path": "packages/three-hud/src/primitives/NineSlice.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d350701938030d953819168538add9526d6ea108705aa11077906504f9b33052",
+        "size": 1523
+      },
+      {
+        "path": "packages/three-hud/src/primitives/Rect.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "76c11c50d9bd915b290ca7183f9a179b91ae76d61eaaf922b15db069e3e7d1d2",
+        "size": 1461
+      },
+      {
+        "path": "packages/three-hud/src/primitives/Ring.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "4da6cb64f3116ad6ed2404f3cb6109bf90bdf9823fae8e7431b4bcc705272414",
+        "size": 3987
+      },
+      {
+        "path": "packages/three-hud/src/primitives/RoundedRect.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "9ead2b363f85bd8b4321092415e216b3012ff337e043f2245184651e3339c7d6",
+        "size": 1391
+      },
+      {
+        "path": "packages/three-hud/src/primitives/arc.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5778009be6be3533d68a57975556ffb2c1731b21f323bee432e4546b4ece439d",
+        "size": 357
+      },
+      {
+        "path": "packages/three-hud/src/primitives/image.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "fea2a911552a9e1b08b1cce5016ced5cbf08de1b8ac15ff7718ed517a9100fe1",
+        "size": 2425
+      },
+      {
+        "path": "packages/three-hud/src/primitives/line.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d50f51eca1675f7d431f44d0fa952429c51a5a3f1dd94b4863662f2f9850717a",
+        "size": 2060
+      },
+      {
+        "path": "packages/three-hud/src/primitives/nine-slice.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a92508e858dd158d3d002e29f2a3af3530e8acbf2216eb7698db1f38b02d8614",
+        "size": 1146
+      },
+      {
+        "path": "packages/three-hud/src/primitives/rect.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "4f13d463010f22d7946177fc985ac2dc5dea308d9c827f05ad99fdcc2ff3bf59",
+        "size": 1834
+      },
+      {
+        "path": "packages/three-hud/src/primitives/ring.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "919f1803a495a9419730d6af09123dc56ed456d6965b47ddfd340d9fe8927006",
+        "size": 2440
+      },
+      {
+        "path": "packages/three-hud/src/primitives/rounded-rect.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "c2260141f11aec6fdcceba0f635546d18a7255b1e339842c402149a577e83d34",
+        "size": 1270
+      },
+      {
+        "path": "packages/three-hud/src/render/blending.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "47c58695d4d5daa21ed4724feca4672091b383aaec97e92427c24e55dc7233ec",
+        "size": 2039
+      },
+      {
+        "path": "packages/three-hud/src/render/clip.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "445a89e647c4260329eb1ec75556602feac719b99ffc6ccad0687874c78e7663",
+        "size": 859
+      },
+      {
+        "path": "packages/three-hud/src/render/clipping.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "e872c996658bdbe69ac6f4dc6d7a08850617c3f0b5ae322685a989995141c1b3",
+        "size": 2373
+      },
+      {
+        "path": "packages/three-hud/src/render/color.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "7cb78ed928ba08e5063b365320573f0bab0a370d36bfcab28dad356049f31273",
+        "size": 1257
+      },
+      {
+        "path": "packages/three-hud/src/render/commands.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "acc772452153154f56a106444f154467d2922759e30244628910ec5d652ab085",
+        "size": 2570
+      },
+      {
+        "path": "packages/three-hud/src/render/contracts.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5b3a51aca9ee1247c0a9a4db93a0b0238a02d0b86cbe95b525eeac1e4d9a2e35",
+        "size": 407
+      },
+      {
+        "path": "packages/three-hud/src/render/createHudOverlayAdapter.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "0a8e0e69ecfe9e2309c8df3c7e0acdc4f397f305a3e5ad5e23118d2d859bd877",
+        "size": 17736
+      },
+      {
+        "path": "packages/three-hud/src/render/encodeOverlayQueue.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "9a0c8275c7ac220c9a202ff78e76d3a10ed28606ed59ceb22d742fd6cdf16edf",
+        "size": 7681
+      },
+      {
+        "path": "packages/three-hud/src/render/overlay-queue.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "152297e08db27f38135966e3a4b841550593c5315d43af426b05c137a2ebd9cd",
+        "size": 6396
+      },
+      {
+        "path": "packages/three-hud/src/render/overlay-state.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "fd477cb225ea57da077cd0dd8b4b14d40841dd168235ae6ed74bcf029cf2200e",
+        "size": 5135
+      },
+      {
+        "path": "packages/three-hud/src/render/overlayMaterial.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "7833d4cfbe9ab26fde33e97939a88232e51065fb11b63b01fc52b531781a9023",
+        "size": 4330
+      },
+      {
+        "path": "packages/three-hud/src/render/overlayProfile.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "7114730769a1ca3323944394b927eb5eaac8d0177d1c2c868cdcf8f6397815ea",
+        "size": 1241
+      },
+      {
+        "path": "packages/three-hud/src/render/overlayRaster.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "b5e9b26ed331a5eb03668abfd61ede4f6dc23b8073e37ad31e294443478cc906",
+        "size": 4753
+      },
+      {
+        "path": "packages/three-hud/src/render/overlayState.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "516220033c1f5cb6c45a400ab32ba40b43953f4c0106e9bdb4cadb3857c55f4b",
+        "size": 4376
+      },
+      {
+        "path": "packages/three-hud/src/render/primitive-regression.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "00101f18953313794e3283df21b10677429641422ddc0fcdb8cc7582dc5d3eb1",
+        "size": 1187
+      },
+      {
+        "path": "packages/three-hud/src/render/primitiveScenarios.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "490d5e4bb1679fb538dbd7a15e0d173690b185ac28150772d166ab1e22f6ce8f",
+        "size": 8694
+      },
+      {
+        "path": "packages/three-hud/src/render/render-pools.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "56a58b75adccb70c49d0a32aed6c4451898bd61f570d7ca7a63357c6d667db58",
+        "size": 2838
+      },
+      {
+        "path": "packages/three-hud/src/render/render-queue.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "2572de4a6aa163494d18270529c196d3f44f34bf89cb1e2e02c7836b5902f949",
+        "size": 5423
+      },
+      {
+        "path": "packages/three-hud/src/render/renderQueue.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "e8d7ee669220ba82837d861aad2ea658d6918130ae4cdc198aa1d210022f5dbb",
+        "size": 2564
+      },
+      {
+        "path": "packages/three-hud/src/render/renderer-capabilities.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "66eb8db692b56b12c099d30404c352840e4e9848dede3acb048c1509e5671e5f",
+        "size": 8039
+      },
+      {
+        "path": "packages/three-hud/src/render/renderer-capabilities.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "0cfefed3760f16a1ec427146f6602ec2b16fcbdc520ba84257245aeeb54f0455",
+        "size": 11741
+      },
+      {
+        "path": "packages/three-hud/src/render/resourcePool.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "e0a9b7e63158f4d7a78a8e14275b74c60a636407daf57cca4a89f238b439fc2c",
+        "size": 9165
+      },
+      {
+        "path": "packages/three-hud/src/render/three-overlay-adapter.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "589820e113c8536d4ab74a16b439e66cecbcbb475e51097b8f23b41ac1b57b50",
+        "size": 10579
+      },
+      {
+        "path": "packages/three-hud/src/testing/clock.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "f1dffc7806c9d6e25947f5497c9549ffdcf591f50b2e48574dcec577373e1f0d",
+        "size": 757
+      },
+      {
+        "path": "packages/three-hud/src/testing/fixtures.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a9f878e5df82d3b8cef2e6cf597b28fd64029222f3346b5aabb37922ea8a2688",
+        "size": 1381
+      },
+      {
+        "path": "packages/three-hud/src/testing/harness.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "858f854a2172152d87a88f1fe761733cb8809d30ef2c93245851bd16d7a896c9",
+        "size": 5091
+      },
+      {
+        "path": "packages/three-hud/src/testing/index.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "70aa006044e2d5f1360ff937e12bddd576d369d70767038827a08263bd8b206d",
+        "size": 767
+      },
+      {
+        "path": "packages/three-hud/src/testing/mocks.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "26bf44d3c720fc5bc8f014efb19ad551e1f008b1327f09b2853e7870a1ac40b5",
+        "size": 4394
+      },
+      {
+        "path": "packages/three-hud/src/text/ascii-atlas.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "cad67b7a23466cae1dd05c2b60b55c143dbf340a90fe4ed5137a76d10249f094",
+        "size": 5814
+      },
+      {
+        "path": "packages/three-hud/src/text/asciiAtlas.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "1ab0d8f3f171ff3b0d34667548b19703218d567b737ed06b3158dc9065144287",
+        "size": 6359
+      },
+      {
+        "path": "packages/three-hud/src/text/basic-text-layout.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "bb30b1b2bdf4e793622a4a4888a2ff9bc9bd1c66f77fa64b8f02802e9684fa5c",
+        "size": 1584
+      },
+      {
+        "path": "packages/three-hud/src/text/bitmap-adapter.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "e3cb27072b6eed75bd3ad2f318b39a0d30d001bb5144ef686ec45275f356cea2",
+        "size": 3287
+      },
+      {
+        "path": "packages/three-hud/src/text/bitmap-scale-policy.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "09792f9a511f58ab75d3e8cee3a9a9aa17bf8976f4474da8edb70ea15c320587",
+        "size": 1224
+      },
+      {
+        "path": "packages/three-hud/src/text/bitmap.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a26d532500400eb1c39d379d62c3bb3b8cb045db3150d7a6a0808a8d855e4b9e",
+        "size": 420
+      },
+      {
+        "path": "packages/three-hud/src/text/bitmap/adapter.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "9110af66cc10268794d6d93223d579a53cfca99ad5a4a7889b44600db590bf78",
+        "size": 5175
+      },
+      {
+        "path": "packages/three-hud/src/text/bitmap/manifest.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "ceec8243457de2cc6a4ad6a1566e20cfe0a93b91659035299d03c35bae00b5d1",
+        "size": 1625
+      },
+      {
+        "path": "packages/three-hud/src/text/bitmap/scalePolicy.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "eac4a4a7f8192a5b1b2729dec45c4525cf8ba4a7daf6ae5986b1ad21cd7518f1",
+        "size": 504
+      },
+      {
+        "path": "packages/three-hud/src/text/contracts.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a18217c7ca4ec0fb7fbcb1539c4c617c16049593eb0ec15a9242b9cfdf5ad75a",
+        "size": 7089
+      },
+      {
+        "path": "packages/three-hud/src/text/font-contracts.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "3be984dae764340ed13bfddda3a6c154f56afee42122925cf07252fe8c0f6e89",
+        "size": 2947
+      },
+      {
+        "path": "packages/three-hud/src/text/font-registry.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "e71832605024973d4f835d7eb48546eb58acd7186bdc02869b23333971785379",
+        "size": 3679
+      },
+      {
+        "path": "packages/three-hud/src/text/fontLicenses.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "13f49eef89db0a8eb11584676a3391308056b7c37d8a6e26f021e1214e4663ed",
+        "size": 1635
+      },
+      {
+        "path": "packages/three-hud/src/text/fontRegistry.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "14c6df483539a08013755a6a3e791acd72e0a89440c9d510e4f5edd60efd166e",
+        "size": 8814
+      },
+      {
+        "path": "packages/three-hud/src/text/layoutText.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "6f25d10946de303175e10dafbbcf29910019ca4e7b5c66d2abfcb14411375550",
+        "size": 7092
+      },
+      {
+        "path": "packages/three-hud/src/text/measurement-cache.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "1175fd8be79d5530ca880ecc6f5b95d32b3c6483d7852ad32cfd4c6d77881b55",
+        "size": 2204
+      },
+      {
+        "path": "packages/three-hud/src/text/measurementCache.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "121ee460c525ee421a6d4bb24789bdc88f884a49ad319cf55ec41660e50bf106",
+        "size": 1816
+      },
+      {
+        "path": "packages/three-hud/src/text/sdf-adapter.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "ffe31e67ecc38a21efa18e3ca4f181a9572c878c7b96146560e04dfd9c25d8fc",
+        "size": 3113
+      },
+      {
+        "path": "packages/three-hud/src/text/sdf-capabilities.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "51e66e4c321cb5d099ab3b06021a35f1532bff9be9b6069967b34f8d9316c8fe",
+        "size": 1075
+      },
+      {
+        "path": "packages/three-hud/src/text/sdf-lifecycle.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "f464625712405008ff037090079ccfeed229849e68c6fa9416fd77a2e5d0a4ae",
+        "size": 803
+      },
+      {
+        "path": "packages/three-hud/src/text/sdf.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "389a482ecb9db1443c6f5fb8149fef1b5e1643f9cfb43addbcba9be27404594e",
+        "size": 155
+      },
+      {
+        "path": "packages/three-hud/src/text/sdf/adapter.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5c504bdb985beb0d3432846094cd469fae96c937b8c6f4ddd7f2c7a2198ab55c",
+        "size": 4405
+      },
+      {
+        "path": "packages/three-hud/src/text/stub.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "fb88d70b693726160fbd7c8d24719c77098d23ed50cce9ea553dd03f84b2b81a",
+        "size": 878
+      },
+      {
+        "path": "packages/three-hud/src/text/text-backend-contract.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "fbe22f603874ce40a4c1daaa25888b5295a5766c7400a233aff12b94406f68e2",
+        "size": 3663
+      },
+      {
+        "path": "packages/three-hud/src/text/text-backends.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "22cbbbcda3f346fb9f97c359732e6182167e715bbe2a292d6cfa47812a0cc6f2",
+        "size": 2707
+      },
+      {
+        "path": "packages/three-hud/src/text/text-diagnostics.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "913279e3a42552f5abefd150d4cd980dbb044be1ab721933c8d71ed861cfdba9",
+        "size": 1227
+      },
+      {
+        "path": "packages/three-hud/src/text/text-fallback.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "6d552fae4547ebe035b9bb132dff3249a6fb717dae5ff20e1e8941d5fa530713",
+        "size": 1366
+      },
+      {
+        "path": "packages/three-hud/src/text/text-style.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5e72fc78af766c75a831ba93d8f421d5816bd1a927388a6a9a7bae8209c9615d",
+        "size": 999
+      },
+      {
+        "path": "packages/three-hud/src/text/textBackendConformance.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a741187abfba2303f180a0fa42fe8cdd0acfd6036f50d21370ff232d44febfef",
+        "size": 4145
+      },
+      {
+        "path": "packages/three-hud/src/text/textFallback.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d32e28922321e87aad3676c912817c6516cf618818e50da18acb333d97af40b9",
+        "size": 3619
+      },
+      {
+        "path": "packages/three-hud/src/text/textStyle.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a3968dff13a97c15d33c9e7176dfc251d3c3b34583cec25e7ad3bc621d121696",
+        "size": 3303
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil-adapter.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "0ce9f16ee1426e2a1fb9e48526cf10bbdad9a2e97cb071116d5aaa0529645ed4",
+        "size": 3964
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil-atlas.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5f11fc81ce993d7442eaa1ac6a28a6cae92ad3e227f6b61617125acf14b12d3e",
+        "size": 2932
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil-failure.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "898e250c38570d1ac6fe2a8307fa66180038c40625a9569529c1995623460ae6",
+        "size": 1843
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil-matrix.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "3f02c7a6fdcdec6436f761bfe38eccedca8fb4ec586ba64aa437e02d85cd96a2",
+        "size": 1371
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil-preprocess.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "1a428e18478244f8a5e89f075277b953a6a68d976f862fb13fd0c54a42453018",
+        "size": 10094
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil-three-spike.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a36993ecad3ef4e26a569c6ce1c6a0c7b8f2278043b6657c5fc76ffc7f8bc5f0",
+        "size": 3871
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "500ab508a7bd2f346585bde3816f706d33e3170602a8d91065c75eafd53a2fae",
+        "size": 1478
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil/adapter.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "41daaacb3b839436acdb45a56884ca5ab7897dd9567b664e01a9503b906fb42b",
+        "size": 7350
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil/atlas.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "1c1bfa815adeaac11fabc33cf67079a427f0caddcd093804fea643b95eb47152",
+        "size": 5873
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil/limits.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "45e58da3ad1466d1da243f146282f2b4387015276c20cf8f43efc82bc2237c82",
+        "size": 1252
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil/matrix.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "3b2b34cee341b30c867010e5bfe8fa3e52d9719d91fb699f9b938fd23ecf6180",
+        "size": 5741
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil/parseTrueType.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "fdc509a2fac1813273aec8f862518c98b2052702e2bde03013a40d37843ff1bc",
+        "size": 11344
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil/preprocess.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "b73dc411c73ef5bc71ab72e9fce1964fdad12572fdab83331b7a639da4585dc2",
+        "size": 10138
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil/threeSpike.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "df85f68f64d473bae66d73bbd0bae93caf51c52f964dd586c09479d2e9e27796",
+        "size": 6360
+      },
+      {
+        "path": "packages/three-hud/src/text/windfoil/types.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "4204ac4c6a21ef74287e371d91b255b23269ee36814ea25cd5da2382004399a6",
+        "size": 2651
+      },
+      {
+        "path": "packages/three-hud/src/theme/theme.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "152bcf102ae4d8d0f3672aefecf748c9f801061b94d04edcf5372e9252db7d4c",
+        "size": 7678
+      },
+      {
+        "path": "packages/three-hud/src/theme/themes.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "c0a7b91131fc3c3d344aaa5dd893567608d3e656f1e2dbac22bb3c6f18f334e9",
+        "size": 3250
+      },
+      {
+        "path": "packages/three-hud/src/viewport/coordinate-spaces.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "3b88fddbf7df19c2ff828a950f7df8b674032656a604552c77e8d4277264b204",
+        "size": 1924
+      },
+      {
+        "path": "packages/three-hud/src/viewport/coordinateSpaces.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "c68a2b83ed09ab68c5de3b56435fb2a45d676e88c102240ab7122213bef855b3",
+        "size": 3389
+      },
+      {
+        "path": "packages/three-hud/src/viewport/drawing-buffer.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "66e9926df5c106455c970da4a29c5079f1f807da9f3f78d695d989f7f7163cef",
+        "size": 2623
+      },
+      {
+        "path": "packages/three-hud/src/viewport/hostSurface.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "3a0e0f53b01cb550be4d505df6ffccde065d531293d3c5737086a72aa4044728",
+        "size": 2538
+      },
+      {
+        "path": "packages/three-hud/src/viewport/hud-zoom.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "288b76e628a41dc1899e5b0cb1d0b889bbc5e023acea8173dc71f184b5e9e36e",
+        "size": 1634
+      },
+      {
+        "path": "packages/three-hud/src/viewport/integer-scale.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "bf04fc2d5ef0cf78eaf250c7f05089a426dcd7586726e00fb63b0c1a61b95f4a",
+        "size": 1884
+      },
+      {
+        "path": "packages/three-hud/src/viewport/layerTransform.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "c64043321c4d263c7d8bd3cb816bc23b1b6ea72dd9475129b4576401774002c4",
+        "size": 6507
+      },
+      {
+        "path": "packages/three-hud/src/viewport/multi-viewport.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "87250399d2716b41270c76748f2be2916c95bb05b781975294083e752458608f",
+        "size": 2565
+      },
+      {
+        "path": "packages/three-hud/src/viewport/pixel-snap.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "656d1c69bc48d6c746d543486ea165f71d7829596405155268fc99f1512d4bac",
+        "size": 2281
+      },
+      {
+        "path": "packages/three-hud/src/viewport/resolveViewport.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "18ac530a98c0de0bc561a156d5d817783ba7e2a43a4026c34e27c555ef24cb0c",
+        "size": 1077
+      },
+      {
+        "path": "packages/three-hud/src/viewport/resolveViewport.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "4c77670927d13f3b1380e31c20f995a143e59fcff20ee71a9dacf16dbc1dd4ca",
+        "size": 6020
+      },
+      {
+        "path": "packages/three-hud/src/viewport/safe-frame.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d2ee5eedb350d4d6f3af9d51f1a8626258dddce4a081676c049511001f2eee4d",
+        "size": 1231
+      },
+      {
+        "path": "packages/three-hud/src/viewport/scale-modes.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "099dfe726b859f400d459175e64404658aa9ff8acc474459f3562c7fa2cab1f3",
+        "size": 3487
+      },
+      {
+        "path": "packages/three-hud/src/viewport/viewport-transform.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "1eafda96db8fc08a1ab2c4adace2d71bc383c7f5672a9ad7e34d8d67ca4790ce",
+        "size": 3412
+      },
+      {
+        "path": "packages/three-hud/src/widgets/Compass.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "91fe510fe1535c0c9d2ff8334d0c58db1494928896fdf2a378a8615450b1d8cb",
+        "size": 4869
+      },
+      {
+        "path": "packages/three-hud/src/widgets/Crosshair.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "43c4187f445e9d2fc439001c7e68d5ff534daaacb6aa5c3550cb328d42e93a88",
+        "size": 5434
+      },
+      {
+        "path": "packages/three-hud/src/widgets/Gauge.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d28f0fce143f7bbec1ccd9fb085cd5f5815c1cb6ce49a1c2cf4bf194c89dcddc",
+        "size": 3826
+      },
+      {
+        "path": "packages/three-hud/src/widgets/Hotbar.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "943db48d06370b88b28aad08f57dd4f881b6e2012a56f728aa4aee12cae0902f",
+        "size": 4565
+      },
+      {
+        "path": "packages/three-hud/src/widgets/IconLabel.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "bbd58e55044368726dd162733ac65532daf5fb174e82bfc8c667a19ea3f7462a",
+        "size": 2224
+      },
+      {
+        "path": "packages/three-hud/src/widgets/InventoryGrid.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "ec4f69fcbf5c335e57c9b7f1fe34a61f5d23c38eec8409b18d848984bba16c7c",
+        "size": 3147
+      },
+      {
+        "path": "packages/three-hud/src/widgets/Label.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a776b7c363dfa3438987e43da49f4962931b95e91cebb674923bbcc3b3666cf1",
+        "size": 2437
+      },
+      {
+        "path": "packages/three-hud/src/widgets/LinearBar.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "b03897329aca303933f74ee40b294077c648ebfb4941d7f222649d9ac25dcfe1",
+        "size": 859
+      },
+      {
+        "path": "packages/three-hud/src/widgets/LinearBar.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "f97cacdc5e62b2f186a7f3ee50e217d479491b59fc6f06bc650cc9e54d3334a2",
+        "size": 5905
+      },
+      {
+        "path": "packages/three-hud/src/widgets/Panel.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "bbf28fbcc6e0a0b232d905b1ae4968dc9a37bf3f269df652adcca70a8670fa73",
+        "size": 3014
+      },
+      {
+        "path": "packages/three-hud/src/widgets/RadialBar.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5f1c7729b2fcf9b52e327b6d72c0c3df47f23bbd75c5c645f668a3cc807cfddc",
+        "size": 2452
+      },
+      {
+        "path": "packages/three-hud/src/widgets/Slot.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "0bee78dd4c8bd922954720cc1fa78658b1ccabbe9cdaceb4209bb05ec70c138e",
+        "size": 3293
+      },
+      {
+        "path": "packages/three-hud/src/widgets/compass.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d9c1347f6b46b047d18468d6acd780a0225bffc452c883934722a1946ce0b8b6",
+        "size": 1153
+      },
+      {
+        "path": "packages/three-hud/src/widgets/crosshair.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "6737ba4a46624ddd9133a5b0e5be1f6df1c64cb99336b79e8d29822bba834770",
+        "size": 2063
+      },
+      {
+        "path": "packages/three-hud/src/widgets/gauge.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "55b7deccc2b77bb2aa3a514c3ea02b3eb1e4259513b12d7ec86e8791b3d59ca7",
+        "size": 2641
+      },
+      {
+        "path": "packages/three-hud/src/widgets/hotbar.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "b0b9379e0488a69587b062191e8637c0d5f67c0f1f5ac92acd96f8af4649bf08",
+        "size": 2128
+      },
+      {
+        "path": "packages/three-hud/src/widgets/icon-label.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "66847bfc0c0b54d56e4e718c898cd571d32603820dc00461e8fd74f24adc34cd",
+        "size": 1675
+      },
+      {
+        "path": "packages/three-hud/src/widgets/inventory-grid.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "f2f29fbfcf71c04c9903a3831ebeeccef39a58eae18d8ef506b8fd030a558a56",
+        "size": 2597
+      },
+      {
+        "path": "packages/three-hud/src/widgets/label.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d5465925f4d3537833bd80acffe43003289d57fde7a42cc7518873295701b64f",
+        "size": 1603
+      },
+      {
+        "path": "packages/three-hud/src/widgets/linear-bar.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "6445b3a6d6d913db651742ea59c90a0ee709d296cfc7ac1994ca7a605f5c2e16",
+        "size": 3907
+      },
+      {
+        "path": "packages/three-hud/src/widgets/panel.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d29d7c59267c502a01207dfe9d14cb10550cf3ea907d4b4b8244143ae3a25cce",
+        "size": 2500
+      },
+      {
+        "path": "packages/three-hud/src/widgets/radial-bar.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "9d603127963908c3d00d52bad9c1edee273914cee044d7279d6bd070730e9a36",
+        "size": 1535
+      },
+      {
+        "path": "packages/three-hud/src/widgets/slot.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "27844137e4e5cc669dd797752c65b7149fb61585d7174ef6538f8cc1fedfa976",
+        "size": 1517
+      },
+      {
+        "path": "packages/three-hud/src/widgets/widgets.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "8d5de4cc7369ddee80c730be4ddea37661d1c9e2ac041dadcdb131becce77324",
+        "size": 2232
+      },
+      {
+        "path": "packages/three-hud/tsconfig.json",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "ce22def32bb11ac723868cce4c49e151d8c682a4d961c5227dab19bc9f477602",
+        "size": 166
+      },
+      {
+        "path": "packages/three-hud/tsconfig.lib.json",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "2c4e9388e18b85a13b679bb7711edd766d9ee32cc8c649bc23c65ea262e3bb02",
+        "size": 297
+      },
+      {
+        "path": "packages/three-hud/vite.lib.config.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "f39518476c06a3d90aaea55b131fa71007b5aa24d3f4adbf10344c51828497e9",
+        "size": 710
+      },
+      {
+        "path": "playwright.config.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "9b7c61523510b5d3286906725a35b0f086d19828c9f09d4fab5aa1c538f9aa99",
+        "size": 572
+      },
+      {
+        "path": "scripts/api-check.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "be0ccb055c7f55fbc0160fc031ae3298805a8a3106f6424d739ed6061b36661d",
+        "size": 1189
+      },
+      {
+        "path": "scripts/archive-release.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "89528c913db040b3ffe9dd3fc53d02e2b502a047305b179deb601ac83d944a93",
+        "size": 3308
+      },
+      {
+        "path": "scripts/assert-release-ready.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "2478fb730ba6ea37cc99120ad64b45f0fe65a370727f63f78177ac130fbb3de1",
+        "size": 301
+      },
+      {
+        "path": "scripts/benchmark-allocations.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "22a838d361ebd89d8233cdded3535b43090dd39df8828000b93ebb8a6f6db74f",
+        "size": 1533
+      },
+      {
+        "path": "scripts/benchmark-full.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "0469128751f7c957a01c77886d38fea53605e62c4ff193953e558cba3a8660d4",
+        "size": 3996
+      },
+      {
+        "path": "scripts/benchmark-windfoil-dynamic.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d354aa6fad16cad43ef140da518f3e4b275e1391405d4f04dc280f4b83e7893b",
+        "size": 1637
+      },
+      {
+        "path": "scripts/benchmark-windfoil.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "e60cef520913d3b2a11bacc5eddeeb252e95013f246813f39a6a1d68bbad13ea",
+        "size": 1104
+      },
+      {
+        "path": "scripts/bitmap-manifest.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "bce245950253afc0b033794b3e8b83695659c12f95728f7270ef0ba069f8eed4",
+        "size": 1157
+      },
+      {
+        "path": "scripts/bundle-report.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d2c4f13147ef6f5a20f35b156fff6275825ad5703d317f6a1b4e8f25abd3055e",
+        "size": 1249
+      },
+      {
+        "path": "scripts/bundle-verify.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "5f9a51550bb25bde3177153020787a18a9611028083c930e05574bc68b184e48",
+        "size": 2138
+      },
+      {
+        "path": "scripts/check-boundaries.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "529675d38eef8f598b5dbf7ac7fc06d8663407e21b695800c53c8b0c61ee0c7e",
+        "size": 3571
+      },
+      {
+        "path": "scripts/check-doc-links.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "189311c8899ca834c5e36ef688669ff09329a9608ae2ad96c105acf70babb804",
+        "size": 1845
+      },
+      {
+        "path": "scripts/clean-package.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "db9722341ccc31b9f205e4d39277c713f8f5d9d6f76c48c3b5e06e32d900a4c5",
+        "size": 447
+      },
+      {
+        "path": "scripts/clean.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "6c0f6c61b6e4365a843d6d4585cb47ba00d8da4859f9a168acdcb3a1d062534f",
+        "size": 555
+      },
+      {
+        "path": "scripts/compatibility-report.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "902f16bd183029ad0b147526a1b345bad3a56ce9b428439ab7c971fd78382163",
+        "size": 3123
+      },
+      {
+        "path": "scripts/coverage-split.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "bf28aeaf3f59f0b69b8c11ffb294427bd69e926b0debc3b17fb82efb2e6e87d3",
+        "size": 1309
+      },
+      {
+        "path": "scripts/examples-verify.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "f8095ad2d5eafdab1fc09597d6de181bfb93428ab8a0f2745ef70ad6ef8a65aa",
+        "size": 1951
+      },
+      {
+        "path": "scripts/lib/walk-files.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "35108889fb7a443506422895185e90e7a194a0ab870fa67a68bb3871990756eb",
+        "size": 538
+      },
+      {
+        "path": "scripts/licenses-fonts.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "13de688e4f8aafff84681a599fde79eeec4404e974c624b4641524e685fc03c1",
+        "size": 2054
+      },
+      {
+        "path": "scripts/licenses-verify.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "e078db5b8250ead4fbae96cf70771e5782e5735c87c860a1d5ac296465da4d93",
+        "size": 247
+      },
+      {
+        "path": "scripts/package-verify.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "9689f9c3ea8b934727092d4e175e3080ea6b1459ed0836f2a20d698c22aa0faa",
+        "size": 1370
+      },
+      {
+        "path": "scripts/release-dry-run.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "1292c51d5ea1fec6ae40d8ed8e65f6c29af56dc7368df883b06f51d684945c04",
+        "size": 587
+      },
+      {
+        "path": "scripts/release-qa.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "c59985850358f33e51771cdd0e1a37006b49fb79c007ab7daeca5216a4dc5f3e",
+        "size": 1754
+      },
+      {
+        "path": "scripts/release-verify-registry.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "125b54c7e1b59606077a17efe99e97c1c8866af5ac5fc350d29bc8157762c59a",
+        "size": 2532
+      },
+      {
+        "path": "scripts/render-budget.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "4180608c356faec64f1e084852d75a1d4975a31660ac841548ebfd853d8ed552",
+        "size": 409
+      },
+      {
+        "path": "scripts/test-external-consumer.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "b487c61b4771e8eb30f41896260f07166f9b5e0032659d41fce305d1616f960f",
+        "size": 1697
+      },
+      {
+        "path": "scripts/test-resources.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "ab1d31164ea4556f2f7928ce847ab61d4cd427c98a518666834e9a17322256d6",
+        "size": 2187
+      },
+      {
+        "path": "scripts/test-ssr-import.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "aee573bebae728967aae7231b4e76853a9226178a0993d3104fb6f593fafd376",
+        "size": 964
+      },
+      {
+        "path": "scripts/tests/overlay-no-host-loop.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "21ed6155e5dff4b873b8ed243224183eb9160776d493f7eeeddeaf27eaf42393",
+        "size": 1013
+      },
+      {
+        "path": "scripts/tests/release-candidate.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "091337f1d455808fd8eee494de68505c092abe0492ba3c5b841fa52864b19ab1",
+        "size": 2051
+      },
+      {
+        "path": "scripts/tests/verify-honesty.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "6c3005090f0d853bc1e23db90624b9c7be5ee733fe3528de68bf7efcb041bd73",
+        "size": 1656
+      },
+      {
+        "path": "scripts/tests/windfoil-three-public-api.test.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "d8c7d70993eae174adae5f042533481ac409da801a4cdec5af406da1c02a51ab",
+        "size": 543
+      },
+      {
+        "path": "scripts/visual-all.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "65021ec711eca04e93082edb8d42f57cb3cfb2a0e4e28e09dd8a83e94edbabb0",
+        "size": 956
+      },
+      {
+        "path": "scripts/visual-layout.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "6734d376b5b68c685e0537dda84ee1681d1cc3bfb59188e14a68e6fd4176e94f",
+        "size": 2591
+      },
+      {
+        "path": "scripts/visual-matrix.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "1dfcf834fa5f283156317d3dc41f58491f25785ab84d919e10f9dfba37f478f3",
+        "size": 5207
+      },
+      {
+        "path": "scripts/visual-primitives.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "123e82bde038115fb9fa41c2e7b2d86f68c31bb2063989737b6519426ca18003",
+        "size": 1717
+      },
+      {
+        "path": "scripts/visual-regression.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "df119452ed7bbee686317491fa3b1de4f84a3c448d48413674e9977119d8435c",
+        "size": 3226
+      },
+      {
+        "path": "scripts/visual-showcase.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "be730b28bdd167b6fca48488ecf85555cce8213e828f7d1917533c1578eb6e98",
+        "size": 2501
+      },
+      {
+        "path": "scripts/visual-text-bitmap.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "62f2022dd6d41ef3e58f149d6777cb1f5266c6a3d0cf2047501da6bd3ef976cf",
+        "size": 1150
+      },
+      {
+        "path": "scripts/visual-widgets.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "7356b667c4abd3e04466001473acd7b661d92718444910c02068cfb709637ed8",
+        "size": 4787
+      },
+      {
+        "path": "scripts/workspace-check.mjs",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "4749a89ee38514754f9a8c13a9ba2829f0cfbacb6c6babd8a5e02b5c136d700c",
+        "size": 2975
+      },
+      {
+        "path": "tsconfig.base.json",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "18beecb03e95d667193e1136242707be658ef847f091b29646a9cd43a2e2fa45",
+        "size": 632
+      },
+      {
+        "path": "tsconfig.json",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "644bf7d863bf65d972ecd1f2b642018e80d8918a529c5fb335d7607599a3ebc7",
+        "size": 105
+      },
+      {
+        "path": "vitest.config.ts",
+        "origin": "tracked",
+        "state": "present",
+        "digest": "a60925723c8e6b39ccbe28689fc8e5eba2f13ab0308ca46b1fb009a9fcb123ad",
+        "size": 667
+      }
+    ],
+    "digest": "27ec873c7661ee950de7da556ad9fb4497b1d4f23363519ced9da86f931fb7f1"
+  },
+  "source_digest": "673702c83d7c64dda9ddaeec1081321641b206b5a73145926d30ab1e959421c0",
+  "artifact_hashes": {
+    "codemap.json": "7e99ac86b9ef1455260e08e4b6ced6dab1504f6075b615ed6e94cfe4fb48be37",
+    "codemap.md": "c8b3ef3d30d6f8c5c301e80c95f7a7ccb12915520f07b379c4790bd12d7f2df4",
+    "codemap.html": "3a3f0668976200a3d254a29636440bed6b1cd63e6ffc775e1afe7bd752595824"
+  }
+}

@@ -77,7 +77,11 @@ export function isWallCell(grid: MazeGrid, x: number, z: number): boolean {
   return grid.walls[z * grid.width + x] === true;
 }
 
-export function openNeighbors(grid: MazeGrid, x: number, z: number): Array<{ x: number; z: number }> {
+export function openNeighbors(
+  grid: MazeGrid,
+  x: number,
+  z: number,
+): Array<{ x: number; z: number }> {
   const cells: Array<{ x: number; z: number }> = [];
   const dirs = [
     { x: 0, z: -1 },
@@ -128,18 +132,26 @@ export function shortestTurn(from: number, to: number): number {
 }
 
 /** Yaw 0 looks north (-Z). Positive yaw turns right toward east (+X). */
-export function yawToLook(yaw: number, pitch = 0): { x: number; y: number; z: number } {
+export function yawToLook(
+  yaw: number,
+  pitch = 0,
+  out: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 },
+): { x: number; y: number; z: number } {
   const cp = Math.cos(pitch);
-  return {
-    x: Math.sin(yaw) * cp,
-    y: Math.sin(pitch),
-    z: -Math.cos(yaw) * cp,
-  };
+  out.x = Math.sin(yaw) * cp;
+  out.y = Math.sin(pitch);
+  out.z = -Math.cos(yaw) * cp;
+  return out;
 }
 
 /** Strafe-right vector on XZ. At yaw 0 this is +X. */
-export function yawToRight(yaw: number): { x: number; z: number } {
-  return { x: Math.cos(yaw), z: Math.sin(yaw) };
+export function yawToRight(
+  yaw: number,
+  out: { x: number; z: number } = { x: 0, z: 0 },
+): { x: number; z: number } {
+  out.x = Math.cos(yaw);
+  out.z = Math.sin(yaw);
+  return out;
 }
 
 /**
@@ -166,18 +178,26 @@ export function facingOpenYaw(grid: MazeGrid): number {
   return -Math.PI / 2;
 }
 
-export function cellCenter(grid: MazeGrid, x: number, z: number): { x: number; z: number } {
-  return {
-    x: (x - (grid.width - 1) / 2) * CELL,
-    z: (z - (grid.height - 1) / 2) * CELL,
-  };
+export function cellCenter(
+  grid: MazeGrid,
+  x: number,
+  z: number,
+  out: { x: number; z: number } = { x: 0, z: 0 },
+): { x: number; z: number } {
+  out.x = (x - (grid.width - 1) / 2) * CELL;
+  out.z = (z - (grid.height - 1) / 2) * CELL;
+  return out;
 }
 
-export function worldToCell(grid: MazeGrid, x: number, z: number): { x: number; z: number } {
-  return {
-    x: Math.round(x / CELL + (grid.width - 1) / 2),
-    z: Math.round(z / CELL + (grid.height - 1) / 2),
-  };
+export function worldToCell(
+  grid: MazeGrid,
+  x: number,
+  z: number,
+  out: { x: number; z: number } = { x: 0, z: 0 },
+): { x: number; z: number } {
+  out.x = Math.round(x / CELL + (grid.width - 1) / 2);
+  out.z = Math.round(z / CELL + (grid.height - 1) / 2);
+  return out;
 }
 
 export function isBlocked(grid: MazeGrid, x: number, z: number, radius = PLAYER_RADIUS): boolean {
@@ -220,7 +240,11 @@ function addUniqueEdge(
   positions.push(ax, ay, az, bx, by, bz);
 }
 
-function cellBounds(grid: MazeGrid, x: number, z: number): {
+function cellBounds(
+  grid: MazeGrid,
+  x: number,
+  z: number,
+): {
   x0: number;
   x1: number;
   z0: number;
@@ -244,14 +268,23 @@ function makeLineMesh(positions: number[], material: THREE.LineBasicMaterial): T
   return mesh;
 }
 
-function wireBox(sx: number, sy: number, sz: number, material: THREE.LineBasicMaterial): THREE.LineSegments {
+function wireBox(
+  sx: number,
+  sy: number,
+  sz: number,
+  material: THREE.LineBasicMaterial,
+): THREE.LineSegments {
   const box = new THREE.BoxGeometry(sx, sy, sz);
   const geometry = new THREE.EdgesGeometry(box);
   box.dispose();
   return new THREE.LineSegments(geometry, material);
 }
 
-function makePickup(kind: string, ink: THREE.LineBasicMaterial, shade: THREE.LineBasicMaterial): THREE.Object3D {
+function makePickup(
+  kind: string,
+  ink: THREE.LineBasicMaterial,
+  shade: THREE.LineBasicMaterial,
+): THREE.Object3D {
   const group = new THREE.Group();
   if (kind === "orb") {
     group.add(wireBox(0.22, 0.22, 0.22, ink));
@@ -288,6 +321,12 @@ export type MazeSceneHandle = Readonly<{
   setInk: (ink: number, muted: number, paper: number) => void;
   dispose: () => void;
 }>;
+
+function disposeLineGeometry(object: THREE.Object3D): void {
+  object.traverse((child) => {
+    if (child instanceof THREE.LineSegments) child.geometry.dispose();
+  });
+}
 
 function paperMaterial(color: number): THREE.MeshBasicMaterial {
   const material = new THREE.MeshBasicMaterial({ color, fog: true });
@@ -486,6 +525,8 @@ export function buildMazeScene(
       floors.geometry.dispose();
       faceGeo.dispose();
       occluderGeo.dispose();
+      disposeLineGeometry(lantern);
+      for (const object of collectibles) disposeLineGeometry(object);
       inkMat.dispose();
       mutedMat.dispose();
       paperMat.dispose();

@@ -7,8 +7,8 @@ import {
   NearestFilter,
   OrthographicCamera,
   Quaternion,
+  NoColorSpace,
   RGBAFormat,
-  SRGBColorSpace,
   Scene,
   UnsignedByteType,
   Vector3,
@@ -19,12 +19,7 @@ import type { HudLayer } from "../core/HudLayer.js";
 import type { HudNode } from "../core/HudNode.js";
 import { cssRectToDevice } from "../viewport/hostSurface.js";
 import { HudResourcePool } from "./resourcePool.js";
-import {
-  logicalSizeToClip,
-  logicalToClip,
-  resolveLayerViewport,
-  type LayerViewportTransform,
-} from "../viewport/layerTransform.js";
+import { resolveLayerViewport, type LayerViewportTransform } from "../viewport/layerTransform.js";
 import { snapCssToDevicePixel } from "../viewport/resolveViewport.js";
 import type { HudFrameInfo, HudRendererAdapter } from "./contracts.js";
 import { intersectRects } from "./clip.js";
@@ -149,6 +144,27 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
   const scale = new Vector3();
   const quaternion = new Quaternion();
   const axisZ = new Vector3(0, 0, 1);
+  const transforms = new Map<HudLayer, LayerViewportTransform>();
+  const layerByNodeId = new Map<string, HudLayer>();
+  const sizeTarget = {
+    x: 0,
+    y: 0,
+    set(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      return this;
+    },
+  };
+  const hostViewportRect = { x: 0, y: 0, width: 0, height: 0 };
+  const fallbackViewport = { x: 0, y: 0, width: 0, height: 0 };
+  const snappedBounds = { x: 0, y: 0, width: 0, height: 0 };
+  const scratchUv: [number, number, number, number] = [0, 0, 1, 1];
+  const scratchParams: [number, number, number, number] = [0, 0, 0, 1];
+  const scratchExtras = {
+    shape: 0,
+    params: scratchParams,
+    uv: scratchUv,
+  };
 
   let disposed = false;
   let lastQueue: RenderQueueSnapshot | null = null;
@@ -239,16 +255,16 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     pool.beginFrame();
     textPool.beginFrame();
     pixelTextPool.beginFrame();
+    transforms.clear();
+    layerByNodeId.clear();
     if (layers.length === 0 || queue.commands.length === 0) {
       pool.endFrame();
       textPool.endFrame();
       pixelTextPool.endFrame();
       return;
     }
-    const hostViewport = cssViewport ?? readCssViewport(renderer);
+    const hostViewport = cssViewport ?? readHostCssViewport();
     const dpr = renderer.getPixelRatio?.() ?? 1;
-    const transforms = new Map<HudLayer, LayerViewportTransform>();
-    const layerByNodeId = new Map<string, HudLayer>();
     for (const layer of layers) {
       if (!layer.enabled) continue;
       indexLayerNodes(layer, layer, layerByNodeId);
@@ -264,12 +280,12 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
       const layer = layerByNodeId.get(command.sourceNodeId) ?? fallback;
       let transform = transforms.get(layer);
       if (!transform) {
-        const viewport = hostViewport ?? {
-          x: 0,
-          y: 0,
-          width: layer.referenceSize.width,
-          height: layer.referenceSize.height,
-        };
+        let viewport = hostViewport;
+        if (!viewport) {
+          fallbackViewport.width = layer.referenceSize.width;
+          fallbackViewport.height = layer.referenceSize.height;
+          viewport = fallbackViewport;
+        }
         transform = resolveLayerViewport({
           referenceSize: layer.referenceSize,
           viewport,
@@ -295,28 +311,22 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
       if (webgpuSafe) return;
       const pixel = command.fontId === "pixel";
       const glyphs = pixel ? pixelTextPool : textPool;
-      const snapTransform = pixel ? { ...transform, pixelSnap: true } : transform;
       for (const glyph of command.glyphs) {
         if (command.clip && !intersectRects(glyph, command.clip)) continue;
-        placeRect(glyph, snapTransform);
-        const slot = glyphs.acquireSlot();
-        glyphs.writeInstance(slot, rectMatrix, command.fill, {
-          shape: SHAPE_TEXT,
-          params: [0, pixel ? 1 : 0, 0, command.opacity],
-          uv: [glyph.u0, glyph.v0, glyph.u1, glyph.v1],
-        });
+        placeRect(glyph, transform, pixel);
+        scratchUv[0] = glyph.u0;
+        scratchUv[1] = glyph.v0;
+        scratchUv[2] = glyph.u1;
+        scratchUv[3] = glyph.v1;
+        writeSlot(glyphs, command.fill, SHAPE_TEXT, 0, pixel ? 1 : 0, 0, command.opacity);
       }
       return;
     }
     if (command.kind === "image") {
       if (command.clip && !intersectRects(command.bounds, command.clip)) return;
       placeRect(command.bounds, transform);
-      const slot = pool.acquireSlot();
-      pool.writeInstance(slot, rectMatrix, command.tint, {
-        shape: SHAPE_IMAGE,
-        params: [0, 0, 0, command.opacity],
-        uv: clipToUv(command.bounds, command.clip),
-      });
+      clipToUv(command.bounds, command.clip, scratchUv);
+      writeSlot(pool, command.tint, SHAPE_IMAGE, 0, 0, 0, command.opacity);
       return;
     }
     if (command.kind !== "shape") return;
@@ -329,61 +339,87 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     const params = command.shapeParams;
     if (command.shape === "line" && params) {
       placeLine(params, transform);
-      const slot = pool.acquireSlot();
-      pool.writeInstance(slot, rectMatrix, command.fill, {
-        shape: SHAPE_LINE,
-        params: [params.strokeWidth ?? 1, 0, 0, command.opacity],
-      });
+      scratchUv[0] = 0;
+      scratchUv[1] = 0;
+      scratchUv[2] = 1;
+      scratchUv[3] = 1;
+      writeSlot(pool, command.fill, SHAPE_LINE, params.strokeWidth ?? 1, 0, 0, command.opacity);
       return;
     }
     if (command.clip && !intersectRects(command.bounds, command.clip)) return;
     placeRect(command.bounds, transform);
-    const slot = pool.acquireSlot();
-    const clipUv = clipToUv(command.bounds, command.clip);
+    clipToUv(command.bounds, command.clip, scratchUv);
     if (command.shape === "ring") {
       const inner = params?.innerRadius ?? 0;
       const outer = params?.outerRadius ?? 1;
-      pool.writeInstance(slot, rectMatrix, command.fill, {
-        shape: SHAPE_RING,
-        params: [
-          outer <= 0 ? 0 : inner / outer,
-          params?.startAngle ?? 0,
-          params?.sweep ?? Math.PI * 2,
-          command.opacity,
-        ],
-        uv: clipUv,
-      });
+      writeSlot(
+        pool,
+        command.fill,
+        SHAPE_RING,
+        outer <= 0 ? 0 : inner / outer,
+        params?.startAngle ?? 0,
+        params?.sweep ?? Math.PI * 2,
+        command.opacity,
+      );
       return;
     }
     if (command.shape === "rounded-rect") {
       const radius = params?.radius ?? 0;
       const minSide = Math.min(command.bounds.width, command.bounds.height);
-      pool.writeInstance(slot, rectMatrix, command.fill, {
-        shape: SHAPE_ROUNDED,
-        params: [minSide <= 0 ? 0 : Math.min(0.5, radius / minSide), 0, 0, command.opacity],
-        uv: clipUv,
-      });
+      writeSlot(
+        pool,
+        command.fill,
+        SHAPE_ROUNDED,
+        minSide <= 0 ? 0 : Math.min(0.5, radius / minSide),
+        0,
+        0,
+        command.opacity,
+      );
       return;
     }
-    pool.writeInstance(slot, rectMatrix, command.fill, {
-      shape: SHAPE_RECT,
-      params: [0, 0, 0, command.opacity],
-      uv: clipUv,
-    });
+    writeSlot(pool, command.fill, SHAPE_RECT, 0, 0, 0, command.opacity);
+  }
+
+  function writeSlot(
+    target: HudResourcePool,
+    fill: number,
+    shape: number,
+    p0: number,
+    p1: number,
+    p2: number,
+    p3: number,
+  ): void {
+    const slot = target.acquireSlot();
+    scratchParams[0] = p0;
+    scratchParams[1] = p1;
+    scratchParams[2] = p2;
+    scratchParams[3] = p3;
+    scratchExtras.shape = shape;
+    target.writeInstance(slot, rectMatrix, fill, scratchExtras);
   }
 
   function placeRect(
     bounds: { x: number; y: number; width: number; height: number },
     transform: LayerViewportTransform,
+    pixelSnap = transform.pixelSnap,
   ): void {
-    const snapped = snapDrawBounds(bounds, transform);
-    const clip = logicalToClip(
-      { x: snapped.x + snapped.width / 2, y: snapped.y + snapped.height / 2 },
-      transform,
-    );
-    const clipSize = logicalSizeToClip({ width: snapped.width, height: snapped.height }, transform);
-    rectMatrix.makeScale(clipSize.width, clipSize.height, 1);
-    rectMatrix.setPosition(clip.x, clip.y, 0);
+    const snapped = snapDraw(bounds, transform, pixelSnap);
+    const cx = snapped.x + snapped.width / 2;
+    const cy = snapped.y + snapped.height / 2;
+    const clipX =
+      ((transform.offsetX + cx * transform.scaleX - transform.viewport.x) /
+        transform.viewport.width) *
+        2 -
+      1;
+    const clipY =
+      1 -
+      ((transform.offsetY + cy * transform.scaleY - transform.viewport.y) /
+        transform.viewport.height) *
+        2;
+    const clipW = ((snapped.width * transform.scaleX) / transform.viewport.width) * 2;
+    const clipH = ((snapped.height * transform.scaleY) / transform.viewport.height) * 2;
+    rectMatrix.makeScale(clipW, clipH, 1);
+    rectMatrix.setPosition(clipX, clipY, 0);
   }
 
   function placeLine(params: ShapeParams, transform: LayerViewportTransform): void {
@@ -395,20 +431,64 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     const dx = x2 - x1;
     const dy = y2 - y1;
     const length = Math.max(stroke, Math.hypot(dx, dy));
-    const clip = logicalToClip({ x: (x1 + x2) / 2, y: (y1 + y2) / 2 }, transform);
-    const clipSize = logicalSizeToClip({ width: length, height: stroke }, transform);
-    position.set(clip.x, clip.y, 0);
-    scale.set(clipSize.width, clipSize.height, 1);
+    const cx = (x1 + x2) / 2;
+    const cy = (y1 + y2) / 2;
+    position.set(
+      ((transform.offsetX + cx * transform.scaleX - transform.viewport.x) /
+        transform.viewport.width) *
+        2 -
+        1,
+      1 -
+        ((transform.offsetY + cy * transform.scaleY - transform.viewport.y) /
+          transform.viewport.height) *
+          2,
+      0,
+    );
+    scale.set(
+      ((length * transform.scaleX) / transform.viewport.width) * 2,
+      ((stroke * transform.scaleY) / transform.viewport.height) * 2,
+      1,
+    );
     quaternion.setFromAxisAngle(axisZ, -Math.atan2(dy, dx));
     rectMatrix.compose(position, quaternion, scale);
   }
+
+  function snapDraw(
+    bounds: { x: number; y: number; width: number; height: number },
+    transform: LayerViewportTransform,
+    pixelSnap: boolean,
+  ): { x: number; y: number; width: number; height: number } {
+    if (!pixelSnap || transform.scaleX === 0 || transform.scaleY === 0) return bounds;
+    const dpr = transform.dpr;
+    const x0 = snapCssToDevicePixel(transform.offsetX + bounds.x * transform.scaleX, dpr);
+    const y0 = snapCssToDevicePixel(transform.offsetY + bounds.y * transform.scaleY, dpr);
+    const x1 = snapCssToDevicePixel(
+      transform.offsetX + (bounds.x + bounds.width) * transform.scaleX,
+      dpr,
+    );
+    const y1 = snapCssToDevicePixel(
+      transform.offsetY + (bounds.y + bounds.height) * transform.scaleY,
+      dpr,
+    );
+    snappedBounds.x = (x0 - transform.offsetX) / transform.scaleX;
+    snappedBounds.y = (y0 - transform.offsetY) / transform.scaleY;
+    snappedBounds.width = Math.max(0, x1 - x0) / transform.scaleX;
+    snappedBounds.height = Math.max(0, y1 - y0) / transform.scaleY;
+    return snappedBounds;
+  }
+
+  function readHostCssViewport(): ReadonlyRect | null {
+    const size = renderer.getSize?.(sizeTarget) ?? sizeTarget;
+    if (!Number.isFinite(size.x) || !Number.isFinite(size.y) || size.x <= 0 || size.y <= 0) {
+      return null;
+    }
+    hostViewportRect.width = size.x;
+    hostViewportRect.height = size.y;
+    return hostViewportRect;
+  }
 }
 
-function indexLayerNodes(
-  layer: HudLayer,
-  node: HudNode,
-  into: Map<string, HudLayer>,
-): void {
+function indexLayerNodes(layer: HudLayer, node: HudNode, into: Map<string, HudLayer>): void {
   into.set(node.id, layer);
   for (const child of node.children) indexLayerNodes(layer, child, into);
 }
@@ -416,58 +496,23 @@ function indexLayerNodes(
 function clipToUv(
   bounds: { x: number; y: number; width: number; height: number },
   clip: { x: number; y: number; width: number; height: number } | null | undefined,
-): readonly [number, number, number, number] {
-  if (!clip || bounds.width === 0 || bounds.height === 0) return [0, 0, 1, 1];
+  out: [number, number, number, number],
+): void {
+  if (!clip || bounds.width === 0 || bounds.height === 0) {
+    out[0] = 0;
+    out[1] = 0;
+    out[2] = 1;
+    out[3] = 1;
+    return;
+  }
   const u0 = (clip.x - bounds.x) / bounds.width;
   const u1 = (clip.x + clip.width - bounds.x) / bounds.width;
   const vHud0 = (clip.y - bounds.y) / bounds.height;
   const vHud1 = (clip.y + clip.height - bounds.y) / bounds.height;
-  return [
-    Math.min(1, Math.max(0, u0)),
-    Math.min(1, Math.max(0, 1 - vHud1)),
-    Math.min(1, Math.max(0, u1)),
-    Math.min(1, Math.max(0, 1 - vHud0)),
-  ];
-}
-
-function readCssViewport(renderer: OverlayRendererLike): ReadonlyRect | null {
-  const target = {
-    x: 0,
-    y: 0,
-    set(x: number, y: number) {
-      this.x = x;
-      this.y = y;
-      return this;
-    },
-  };
-  const size = renderer.getSize?.(target) ?? target;
-  if (!Number.isFinite(size.x) || !Number.isFinite(size.y) || size.x <= 0 || size.y <= 0)
-    return null;
-  return { x: 0, y: 0, width: size.x, height: size.y };
-}
-
-function snapDrawBounds(
-  bounds: { x: number; y: number; width: number; height: number },
-  transform: LayerViewportTransform,
-): { x: number; y: number; width: number; height: number } {
-  if (!transform.pixelSnap || transform.scaleX === 0 || transform.scaleY === 0) return bounds;
-  const dpr = transform.dpr;
-  const x0 = snapCssToDevicePixel(transform.offsetX + bounds.x * transform.scaleX, dpr);
-  const y0 = snapCssToDevicePixel(transform.offsetY + bounds.y * transform.scaleY, dpr);
-  const x1 = snapCssToDevicePixel(
-    transform.offsetX + (bounds.x + bounds.width) * transform.scaleX,
-    dpr,
-  );
-  const y1 = snapCssToDevicePixel(
-    transform.offsetY + (bounds.y + bounds.height) * transform.scaleY,
-    dpr,
-  );
-  return {
-    x: (x0 - transform.offsetX) / transform.scaleX,
-    y: (y0 - transform.offsetY) / transform.scaleY,
-    width: Math.max(0, x1 - x0) / transform.scaleX,
-    height: Math.max(0, y1 - y0) / transform.scaleY,
-  };
+  out[0] = Math.min(1, Math.max(0, u0));
+  out[1] = Math.min(1, Math.max(0, 1 - vHud1));
+  out[2] = Math.min(1, Math.max(0, u1));
+  out[3] = Math.min(1, Math.max(0, 1 - vHud0));
 }
 
 function createAtlasTexture(
@@ -487,7 +532,7 @@ function createAtlasTexture(
   texture.generateMipmaps = false;
   texture.wrapS = ClampToEdgeWrapping;
   texture.wrapT = ClampToEdgeWrapping;
-  texture.colorSpace = SRGBColorSpace;
+  texture.colorSpace = NoColorSpace;
   texture.needsUpdate = true;
   texture.flipY = true;
   return texture;

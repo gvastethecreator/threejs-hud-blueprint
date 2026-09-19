@@ -2,7 +2,7 @@
 
 Widgets are compositions of public nodes, primitives, layout, themes, and pointer contracts. They do not own the game loop or inventory data. Lab chrome (`#status`) may use host DOM; HUD output stays on the canvas.
 
-Playground: `apps/playground/src/main.ts` at `http://127.0.0.1:4174/`. Open `/?webgpu=1` for the WebGPU renderer. Capability helper: `apps/playground/src/labs/capability.ts`.
+Playground: `apps/playground/src/main.ts` at `http://127.0.0.1:4174/`. Open `/?webgpu=1` for the WebGPU renderer. The GitHub Pages site is this same playground. Capability helper: `apps/playground/src/labs/capability.ts`.
 
 ## Panel + Label + IconLabel
 

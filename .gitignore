@@ -33,3 +33,12 @@ ehthumbs.db
 /scratch-playground-*.png
 evidence/
 release/
+
+# Vitest 5 artifacts
+.vitest/
+
+# Code map generation scratch
+docs/codemap/.staging/
+docs/codemap/.review/
+docs/codemap/.publication/
+docs/codemap/.publisher.lock

@@ -66,6 +66,8 @@ pnpm --filter @three-hud/playground dev --host 127.0.0.1 --port 4174
 
 Then open `http://127.0.0.1:4174/`. Add `/?webgpu=1` for the WebGPU renderer path.
 
+The hosted demo is this playground at `https://gvastethecreator.github.io/threejs-hud-blueprint/` after GitHub Pages is enabled.
+
 Playground keys:
 
 - The maze walks a wireframe tour until you take over.
@@ -79,12 +81,7 @@ Playground keys:
 Start a black-and-white HUD with `createMonochromeTheme()`:
 
 ```ts
-import {
-  LinearBar,
-  MONOCHROME_THEME,
-  createMonochromeTheme,
-  themeColor,
-} from "@scope/three-hud";
+import { LinearBar, MONOCHROME_THEME, createMonochromeTheme, themeColor } from "@scope/three-hud";
 
 const theme = MONOCHROME_THEME;
 const ink = themeColor(theme, "text");

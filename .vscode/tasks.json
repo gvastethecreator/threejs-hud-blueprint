@@ -2,47 +2,37 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "🚀 Dev",
+      "label": "▶️ Dev",
       "type": "npm",
       "script": "dev",
       "isBackground": true,
       "problemMatcher": {
         "owner": "vite",
-        "pattern": { "regexp": "^$" },
+        "pattern": {
+          "regexp": "^$"
+        },
         "background": {
           "activeOnStart": true,
           "beginsPattern": ".",
           "endsPattern": "(Local:|ready in)"
         }
       },
-      "presentation": { "reveal": "always", "panel": "dedicated", "focus": false },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      },
       "group": "none"
-    },
-    {
-      "label": "📦 Build",
-      "type": "npm",
-      "script": "build",
-      "problemMatcher": [],
-      "group": { "kind": "build", "isDefault": true }
-    },
-    {
-      "label": "🔎 Types",
-      "type": "npm",
-      "script": "typecheck",
-      "problemMatcher": ["$tsc"]
     },
     {
       "label": "✅ Test",
       "type": "npm",
       "script": "test:unit",
       "problemMatcher": [],
-      "group": { "kind": "test", "isDefault": true }
-    },
-    {
-      "label": "🧪 E2E",
-      "type": "npm",
-      "script": "test:e2e",
-      "problemMatcher": []
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
     },
     {
       "label": "🧹 Lint",
@@ -57,13 +47,35 @@
       "problemMatcher": []
     },
     {
+      "label": "🔎 Types",
+      "type": "npm",
+      "script": "typecheck",
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "🏗️ Build",
+      "type": "npm",
+      "script": "build",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "🧪 E2E",
+      "type": "npm",
+      "script": "test:e2e",
+      "problemMatcher": []
+    },
+    {
       "label": "⚡ Fast",
       "type": "npm",
       "script": "validate:fast",
       "problemMatcher": []
     },
     {
-      "label": "🏗️ Full",
+      "label": "📦 Full",
       "type": "npm",
       "script": "validate:full",
       "problemMatcher": []

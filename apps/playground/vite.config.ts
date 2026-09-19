@@ -4,9 +4,18 @@ import { defineConfig } from "vite";
 
 const playgroundRoot = path.dirname(fileURLToPath(import.meta.url));
 const packageSrc = path.resolve(playgroundRoot, "../../packages/three-hud/src");
+const pagesBase = process.env.PLAYGROUND_BASE;
+const base =
+  pagesBase && pagesBase.length > 0 ? (pagesBase.endsWith("/") ? pagesBase : `${pagesBase}/`) : "/";
 
 export default defineConfig({
+  base,
   server: {
+    host: "127.0.0.1",
+    port: 4174,
+    strictPort: true,
+  },
+  preview: {
     host: "127.0.0.1",
     port: 4174,
     strictPort: true,

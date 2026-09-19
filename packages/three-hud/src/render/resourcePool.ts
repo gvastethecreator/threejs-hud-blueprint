@@ -29,6 +29,15 @@ export type HudResourcePoolOptions = Readonly<{
 
 const hiddenMatrix = new Matrix4().makeScale(0, 0, 0);
 const writeColor = new Color();
+const growMatrix = new Matrix4();
+const growColor = new Color();
+const defaultParams = [0, 0, 0, 1] as const;
+const defaultUv = [0, 0, 1, 1] as const;
+const emptyExtras: {
+  shape?: number;
+  params?: readonly [number, number, number, number];
+  uv?: readonly [number, number, number, number];
+} = {};
 
 export class HudResourcePool {
   readonly unitQuad: PlaneGeometry;
@@ -129,16 +138,16 @@ export class HudResourcePool {
       shape?: number;
       params?: readonly [number, number, number, number];
       uv?: readonly [number, number, number, number];
-    } = {},
+    } = emptyExtras,
   ): void {
     this.assertAlive();
     this.mesh.setMatrixAt(index, matrix);
     writeColor.setHex(fill);
     this.mesh.setColorAt(index, writeColor);
     this.shapeAttr?.setX(index, extras.shape ?? 0);
-    const params = extras.params ?? [0, 0, 0, 1];
+    const params = extras.params ?? defaultParams;
     this.paramsAttr?.setXYZW(index, params[0], params[1], params[2], params[3]);
-    const uv = extras.uv ?? [0, 0, 1, 1];
+    const uv = extras.uv ?? defaultUv;
     this.uvAttr?.setXYZW(index, uv[0], uv[1], uv[2], uv[3]);
     if (this.mesh.instanceMatrix) this.mesh.instanceMatrix.needsUpdate = true;
     if (this.mesh.instanceColor) this.mesh.instanceColor.needsUpdate = true;
@@ -185,7 +194,7 @@ export class HudResourcePool {
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
-    this.mesh.dispose();
+    this.releaseMesh(this.mesh);
     this.unitQuad.dispose();
     for (const entry of this.materials.values()) entry.material.dispose();
     this.materials.clear();
@@ -229,21 +238,24 @@ export class HudResourcePool {
       this.uvAttr.array.set(
         prevUv.array.subarray(0, Math.min(prevUv.array.length, this.uvAttr.array.length)),
       );
-    const matrix = new Matrix4();
-    const color = new Color();
     const copyCount = previous.instanceMatrix.array.length / 16;
     for (let index = 0; index < copyCount; index += 1) {
-      previous.getMatrixAt(index, matrix);
-      grown.setMatrixAt(index, matrix);
+      previous.getMatrixAt(index, growMatrix);
+      grown.setMatrixAt(index, growMatrix);
       if (previous.instanceColor) {
-        previous.getColorAt(index, color);
-        grown.setColorAt(index, color);
+        previous.getColorAt(index, growColor);
+        grown.setColorAt(index, growColor);
       }
     }
     if (previous.parent) previous.parent.add(grown);
-    previous.removeFromParent();
-    previous.dispose();
+    this.releaseMesh(previous);
     this.mesh = grown;
+  }
+
+  private releaseMesh(mesh: InstancedMesh): void {
+    mesh.removeFromParent();
+    if (mesh.geometry !== this.unitQuad) mesh.geometry.dispose();
+    mesh.dispose();
   }
 
   private createMesh(capacity: number): InstancedMesh {
@@ -261,10 +273,6 @@ export class HudResourcePool {
     if (mesh.instanceMatrix) mesh.instanceMatrix.needsUpdate = true;
     this.allocations += 1;
     return mesh;
-  }
-
-  private createDefaultMaterial(): Material {
-    return createOverlayShaderMaterial(false);
   }
 
   private assertAlive(): void {

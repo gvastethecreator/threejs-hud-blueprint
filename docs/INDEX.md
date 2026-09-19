@@ -2,7 +2,7 @@
 
 ## Public API
 
-- `api/GETTING_STARTED.md` — host-owned renderer overlay path.
+- `api/GETTING_STARTED.md` — host-owned renderer overlay path. The GitHub Pages site is the playground, not a second docs homepage.
 - `api/WIDGETS.md` — widget recipes and playground labs.
 - `api/TYPOGRAPHY.md` — font sources, backends, and license rules.
 - `api/KNOWN_LIMITATIONS.md` — v0.1 backend status, scope, and rollback.
@@ -34,6 +34,8 @@
 - `architecture/ERRORS_AND_DIAGNOSTICS.md` — public errors and observable evidence.
 - `architecture/PACKAGE_AND_EXPORTS.md` — workspace, package, subpaths, consumer fixture.
 
+- `codemap/codemap.md` — generated workspace module graph. Do not hand-edit.
+
 ## Decisions
 
 `adrs/` contains bounded architecture decisions. Proposed decisions become accepted only through their named gate.
@@ -62,5 +64,3 @@
 - `operations/DEPENDENCY_POLICY.md`
 - `operations/RELEASE_PROCESS.md`
 - `operations/MAINTENANCE.md`
-
-

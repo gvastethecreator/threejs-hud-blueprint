@@ -94,6 +94,12 @@ gameCamera.position.set(player.x, player.y, player.z);
 const anisotropy =
   renderer instanceof THREE.WebGLRenderer ? renderer.capabilities.getMaxAnisotropy() : 8;
 const mazeScene = buildMazeScene(gameScene, maze, Math.min(8, anisotropy));
+const startGlobe = gameScene.getObjectByName("start-globe") ?? null;
+const lookScratch = { x: 0, y: 0, z: 0 };
+const lookPitchedScratch = { x: 0, y: 0, z: 0 };
+const rightScratch = { x: 0, z: 0 };
+const destScratch = { x: 0, z: 0 };
+const cellScratch = { x: 0, z: 0 };
 const tour = mazeTour(maze);
 let tourIndex = 0;
 let autoNav = true;
@@ -621,9 +627,7 @@ function layoutHud(): void {
   const ammoX = Math.round(barX + barW + torchGap);
   ammo.setPosition(
     ammoX,
-    short
-      ? Math.round(stackBottom - gap - ammo.size.height)
-      : health.position.y,
+    short ? Math.round(stackBottom - gap - ammo.size.height) : health.position.y,
   );
   if (boxesOverlap(ammo.worldBounds(), hotbar.worldBounds(), 4)) {
     ammo.setPosition(
@@ -638,13 +642,15 @@ function layoutHud(): void {
       Math.round(ammo.position.y + Math.max(0, (ammo.size.height - ammoCaption.size.height) / 2)),
     );
   }
-  ammoCaption.visible =
-    !short && ammoCaption.position.x + ammoCaption.size.width <= width - pad;
+  ammoCaption.visible = !short && ammoCaption.position.x + ammoCaption.size.width <= width - pad;
 
   title.setPosition(pad, top);
   title.visible =
     !short && title.position.x + title.size.width < (mapOn ? panel.position.x : right) - 8;
-  lookHint.setPosition(pad, title.visible ? Math.round(title.position.y + title.size.height + 4) : top);
+  lookHint.setPosition(
+    pad,
+    title.visible ? Math.round(title.position.y + title.size.height + 4) : top,
+  );
   if (
     lookHint.visible &&
     lookHint.position.x + lookHint.size.width > (mapOn ? panel.position.x : right) - 8
@@ -668,12 +674,13 @@ function layoutHud(): void {
   logPanel.background.setSize(logPanel.size.width, logPanel.size.height);
   logPanel.setPosition(logX, logY);
 
-  const compassX = Math.round(Math.max(pad, Math.min(right - compassSize, width - pad - compassSize)));
+  const compassX = Math.round(
+    Math.max(pad, Math.min(right - compassSize, width - pad - compassSize)),
+  );
   if (compact) {
     const underMap = mapOn ? panel.position.y + panel.size.height + 12 : top;
     compass.setPosition(compassX, Math.round(underMap));
-    compass.visible =
-      compassOn && compass.position.y + compassSize <= health.position.y - 8;
+    compass.visible = compassOn && compass.position.y + compassSize <= health.position.y - 8;
   } else {
     const y = Math.min(hotbar.position.y + hotH - compassSize, height - pad - compassSize);
     compass.setPosition(
@@ -681,10 +688,7 @@ function layoutHud(): void {
       Math.round(Math.max(mapOn ? panel.position.y + panel.size.height + 12 : top, y)),
     );
     compass.visible = compassOn;
-    if (
-      compass.visible &&
-      boxesOverlap(compass.worldBounds(), health.worldBounds(), 8)
-    ) {
+    if (compass.visible && boxesOverlap(compass.worldBounds(), health.worldBounds(), 8)) {
       compass.visible = false;
     }
   }
@@ -695,10 +699,7 @@ function layoutHud(): void {
     compass.setPosition(Math.round(width - pad - compassSize), compass.position.y);
   }
   if (compass.visible && compass.position.x < pad) compass.visible = false;
-  if (
-    compass.visible &&
-    boxesOverlap(compass.worldBounds(), hotbar.worldBounds(), 6)
-  ) {
+  if (compass.visible && boxesOverlap(compass.worldBounds(), hotbar.worldBounds(), 6)) {
     compass.setPosition(compass.position.x, Math.round(hotbar.position.y - gap - compassSize));
     if (compass.position.y < (mapOn ? panel.position.y + panel.size.height + 8 : top)) {
       compass.visible = false;
@@ -706,7 +707,10 @@ function layoutHud(): void {
   }
 
   placeHotMarks();
-  crosshair.setPosition(width / 2 - crosshair.size.width / 2, height / 2 - crosshair.size.height / 2);
+  crosshair.setPosition(
+    width / 2 - crosshair.size.width / 2,
+    height / 2 - crosshair.size.height / 2,
+  );
 }
 
 function activeTheme(): HudTheme {
@@ -1154,14 +1158,14 @@ function frame(now: number): void {
     while (steps < 8) {
       const waypoint = tour[tourIndex];
       if (!waypoint) break;
-      const dest = cellCenter(maze, waypoint.x, waypoint.z);
+      const dest = cellCenter(maze, waypoint.x, waypoint.z, destScratch);
       if (Math.hypot(dest.x - player.x, dest.z - player.z) >= 0.34) break;
       tourIndex = (tourIndex + 1) % tour.length;
       steps += 1;
     }
     const waypoint = tour[tourIndex];
     if (waypoint) {
-      const dest = cellCenter(maze, waypoint.x, waypoint.z);
+      const dest = cellCenter(maze, waypoint.x, waypoint.z, destScratch);
       const turn = shortestTurn(player.yaw, yawToward(dest.x - player.x, dest.z - player.z));
       player.yaw += Math.sign(turn) * Math.min(Math.abs(turn), 1.8 * delta);
       if (Math.abs(turn) < 0.55) forward = 1;
@@ -1171,8 +1175,8 @@ function frame(now: number): void {
     (canSprint && tools.boots ? 4.6 : canSprint ? 3.35 : 2.2) *
     (tools.flare > 0 ? 1.08 : 1) *
     (autoActive ? 0.92 : 1);
-  const look = yawToLook(player.yaw);
-  const right = yawToRight(player.yaw);
+  const look = yawToLook(player.yaw, 0, lookScratch);
+  const right = yawToRight(player.yaw, rightScratch);
   const wishX = (look.x * forward + right.x * strafe) * pace;
   const wishZ = (look.z * forward + right.z * strafe) * pace;
   const blend = 1 - Math.exp(-MOVE_ACCEL * delta);
@@ -1182,7 +1186,10 @@ function frame(now: number): void {
   const nz = player.z + player.vz * delta;
   let bumped = false;
   const blockedX = isBlocked(maze, nx, player.z);
-  diagnostics.last = { forward, wishX, delta, blockedX };
+  diagnostics.last.forward = forward;
+  diagnostics.last.wishX = wishX;
+  diagnostics.last.delta = delta;
+  diagnostics.last.blockedX = blockedX;
   if (!blockedX) player.x = nx;
   else bumped = true;
   if (!isBlocked(maze, player.x, nz)) player.z = nz;
@@ -1192,8 +1199,8 @@ function frame(now: number): void {
   const lookBlend = 1 - Math.exp(-LOOK_DAMP * delta);
   viewYaw += (player.yaw - viewYaw) * lookBlend;
   viewPitch += (player.pitch - viewPitch) * lookBlend;
-  const lookPitched = yawToLook(viewYaw, viewPitch);
-  const rightView = yawToRight(viewYaw);
+  const lookPitched = yawToLook(viewYaw, viewPitch, lookPitchedScratch);
+  const rightView = yawToRight(viewYaw, rightScratch);
   const shakeAmt = shake * shake;
   const sLat = Math.sin(now * 0.007) * SHAKE_POS * shakeAmt;
   const sUp = Math.sin(now * 0.009) * SHAKE_POS * 0.55 * shakeAmt;
@@ -1221,8 +1228,7 @@ function frame(now: number): void {
     mazeScene.torch.intensity = tools.torch ? 22 : 3.4;
     mazeScene.torch.distance = tools.torch ? 18 : 8;
   }
-  const globe = gameScene.getObjectByName("start-globe");
-  if (globe) globe.rotation.y += delta * 0.35;
+  if (startGlobe) startGlobe.rotation.y += delta * 0.35;
   for (const [index, item] of mazeScene.collectibles.entries()) {
     if (!item.visible) continue;
     const baseY = Number(item.userData["baseY"] ?? 0.82);
@@ -1253,7 +1259,7 @@ function frame(now: number): void {
     const speedTarget = Math.min(100, Math.hypot(player.vx, player.vz) * 22);
     speedShown = damp(speedShown, speedTarget, 8, delta);
     speedBar.setValue(Math.round(speedShown));
-    const cell = worldToCell(maze, player.x, player.z);
+    const cell = worldToCell(maze, player.x, player.z, cellScratch);
     seenCells.add(`${cell.x},${cell.z}`);
     const exploreTarget = OPEN_CELLS <= 0 ? 0 : (seenCells.size / OPEN_CELLS) * 100;
     exploreShown = damp(exploreShown, exploreTarget, 6, delta);

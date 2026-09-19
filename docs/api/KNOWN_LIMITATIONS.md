@@ -7,6 +7,7 @@
 - Complex-script and bidi text are not claimed.
 - Third-party fonts are not bundled. Hosts supply licensed `FontSource` bytes.
 - Compatibility cells outside Chromium WebGL and Node import are unverified until their evidence exists.
+- Native WebGPU overlay uses `MeshBasicMaterial` and skips line, ring, rounded-rect, and atlas text. Use WebGL for the full primitive set.
 - `@scope` is a placeholder npm scope. Replace it before a public registry release.
 
 ## Rollback

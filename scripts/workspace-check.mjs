@@ -26,10 +26,8 @@ const rootPackage = readJson("package.json");
 const library = readJson("packages/three-hud/package.json");
 const playground = readJson("apps/playground/package.json");
 if (rootPackage.private !== true) errors.push("Root package must be private.");
-if (rootPackage.packageManager !== "pnpm@11.22.0")
-  errors.push(
-    "Root packageManager must remain pinned to pnpm@11.22.0 until intentionally changed.",
-  );
+if (rootPackage.packageManager !== "pnpm@12.0.0")
+  errors.push("Root packageManager must remain pinned to pnpm@12.0.0 until intentionally changed.");
 if (library.name !== "@scope/three-hud")
   errors.push(
     "Library placeholder name must be @scope/three-hud until the scope decision is applied consistently.",

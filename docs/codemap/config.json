@@ -1,0 +1,21 @@
+{
+  "scope": ["."],
+  "inventory": "working-tree",
+  "boundaries": {
+    "packages/three-hud/src/contracts": "Contracts",
+    "packages/three-hud/src/core": "Core",
+    "packages/three-hud/src/render": "Render",
+    "packages/three-hud/src/text": "Text",
+    "packages/three-hud/src/layout": "Layout",
+    "packages/three-hud/src/input": "Input",
+    "packages/three-hud/src/widgets": "Widgets",
+    "packages/three-hud/src/viewport": "Viewport",
+    "packages/three-hud/src/primitives": "Primitives",
+    "packages/three-hud/src/theme": "Theme",
+    "packages/three-hud/src/testing": "Testing",
+    "apps/playground": "Playground",
+    "scripts": "Scripts",
+    "e2e": "E2E",
+    "fixtures": "Fixtures"
+  }
+}

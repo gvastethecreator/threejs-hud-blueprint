@@ -12,6 +12,8 @@ Open `http://127.0.0.1:4174/`. You get a host 3D maze and a canvas HUD (bars, ga
 
 Open `http://127.0.0.1:4174/?webgpu=1` for the WebGPU renderer path.
 
+GitHub Pages serves this playground at `https://gvastethecreator.github.io/threejs-hud-blueprint/` after the repo is public and the Pages workflow can run. Set `PLAYGROUND_BASE=/threejs-hud-blueprint/` when you build for that URL.
+
 ## Controls
 
 - The maze starts in a black-and-white wireframe tour. It walks the open cells on its own.

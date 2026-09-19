@@ -1,4 +1,9 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": []
+  "ignorePatterns": [
+    "docs/codemap/*.html",
+    "docs/codemap/*.json",
+    "docs/codemap/*.lock",
+    "docs/codemap/.staging/**"
+  ]
 }

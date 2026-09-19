@@ -31,6 +31,15 @@ pnpm --filter @three-hud/playground dev --host 127.0.0.1 --port 4174
 
 Open `http://127.0.0.1:4174/`. Add `/?webgpu=1` for the WebGPU renderer path.
 
+The GitHub Pages site is this same playground, not a separate landing page. After the repo is public and Pages is enabled, it is at `https://gvastethecreator.github.io/threejs-hud-blueprint/`. Build it locally with:
+
+```bash
+PLAYGROUND_BASE=/threejs-hud-blueprint/ pnpm --filter @three-hud/playground build
+PLAYGROUND_BASE=/threejs-hud-blueprint/ pnpm --filter @three-hud/playground exec vite preview
+```
+
+Then open `http://127.0.0.1:4174/threejs-hud-blueprint/`.
+
 Playground keys:
 
 - The maze walks a wireframe tour. Press `P` to pause or resume it.
@@ -100,17 +109,17 @@ If `releaseReady` is false, do not treat `pnpm run validate:release` as green.
 
 These are the current pinned latest **stable** versions. Pre-release tags are not in use.
 
-| Tool       | Pin       | Notes                                                |
-| ---------- | --------- | ---------------------------------------------------- |
-| pnpm       | 11.22.0   | `packageManager` field. CI uses the same version.    |
-| Node.js    | >=22.12.0 | Engine floor.                                        |
-| TypeScript | 7.0.2     | Latest stable. 7.1 is still `next`.                  |
-| Vite       | 8.2.1     | Rolldown-backed Vite 8.                              |
-| Vitest     | 4.1.11    | Latest 4.x. Vitest 5 is RC only.                     |
-| Playwright | 1.62.1    | Latest stable. 1.63 is alpha.                        |
-| oxlint     | 1.79.0    | React Compiler rule split does not apply here.       |
-| oxfmt      | 0.64.0    | Adds `operatorPosition`. Default style is unchanged. |
-| Three.js   | 0.185.1   | Peer `>=0.185.0 <0.186.0`. r186 is not published.    |
+| Tool       | Pin       | Notes                                                                     |
+| ---------- | --------- | ------------------------------------------------------------------------- |
+| pnpm       | 12.0.0    | `packageManager` field. CI uses the same version.                         |
+| Node.js    | >=22.12.0 | Engine floor.                                                             |
+| TypeScript | 7.0.2     | Latest stable. 7.1 is still `next`.                                       |
+| Vite       | 8.2.2     | Rolldown-backed Vite 8. Windows short-name and HMR circular-import fixes. |
+| Vitest     | 5.0.0     | Stable 5.x. Pin exact; do not float to latest.                            |
+| Playwright | 1.62.1    | Latest stable. 1.63 is alpha.                                             |
+| oxlint     | 1.80.0    | React Compiler rule split does not apply here.                            |
+| oxfmt      | 0.65.0    | Formatter pin. Default style is unchanged.                                |
+| Three.js   | 0.185.1   | Peer `>=0.185.0 <0.186.0`. r186 is not published.                         |
 
 ## Font policy
 
