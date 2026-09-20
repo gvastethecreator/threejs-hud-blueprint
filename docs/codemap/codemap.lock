@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
-  "source_commit": "433f5c42922ab5a61942055d47e28398af3241e4",
+  "source_commit": "39414ab57500f4ffcfec3768534eeee2b35b8131",
   "working_tree_dirty": true,
-  "generated_at": "2026-09-19T06:55:38Z",
-  "generation_id": "52605e54d3245b4ac4be01e28f21f31f4bf21a1ea45feb06eb43941a9ef2bec5",
+  "generated_at": "2026-09-19T22:14:13Z",
+  "generation_id": "a1590932aba8e8a147fa68d774e40552293f884c6c71b2818437566667c4aade",
   "analysis": {
     "version": "syntax-1",
     "digest": "277e322054c030f72811f774ad4e959bcf8d1244bfb70c076e298cf824ccdc3c"
@@ -46,8 +46,8 @@
         "path": "apps/playground/package.json",
         "origin": "tracked",
         "state": "present",
-        "digest": "0a31aa5beb626059b648295b40dbf2c7a36539c52a32ea5056443bb321cb5587",
-        "size": 407
+        "digest": "cd7efd7fa3aa45b95a2b9f196e56c232e228e3fe0f4f6d087e4c3c363304cfd5",
+        "size": 427
       },
       {
         "path": "apps/playground/src/labs/capability.ts",
@@ -57,18 +57,32 @@
         "size": 1000
       },
       {
+        "path": "apps/playground/src/labs/review.ts",
+        "origin": "untracked",
+        "state": "present",
+        "digest": "d194f05e013b58a1b6e037170a6b08546824566a9610e10284f1f85f076e3a6d",
+        "size": 16031
+      },
+      {
         "path": "apps/playground/src/main.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "48fd91354b923b31d921b59c227cd6652aadeeb7fce5506ce9d408046aeba15f",
-        "size": 43310
+        "digest": "af502d63a8b3bfc2a9afbb6c17071695fcfb3ddd0caaff982feb27d2322996ad",
+        "size": 57397
       },
       {
         "path": "apps/playground/src/maze.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "d4a501162502e505e666dfa9816cdf1f1322e34bca41d1a4c806730f04cec8f4",
-        "size": 15983
+        "digest": "6d5aefaf5499d823039ce69fb9b5e26d9071fda08571ef71bf46c895797831b1",
+        "size": 16518
+      },
+      {
+        "path": "apps/playground/src/studio.ts",
+        "origin": "untracked",
+        "state": "present",
+        "digest": "f97fb524585f0bf4810f0ce1d4f6ebdb02001c328de48aeae381480e9e2322fe",
+        "size": 16787
       },
       {
         "path": "apps/playground/tsconfig.json",
@@ -81,8 +95,8 @@
         "path": "apps/playground/vite.config.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "054e47cf0717f8ce672e6fd206f091058aa80bbf330a26b4c5c506669054f219",
-        "size": 845
+        "digest": "a6cc8a258770f8797e49744ac28e99bdad174838712cff8514e0a3ed27dbf2f8",
+        "size": 1093
       },
       {
         "path": "e2e/context-loss.spec.ts",
@@ -102,8 +116,8 @@
         "path": "e2e/input.spec.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "bfbdae83459e1eace829f8931d15055fa2edce9602101fdbedd70fc00e155af4",
-        "size": 312
+        "digest": "74e52eaa31c5b1325385226bc6c7ed49b223d7f2263d9be6fb3576c056f018f9",
+        "size": 1311
       },
       {
         "path": "e2e/inventory.spec.ts",
@@ -116,15 +130,15 @@
         "path": "e2e/labs.spec.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "8351d85d598b5f30e6ea66f0189c1d157206d9689ea0785ebd1c5e2911548e8a",
-        "size": 269
+        "digest": "8e14c9a8bb1433e48ad39e0a9ef7159efd837d63d8e9fd1bd0d47bc6e17fae75",
+        "size": 3133
       },
       {
         "path": "e2e/overlay-state.spec.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "d7a554be3c39724454b8718017bd615b94a8bc0730641533d08f59cb300437cf",
-        "size": 2099
+        "digest": "6f581ec6b38c02240942011f11ec08d53d234e661408cc04ba349da5ad6216c8",
+        "size": 3383
       },
       {
         "path": "e2e/showcase.spec.ts",
@@ -585,8 +599,8 @@
         "path": "packages/three-hud/src/render/commands.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "acc772452153154f56a106444f154467d2922759e30244628910ec5d652ab085",
-        "size": 2570
+        "digest": "ba86af60060d4c8dd502761f25f9dd6cc3942a537a405fe4933b31a5a59ebe09",
+        "size": 2593
       },
       {
         "path": "packages/three-hud/src/render/contracts.ts",
@@ -599,15 +613,15 @@
         "path": "packages/three-hud/src/render/createHudOverlayAdapter.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "0a8e0e69ecfe9e2309c8df3c7e0acdc4f397f305a3e5ad5e23118d2d859bd877",
-        "size": 17736
+        "digest": "c8157299cdeaff7a85b58f4eebe377a5140e7c82d6d93ecd52529fdfdd3109b0",
+        "size": 20747
       },
       {
         "path": "packages/three-hud/src/render/encodeOverlayQueue.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "9a0c8275c7ac220c9a202ff78e76d3a10ed28606ed59ceb22d742fd6cdf16edf",
-        "size": 7681
+        "digest": "c39df2bba899b5a652f33bb8cb82263d21901a906e463eb9029a47a64eb4af7c",
+        "size": 7819
       },
       {
         "path": "packages/three-hud/src/render/overlay-queue.test.ts",
@@ -627,8 +641,8 @@
         "path": "packages/three-hud/src/render/overlayMaterial.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "7833d4cfbe9ab26fde33e97939a88232e51065fb11b63b01fc52b531781a9023",
-        "size": 4330
+        "digest": "0111d11c03dbfa3e6eb56e694f3bef15728bd6aecbb9fe57b297366d0b187b2d",
+        "size": 4486
       },
       {
         "path": "packages/three-hud/src/render/overlayProfile.ts",
@@ -704,15 +718,15 @@
         "path": "packages/three-hud/src/render/resourcePool.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "e0a9b7e63158f4d7a78a8e14275b74c60a636407daf57cca4a89f238b439fc2c",
-        "size": 9165
+        "digest": "3bcd80f0fd984581372b65e6c8e4c9895fdb1ff9fc291e06ffff37ffc4458bdd",
+        "size": 9446
       },
       {
         "path": "packages/three-hud/src/render/three-overlay-adapter.test.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "589820e113c8536d4ab74a16b439e66cecbcbb475e51097b8f23b41ac1b57b50",
-        "size": 10579
+        "digest": "63a3a6e9e7857e68ddbd390901e7a72de9dad3585a22c3ce33569dcbe5999682",
+        "size": 12915
       },
       {
         "path": "packages/three-hud/src/testing/clock.ts",
@@ -1236,15 +1250,15 @@
         "path": "packages/three-hud/src/widgets/LinearBar.test.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "b03897329aca303933f74ee40b294077c648ebfb4941d7f222649d9ac25dcfe1",
-        "size": 859
+        "digest": "a91b8c2454d5cd3e967fc75c83d6e5733a12184a810fdfddce9be11b72a2c885",
+        "size": 1002
       },
       {
         "path": "packages/three-hud/src/widgets/LinearBar.ts",
         "origin": "tracked",
         "state": "present",
-        "digest": "f97cacdc5e62b2f186a7f3ee50e217d479491b59fc6f06bc650cc9e54d3334a2",
-        "size": 5905
+        "digest": "920e29825ab430d24353738373f2693fd97fef7d61adcc1e3e773e0f84b2771c",
+        "size": 6075
       },
       {
         "path": "packages/three-hud/src/widgets/Panel.ts",
@@ -1663,8 +1677,8 @@
         "path": "scripts/workspace-check.mjs",
         "origin": "tracked",
         "state": "present",
-        "digest": "4749a89ee38514754f9a8c13a9ba2829f0cfbacb6c6babd8a5e02b5c136d700c",
-        "size": 2975
+        "digest": "51cb19e48705500aae0f81ca08a015f3ae55d1e4d87afce011e9f0721795cf26",
+        "size": 3047
       },
       {
         "path": "tsconfig.base.json",
@@ -1688,12 +1702,12 @@
         "size": 667
       }
     ],
-    "digest": "27ec873c7661ee950de7da556ad9fb4497b1d4f23363519ced9da86f931fb7f1"
+    "digest": "22d76db781c68a0b001074343d8d5e514dd0a2904c58070c60312cbd044997bc"
   },
-  "source_digest": "673702c83d7c64dda9ddaeec1081321641b206b5a73145926d30ab1e959421c0",
+  "source_digest": "866e00dd3dc6395fbe147254db457c39177e9c1066facc95f5e71c62bef5aca9",
   "artifact_hashes": {
-    "codemap.json": "7e99ac86b9ef1455260e08e4b6ced6dab1504f6075b615ed6e94cfe4fb48be37",
-    "codemap.md": "c8b3ef3d30d6f8c5c301e80c95f7a7ccb12915520f07b379c4790bd12d7f2df4",
-    "codemap.html": "3a3f0668976200a3d254a29636440bed6b1cd63e6ffc775e1afe7bd752595824"
+    "codemap.json": "05065d832378a898499458d08076ea6648b64d3a29abf57ab36159fee7558c2c",
+    "codemap.md": "4cd3204e5c9382120571f441fa6ec03dc08ac671c29e558dc291ee2b8a633988",
+    "codemap.html": "7d62a14d08e9c58b55b690f90f646b5dcb67348c384a690d6d2604f7e66a7fa3"
   }
 }

@@ -1,3 +1,5 @@
+import { createStudioShell, download } from "./studio.js";
+import { createReviewLab, guides, snapPixelText, text as addText } from "./labs/review.js";
 import {
   Compass,
   Crosshair,
@@ -55,6 +57,8 @@ const SAFE_BOTTOM = 20;
 const SPACE = 12;
 const STATUS_H = 22;
 
+const studio = createStudioShell();
+let studioReady = false;
 const hostElement = document.querySelector<HTMLDivElement>("#app");
 const statusElement = document.querySelector<HTMLDivElement>("#status");
 if (hostElement === null || statusElement === null) throw new Error("Playground host is missing.");
@@ -72,6 +76,8 @@ renderer.domElement.style.touchAction = "none";
 
 const fogColor = 0x000000;
 const gameScene = new THREE.Scene();
+const labScene = new THREE.Scene();
+labScene.background = new THREE.Color(0x111111);
 gameScene.background = new THREE.Color(fogColor);
 gameScene.fog = new THREE.Fog(fogColor, 22, 58);
 const gameCamera = new THREE.PerspectiveCamera(62, 1, 0.08, 80);
@@ -104,9 +110,20 @@ const tour = mazeTour(maze);
 let tourIndex = 0;
 let autoNav = true;
 
+const checkerBytes = new Uint8Array(8 * 8 * 4);
+for (let y = 0; y < 8; y++)
+  for (let x = 0; x < 8; x++) {
+    const value = (x + y) % 2 ? 220 : 40;
+    checkerBytes.set([value, value, value, 255], (y * 8 + x) * 4);
+  }
+const checkerTexture = new THREE.DataTexture(checkerBytes, 8, 8);
+checkerTexture.magFilter = checkerTexture.minFilter = THREE.NearestFilter;
+checkerTexture.colorSpace = THREE.SRGBColorSpace;
+checkerTexture.needsUpdate = true;
 const overlay = createHudOverlayAdapter({
   renderer: renderer as unknown as OverlayRendererLike,
   clearDepth: false,
+  textures: new Map([["review-checker", checkerTexture]]),
 });
 const hud = new HUD({ referenceSize: { width: REF_W, height: REF_H }, rendererAdapter: overlay });
 const layer = hud.createLayer({
@@ -404,11 +421,13 @@ function dampAngle(current: number, target: number, lambda: number, dt: number):
 const OPEN_CELLS = maze.walls.reduce((count, wall) => count + (wall ? 0 : 1), 0);
 const seenCells = new Set<string>([`${maze.start.x},${maze.start.z}`]);
 const logState: Array<{ text: string; opacity: number }> = [];
-let staminaShown = stamina.value;
+let staminaState = stamina.value;
+let staminaShown = staminaState;
 let exploreShown = 1;
 let speedShown = 0;
 let headingShown = player.yaw;
-let torchShown = 30;
+let torchState = 30;
+let torchShown = torchState;
 
 function pushLog(text: string): void {
   logState.unshift({ text, opacity: 0 });
@@ -442,14 +461,7 @@ function sizeCompass(size: number): void {
 }
 
 function sizeBars(barW: number): void {
-  const apply = (bar: LinearBar, height: number): void => {
-    const previous = bar.size.width;
-    bar.setSize(barW, height);
-    if (previous === barW) return;
-    const value = bar.value;
-    bar.value = value === bar.min ? bar.max : bar.min;
-    bar.setValue(value);
-  };
+  const apply = (bar: LinearBar, height: number): void => bar.setSize(barW, height);
   apply(health, 16);
   apply(stamina, 16);
   apply(explore, 14);
@@ -496,8 +508,8 @@ function paintChrome(): void {
   const selected = themeColor(theme, "selected");
   for (const [index, slot] of hotbar.slots.entries()) {
     const on = index === hotbar.activeIndex;
-    paintFill(slot, on ? selected : track);
-    paintFill(slot.frame, on ? selected : muted);
+    paintFill(slot, on ? selected : invertHud ? 0x999999 : 0x444444);
+    paintFill(slot.frame, on ? selected : paper);
     const shortcut = hotbar.shortcuts[index];
     if (shortcut) shortcut.color = on ? paper : ink;
     const mark = hotMarks[index];
@@ -737,7 +749,11 @@ function applyShowcaseSkin(): void {
   layer.pixelSnap = pixel;
   if (gameScene.background instanceof THREE.Color) gameScene.background.set(panelFill);
   if (gameScene.fog) gameScene.fog.color.set(panelFill);
-  mazeScene.setInk(text, themeColor(theme, "muted"), panelFill);
+  mazeScene.setInk(
+    studio.state.wireframe ? text : invertHud ? 0x777777 : 0x454545,
+    invertHud ? 0x999999 : 0x333333,
+    studio.state.wireframe ? panelFill : invertHud ? 0xdddddd : 0x242424,
+  );
   paintFill(panel, panelFill);
   paintFill(panel.background, panelFill);
   panel.background.setRadius(Number(theme.radii["panel"] ?? 0));
@@ -774,10 +790,9 @@ function applyShowcaseSkin(): void {
     label.remeasure();
   }
   health.labelNode.setFontId(fontName);
-  health.labelNode.setFontSize(Math.min(typeSize, health.size.height - 2));
-  health.labelNode.remeasure();
+  health.labelNode.setFontSize(10);
   stamina.labelNode.setFontId(fontName);
-  stamina.labelNode.setFontSize(Math.min(typeSize, stamina.size.height - 2));
+  stamina.labelNode.setFontSize(9);
   stamina.labelNode.remeasure();
   explore.labelNode.setFontId(fontName);
   explore.labelNode.setFontSize(Math.min(typeSize, explore.size.height - 2));
@@ -807,10 +822,10 @@ function applyShowcaseSkin(): void {
   status.style.background = paperCss;
   status.style.color = inkCss;
   status.style.borderBottomColor = muteCss;
-  document.documentElement.style.background = paperCss;
-  document.body.style.background = paperCss;
+
   paintChrome();
   layoutHud();
+  if (studioReady) composeStudioHud();
 }
 
 applyShowcaseSkin();
@@ -959,6 +974,7 @@ function activateTool(key: string): void {
   pushLog(`${key.toUpperCase()} ${key === "torch" ? (tools.torch ? "ON" : "OFF") : "OK"}`);
   paintChrome();
   layoutHud();
+  if (studioReady) composeStudioHud();
   writeStatus();
 }
 
@@ -983,9 +999,10 @@ function pickupIfClose(): void {
       painted.frame.fill = itemFill;
     }
     pushLog(`GOT ${key.toUpperCase()}`);
-    inventoryOn = bag.some((item) => item.empty !== true);
+    notice.setText(`RECOVERED / ${key.toUpperCase()}`);
+    noticeLeft = 4;
     paintChrome();
-    layoutHud();
+    composeStudioHud();
     shake = Math.min(1, shake + 0.18);
   }
 }
@@ -1046,6 +1063,7 @@ function resize(): void {
   writeStatus();
   hud.resize();
   if (hud.state === "ready") applyShowcaseSkin();
+  if (studioReady) lab.rebuild(studio.state, width, height);
 }
 
 const observer = new ResizeObserver(resize);
@@ -1053,6 +1071,16 @@ observer.observe(host);
 resize();
 
 function onKey(event: KeyboardEvent, down: boolean): void {
+  if (!down) {
+    held.delete(event.code);
+    return;
+  }
+  if (
+    event.target instanceof HTMLElement &&
+    event.target.closest("input, select, textarea, button, [contenteditable]")
+  )
+    return;
+  if (studio.state.view !== "field" && studio.state.view !== "playground") return;
   if (
     event.code.startsWith("Arrow") ||
     event.code === "Space" ||
@@ -1063,9 +1091,17 @@ function onKey(event: KeyboardEvent, down: boolean): void {
   ) {
     event.preventDefault();
   }
-  if (down) held.add(event.code);
-  else held.delete(event.code);
-  if (!down) return;
+  held.add(event.code);
+  if (event.repeat) return;
+  if (event.code === "KeyB") {
+    studio.state.inventory = !studio.state.inventory;
+    composeStudioHud();
+    studio.refresh();
+  }
+  if (event.code === "Space") {
+    studio.state.paused = !studio.state.paused;
+    studio.refresh();
+  }
   const digit = event.code.startsWith("Digit") ? Number(event.code.slice(5)) : 0;
   if (digit >= 1 && digit <= 6) {
     hotbar.activate(digit - 1);
@@ -1073,6 +1109,8 @@ function onKey(event: KeyboardEvent, down: boolean): void {
   }
   if (event.code === "KeyI") {
     invertHud = !invertHud;
+    studio.state.invert = invertHud;
+    studio.refresh();
     applyShowcaseSkin();
     pushLog(invertHud ? "INK INVERT" : "INK NIGHT");
     writeStatus();
@@ -1104,6 +1142,17 @@ function onPointerLockChange(): void {
 }
 
 function onCanvasClick(event: MouseEvent): void {
+  if (studio.state.view !== "field" || studio.state.inventory) return;
+  const hovered = hud.pointer.hovered;
+  if (
+    hovered &&
+    Object.values(groupNodes).some((node) => {
+      for (let current: HudNode | null = hovered; current; current = current.parent)
+        if (current === node) return true;
+      return false;
+    })
+  )
+    return;
   if (pointerLocked) return;
   const rect = renderer.domElement.getBoundingClientRect();
   const y = (event.clientY - rect.top) / Math.max(1, rect.height);
@@ -1127,18 +1176,304 @@ addEventListener("keyup", onKeyUp);
 addEventListener("mousemove", onMouseMove);
 document.addEventListener("pointerlockchange", onPointerLockChange);
 renderer.domElement.addEventListener("click", onCanvasClick);
-renderer.domElement.focus();
+renderer.domElement.setAttribute("aria-label", "Three.js scene and HUD");
+function clearHeld(): void {
+  held.clear();
+  player.vx = player.vz = 0;
+}
+function onFocusIn(event: FocusEvent): void {
+  if (
+    event.target instanceof HTMLElement &&
+    event.target.closest("input, select, textarea, button, [contenteditable]")
+  )
+    clearHeld();
+}
+document.addEventListener("focusin", onFocusIn);
+addEventListener("blur", clearHeld);
+document.addEventListener("visibilitychange", clearHeld);
 
+const lab = createReviewLab(hud, (id) => {
+  studio.state.selected = id;
+  studio.refresh();
+  lab.rebuild(studio.state, host.clientWidth, host.clientHeight);
+});
+let guideRoot: HudNode | null = null;
+let cooldownLeft = 0;
+let noticeLeft = 0;
+let lastTelemetry = 0;
+const notice = addText(layer, "CORE RECOVERED / OBJECTIVE UPDATED", 24, 100, 13);
+notice.visible = false;
+const abilityLabel = addText(layer, "READY", 0, 0, 11);
+const healthReadout = addText(layer, "86 / 100", 0, 0, 23);
+const inventoryBackdrop = layer.add(
+  new Panel({ id: "inventory-backdrop", width: 340, height: 220, fill: 0x151515, radius: 4 }),
+);
+const inventoryHeading = addText(layer, "INVENTORY / FIELD KIT", 0, 0, 14);
+const inventoryHint = addText(layer, "Collect supplies in the maze.", 0, 0, 10);
+function setGroupOrder(node: HudNode, order: number): void {
+  node.zIndex = order;
+  for (const child of node.children) setGroupOrder(child, order);
+}
+setGroupOrder(inventoryBackdrop, 40);
+setGroupOrder(inventory, 41);
+inventoryHeading.zIndex = inventoryHint.zIndex = 42;
+notice.zIndex = 60;
+
+const groupNodes = { health, equipment: hotbar, map: panel, crosshair };
+for (const [id, node] of Object.entries(groupNodes))
+  hud.pointer.addListener(node, (event) => {
+    if (event.type !== "click" || event.phase === "capture") return;
+    studio.state.selected = id;
+    studio.refresh();
+  });
+function composeStudioHud(): void {
+  const width = layer.referenceSize.width,
+    height = layer.referenceSize.height;
+  const compact = width < 550,
+    pad = compact ? 16 : 30;
+  for (const node of [explore, speedBar, logPanel, logTitle, lookHint, ...logLabels])
+    setHudVisible(node, false);
+  title.setText("VAULT 09");
+  title.setFontSize(12);
+  title.opacity = 0.7;
+  title.setPosition(pad, 25);
+  title.visible = true;
+  const barWidth = Math.min(studio.state.width, Math.max(100, width - pad * 2 - 80));
+  health.setSize(barWidth, 4);
+  stamina.setSize(barWidth, 2);
+  const hx = pad + studio.state.offsetX,
+    hy = height - (compact ? 114 : 56) + studio.state.offsetY;
+  health.setPosition(hx, hy);
+  health.labelNode.setPosition(0, -23);
+  health.labelNode.setText("HEALTH");
+  health.labelNode.setFontSize(10);
+  healthReadout.setText(`${Math.round(health.value)}`);
+  healthReadout.setFontSize(16);
+  healthReadout.setPosition(hx + barWidth - healthReadout.size.width, hy - 27);
+  healthReadout.color = themeColor(activeTheme(), "text");
+  stamina.setPosition(hx, hy + 12);
+  stamina.labelNode.setPosition(0, 11);
+  stamina.labelNode.setText("");
+  stamina.labelNode.setFontSize(9);
+  const hotScale = Math.min(0.65, (width - pad * 2) / hotbar.size.width);
+  hotbar.scaleX = hotbar.scaleY = hotScale;
+  hotbar.setPosition((width - hotbar.size.width * hotScale) / 2, height - 72);
+  inventory.visible = studio.state.inventory;
+  inventory.scaleX = inventory.scaleY = Math.min(0.85, (width - 48) / inventory.size.width);
+  inventory.setPosition(
+    (width - inventory.size.width * inventory.scaleX) / 2,
+    Math.max(90, height / 2 - 50),
+  );
+  const panelWidth = Math.min(340, width - 32);
+  inventoryBackdrop.setSize(panelWidth, 220);
+  inventoryBackdrop.background.setSize(panelWidth, 220);
+  inventoryBackdrop.setPosition((width - panelWidth) / 2, Math.max(65, height / 2 - 100));
+  const inventoryPaper = invertHud ? 0xeeeeee : 0x151515;
+  inventoryBackdrop.fill = inventoryBackdrop.background.fill = inventoryPaper;
+  inventoryHeading.setPosition(
+    inventoryBackdrop.position.x + 18,
+    inventoryBackdrop.position.y + 18,
+  );
+  inventoryHint.setPosition(inventoryBackdrop.position.x + 18, inventoryBackdrop.position.y + 185);
+  inventoryHeading.color = inventoryHint.color = themeColor(activeTheme(), "text");
+  inventoryBackdrop.visible =
+    inventoryHeading.visible =
+    inventoryHint.visible =
+      studio.state.inventory;
+  for (const [index, slot] of inventory.slots.entries()) {
+    slot.icon.visible = false;
+    slot.fill = invertHud ? 0xaaaaaa : 0x555555;
+    slot.frame.fill = invertHud ? 0xdddddd : 0x252525;
+    slot.quantity.color = themeColor(activeTheme(), "text");
+    slot.quantity.setText(
+      bag[index]?.empty === false || (bag[index] && !bag[index]?.empty) ? "1" : "-",
+    );
+  }
+  ammo.visible = false;
+  ammoCaption.visible = !compact;
+  ammo.setPosition(width - 100, height - 173);
+  ammoCaption.setPosition(Math.max(pad, width - ammoCaption.size.width - pad), height - 55);
+  ammoCaption.setFontSize(11);
+  panel.visible = tools.map && !compact;
+  panel.setPosition(width - panel.size.width - pad, 26);
+  panel.scaleX = panel.scaleY = 0.8;
+  panel.setSize(138, 150);
+  panel.background.setSize(138, 150);
+  panel.content.setSize(126, 138);
+  panel.setPosition(width - 138 * 0.8 - pad, 26);
+  panel.setClip(null);
+  fitMap(9, 11, 2);
+  mapRoot.setPosition(2, 19);
+  trayTitle.zIndex = 30;
+  trayTitle.setFontSize(9);
+  trayTitle.setPosition(panel.position.x + 10, panel.position.y + 9);
+  trayTitle.visible = false;
+  for (const label of [trayPos, trayHead, trayHelp]) label.visible = false;
+  compass.visible = tools.compass && !compact;
+  compass.scaleX = compass.scaleY = 0.5;
+  compass.setPosition(width / 2 - compass.size.width * 0.25, 20);
+  crosshair.visible = !studio.state.inventory;
+  crosshair.setPosition(
+    width / 2 - crosshair.size.width / 2,
+    height / 2 - crosshair.size.height / 2,
+  );
+  abilityLabel.setPosition(width / 2 - 48, height - 94);
+  abilityLabel.setFontSize(10);
+  abilityLabel.color = themeColor(activeTheme(), "text");
+  notice.setPosition(pad, 80);
+  notice.color = themeColor(activeTheme(), "text");
+  if (guideRoot) {
+    layer.remove(guideRoot);
+    guideRoot.dispose();
+  }
+  guideRoot = guides(layer, width, height, studio.state);
+  snapPixelText(layer, hudScale() * renderer.getPixelRatio(), fontName);
+  healthReadout.setPosition(hx + barWidth - healthReadout.size.width, hy - 27);
+  layer.markDirty(STYLE_DIRTY | QUEUE_DIRTY);
+}
+function syncStudio(key: string): void {
+  const state = studio.state;
+  if (key === "view") {
+    clearHeld();
+    if (document.pointerLockElement) document.exitPointerLock();
+  }
+  layer.setEnabled(state.view === "playground" || state.view === "field");
+  invertHud = state.invert;
+  if (["value", "preset"].includes(key) || key === "view") health.setValue(state.value);
+  if (key === "dpr") renderer.setPixelRatio(state.dpr);
+
+  resize();
+  document.getElementById("lab-note")!.textContent =
+    state.view === "field"
+      ? "Click the scene to look around. B opens inventory. HUD controls consume pointer input."
+      : state.view === "contracts"
+        ? "These are live fixtures, not inherited results from the preview. Export contains the actual render queue."
+        : "Monochrome tokens · public package widgets · host-owned frame loop";
+}
+function studioAction(name: string): void {
+  if (name === "damage" || name === "heal") {
+    const old = health.value;
+    studio.state.value = Math.max(0, Math.min(100, old + (name === "damage" ? -23 : 25)));
+    health.setValue(studio.state.value);
+    health.setDelayedValue(Math.max(old, health.value));
+    shake = name === "damage" ? 0.6 : 0;
+    notice.setText(name === "damage" ? "DAMAGE / INTEGRITY LOST" : "MEDKIT / INTEGRITY RESTORED");
+    noticeLeft = 3;
+    composeStudioHud();
+    studio.refresh();
+  }
+  if (name === "ability" && cooldownLeft <= 0) {
+    cooldownLeft = 5;
+    tools.flare = 2.4;
+    studio.state.paused = false;
+    studio.refresh();
+  }
+  if (name === "reset") {
+    player.x = start.x + look0.x * 0.4;
+    player.z = start.z + look0.z * 0.4;
+    player.yaw = spawnYaw;
+    player.pitch = 0;
+    viewYaw = player.yaw;
+    viewPitch = 0;
+    shake = 0;
+    fovPunch = 0;
+    clearHeld();
+    staminaState = staminaShown = 100;
+    torchState = torchShown = 30;
+    cooldownLeft = 0;
+    noticeLeft = 0;
+    studio.state.value = 86;
+    studio.state.offsetX = studio.state.offsetY = 0;
+    studio.state.width = 220;
+    studio.state.inventory = false;
+    bag.splice(
+      0,
+      bag.length,
+      ...Array.from({ length: 4 }, (_, index) => ({ key: `empty-${index}`, empty: true })),
+    );
+    inventory.setItems(bag);
+    pickupKeys.clear();
+    seenCells.clear();
+    seenCells.add(`${maze.start.x},${maze.start.z}`);
+    tourIndex = 0;
+    for (const item of mazeScene.collectibles) {
+      item.visible = true;
+      const cell = worldToCell(maze, item.position.x, item.position.z);
+      pickupKeys.add(`${cell.x},${cell.z}`);
+    }
+    health.setValue(86);
+    health.setDelayedValue(86);
+    studio.refresh();
+    syncStudio("preset");
+  }
+  if (name === "capture") {
+    renderer.render(layer.enabled ? gameScene : labScene, gameCamera);
+    hud.render(hud.update(0));
+    renderer.domElement.toBlob((blob) => {
+      if (blob) download("three-hud.png", blob);
+    });
+  }
+  if (name === "export-contracts")
+    download("three-hud-contract.json", JSON.stringify(contractEvidence(), null, 2));
+}
+function contractEvidence() {
+  return {
+    schema: "three-hud-live-contract/v1",
+    scope: "Live Three.js WebGL queue; visual inspection is separate",
+    case: studio.state.contract,
+    renderer: overlay.profile,
+    dpr: renderer.getPixelRatio(),
+    buffer: { width: renderer.domElement.width, height: renderer.domElement.height },
+    queue: overlay.lastQueue,
+  };
+}
+function updateStudioTelemetry(now: number, dt: number): void {
+  cooldownLeft = Math.max(0, cooldownLeft - dt);
+  noticeLeft = Math.max(0, noticeLeft - dt);
+  notice.visible = noticeLeft > 0;
+  abilityLabel.visible = cooldownLeft > 0;
+  abilityLabel.setText(
+    cooldownLeft > 0 ? `ABILITY / ${cooldownLeft.toFixed(1)}s` : "ABILITY / READY",
+  );
+  if (now - lastTelemetry < 300) return;
+  lastTelemetry = now;
+  if (studio.state.inventory) {
+    let target = hud.pointer.hovered;
+    while (target && !inventory.slots.some((slot) => slot === target)) target = target.parent;
+    const item = target ? bag[inventory.slots.findIndex((slot) => slot === target)] : undefined;
+    inventoryHint.setText(
+      item && !item.empty
+        ? `${item.key.toUpperCase()} / COLLECTED`
+        : "Collect supplies in the maze.",
+    );
+  }
+
+  const queue = overlay.lastQueue;
+  document.getElementById("renderer-info")!.textContent =
+    `${overlay.profile.toUpperCase()} / Three.js\n${renderer.domElement.width} x ${renderer.domElement.height} buffer\nDPR ${renderer.getPixelRatio()}\n${queue?.commands.length ?? 0} draw commands\n${queue?.batches.length ?? 0} queue batches\n${overlay.ownedResourceCount} owned resources`;
+  if (studio.state.view === "contracts")
+    document.getElementById("contract-result")!.textContent =
+      `${studio.state.contract.toUpperCase()} / live fixture\n${queue?.commands.length ?? 0} commands submitted\n${studio.state.contract === "time" ? "CPU integration: 30 / 60 / 144 FPS\nExpected fuel: 68.000" : "Inspect pixels; export queue evidence."}`;
+}
+Object.assign(diagnostics, { studio: studio.state, overlay, hud, contractEvidence });
+studioReady = true;
+studio.connect(syncStudio, studioAction);
+
+let simulationTime = 0;
 let previous = performance.now();
 let frameId = 0;
 let stopped = false;
 function frame(now: number): void {
   if (stopped) return;
   frameId = requestAnimationFrame(frame);
-  const delta = Math.max(0, Math.min(0.05, (now - previous) / 1000));
+  const delta =
+    studio.state.paused || (studio.state.view !== "field" && studio.state.view !== "playground")
+      ? 0
+      : Math.max(0, Math.min(0.05, (now - previous) / 1000));
   previous = now;
+  simulationTime += delta;
   const sprintHeld = held.has("ShiftLeft") || held.has("ShiftRight");
-  const canSprint = sprintHeld && stamina.value > 8;
+  const canSprint = sprintHeld && staminaState > 8;
   player.yaw +=
     turnIntent(
       held.has("KeyQ") || held.has("ArrowLeft"),
@@ -1149,10 +1484,19 @@ function frame(now: number): void {
   let forward =
     (held.has("KeyW") || held.has("ArrowUp") ? 1 : 0) -
     (held.has("KeyS") || held.has("ArrowDown") ? 1 : 0);
-  const strafe = (held.has("KeyD") ? 1 : 0) - (held.has("KeyA") ? 1 : 0);
+  if (studio.state.inventory) forward = 0;
+  const strafe = studio.state.inventory
+    ? 0
+    : (held.has("KeyD") ? 1 : 0) - (held.has("KeyA") ? 1 : 0);
   const manualTurn =
     held.has("KeyQ") || held.has("ArrowLeft") || held.has("KeyE") || held.has("ArrowRight");
-  const autoActive = autoNav && !pointerLocked && forward === 0 && strafe === 0 && !manualTurn;
+  const autoActive =
+    autoNav &&
+    !studio.state.inventory &&
+    !pointerLocked &&
+    forward === 0 &&
+    strafe === 0 &&
+    !manualTurn;
   if (autoActive && tour.length > 0) {
     let steps = 0;
     while (steps < 8) {
@@ -1177,8 +1521,9 @@ function frame(now: number): void {
     (autoActive ? 0.92 : 1);
   const look = yawToLook(player.yaw, 0, lookScratch);
   const right = yawToRight(player.yaw, rightScratch);
-  const wishX = (look.x * forward + right.x * strafe) * pace;
-  const wishZ = (look.z * forward + right.z * strafe) * pace;
+  const moveLength = Math.max(1, Math.hypot(forward, strafe));
+  const wishX = ((look.x * forward + right.x * strafe) * pace) / moveLength;
+  const wishZ = ((look.z * forward + right.z * strafe) * pace) / moveLength;
   const blend = 1 - Math.exp(-MOVE_ACCEL * delta);
   player.vx += (wishX - player.vx) * blend;
   player.vz += (wishZ - player.vz) * blend;
@@ -1202,8 +1547,8 @@ function frame(now: number): void {
   const lookPitched = yawToLook(viewYaw, viewPitch, lookPitchedScratch);
   const rightView = yawToRight(viewYaw, rightScratch);
   const shakeAmt = shake * shake;
-  const sLat = Math.sin(now * 0.007) * SHAKE_POS * shakeAmt;
-  const sUp = Math.sin(now * 0.009) * SHAKE_POS * 0.55 * shakeAmt;
+  const sLat = reduceMotion ? 0 : Math.sin(simulationTime * 7) * SHAKE_POS * shakeAmt;
+  const sUp = reduceMotion ? 0 : Math.sin(simulationTime * 9) * SHAKE_POS * 0.55 * shakeAmt;
   gameCamera.position.set(
     player.x + rightView.x * sLat,
     player.y + sUp,
@@ -1217,7 +1562,7 @@ function frame(now: number): void {
   const moving = forward !== 0 || strafe !== 0;
   fovPunch =
     canSprint && moving ? Math.min(2.4, fovPunch + 8 * delta) : fovPunch * Math.exp(-delta / 0.22);
-  gameCamera.fov = baseFov + fovPunch;
+  gameCamera.fov = baseFov + (reduceMotion ? 0 : fovPunch);
   gameCamera.updateProjectionMatrix();
   mazeScene.torch.position.set(player.x, 1.32, player.z);
   if (tools.flare > 0) {
@@ -1232,27 +1577,31 @@ function frame(now: number): void {
   for (const [index, item] of mazeScene.collectibles.entries()) {
     if (!item.visible) continue;
     const baseY = Number(item.userData["baseY"] ?? 0.82);
-    item.position.y = baseY + Math.sin(now * 0.003 + index) * 0.08;
-    item.rotation.y += delta * 1.2;
+    item.position.y = baseY + (reduceMotion ? 0 : Math.sin(simulationTime * 3 + index) * 0.08);
+    if (!reduceMotion) item.rotation.y += delta * 1.2;
   }
   pickupIfClose();
-  renderer.render(gameScene, gameCamera);
+  renderer.render(layer.enabled ? gameScene : labScene, gameCamera);
   if (hud.state !== "ready") return;
   try {
-    const staminaTarget = Math.max(
-      8,
-      Math.min(100, staminaShown + (canSprint && moving ? -32 : 16) * delta),
+    staminaState = Math.max(
+      0,
+      Math.min(100, staminaState + (canSprint && moving ? -32 : 16) * delta),
     );
-    staminaShown = damp(staminaShown, staminaTarget, 10, delta);
+    staminaShown = damp(staminaShown, staminaState, 10, delta);
     stamina.setValue(staminaShown);
-    health.setDelayedValue(Math.min(100, health.value + 6 * delta));
-    const torchFuel = Math.max(0, torchShown - (tools.torch ? 0.28 : 0.03) * delta);
-    torchShown = damp(torchShown, torchFuel, 8, delta);
+    health.setDelayedValue(Math.max(health.value, health.delayedValue - 18 * delta));
+    torchState = Math.max(0, torchState - (tools.torch ? 0.28 : 0.03) * delta);
+    torchShown = damp(torchShown, torchState, 8, delta);
     ammo.setValue(Math.round(torchShown));
     ammoCaption.setText(
       layer.referenceSize.width < 900
         ? `${Math.round(torchShown)}/30`
         : `TORCH ${Math.round(torchShown)}/30`,
+    );
+    ammoCaption.setPosition(
+      Math.max(30, layer.referenceSize.width - ammoCaption.size.width - 30),
+      layer.referenceSize.height - 55,
     );
     headingShown = dampAngle(headingShown, player.yaw, 12, delta);
     compass.setHeading(headingShown);
@@ -1277,7 +1626,7 @@ function frame(now: number): void {
       if (!line) continue;
       line.setText(entry.text);
       line.opacity = entry.opacity;
-      line.visible = layer.referenceSize.width >= 900;
+      line.visible = false;
     }
     for (let index = logState.length; index < logLabels.length; index += 1) {
       const line = logLabels[index];
@@ -1287,6 +1636,7 @@ function frame(now: number): void {
     refreshMinimap();
     const info = hud.update(delta);
     hud.render(info);
+    updateStudioTelemetry(now, delta);
   } catch (error) {
     status.textContent = `HUD render failed: ${error instanceof Error ? error.message : String(error)}`;
   }
@@ -1298,6 +1648,12 @@ function shutdown(): void {
   stopped = true;
   cancelAnimationFrame(frameId);
   connected.disconnect();
+  studio.dispose();
+  lab.clear();
+  checkerTexture.dispose();
+  removeEventListener("blur", clearHeld);
+  document.removeEventListener("focusin", onFocusIn);
+  document.removeEventListener("visibilitychange", clearHeld);
   observer.disconnect();
   removeEventListener("keydown", onKeyDown);
   removeEventListener("keyup", onKeyUp);

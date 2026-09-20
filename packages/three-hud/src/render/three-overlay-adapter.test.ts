@@ -1,9 +1,11 @@
-import { ShaderMaterial } from "three";
+import { ShaderMaterial, DataTexture, type Scene, type InstancedMesh } from "three";
 import { describe, expect, it, vi } from "vitest";
 import { HudError } from "../contracts/errors.js";
 import { HUD } from "../core/HUD.js";
 import { HudNode } from "../core/HudNode.js";
 import { Ring } from "../primitives/Ring.js";
+import { Label } from "../widgets/Label.js";
+import { HudImage } from "../primitives/Image.js";
 import { createHudOverlayAdapter } from "./createHudOverlayAdapter.js";
 import { OVERLAY_COLOR_POLICY } from "./overlayProfile.js";
 import { SHAPE_RING } from "./overlayMaterial.js";
@@ -86,6 +88,48 @@ async function hudWithRect(adapter: ReturnType<typeof createHudOverlayAdapter>) 
 }
 
 describe("three-overlay-adapter", () => {
+  it("keeps mixed paint order, crops partial glyphs, and borrows bound image textures", async () => {
+    const renderer = createHostRenderer("webgl");
+    const texture = new DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1);
+    const disposeTexture = vi.spyOn(texture, "dispose");
+    const adapter = createHudOverlayAdapter({
+      renderer,
+      textures: new Map([["checker", texture]]),
+    });
+    const hud = new HUD({ referenceSize: { width: 100, height: 100 }, rendererAdapter: adapter });
+    const layer = hud.createLayer({ id: "mixed" });
+    layer.add(new HudNode({ width: 40, height: 30, fill: 0x333333 }));
+    const label = layer.add(new Label({ text: "M", fontSize: 20 }));
+    label.setClip({ x: 0, y: 0, width: label.size.width / 2, height: 40 });
+    layer.add(new HudNode({ width: 10, height: 10, fill: 0xffffff }));
+    layer.add(
+      new HudImage({
+        texture: { id: "checker", ready: true, filter: "nearest", ownership: "borrowed" },
+      }),
+    );
+    layer.add(new Label({ text: "TOP", fontSize: 12 }));
+    await hud.initialize();
+    hud.render({ deltaSeconds: 0, elapsedSeconds: 0, frame: 1 });
+    const scene = renderer.render.mock.calls[0]?.[0] as Scene;
+    const draws = (scene.children as InstancedMesh[])
+      .filter((mesh) => mesh.count > 0)
+      .sort((a, b) => a.renderOrder - b.renderOrder);
+    expect(draws.map((mesh) => mesh.geometry.getAttribute("aShape").getX(0))).toEqual([
+      0, 5, 0, 4, 5,
+    ]);
+    const glyph = adapter.lastQueue?.commands.find((command) => command.kind === "text");
+    if (glyph?.kind !== "text") throw new Error("Missing text command");
+    expect(adapter.debugInstanceUv(0)[2]).toBeLessThan(glyph.glyphs[0]!.u1);
+    expect((draws[3]!.material as ShaderMaterial).uniforms["map"]?.value).toBe(texture);
+    expect((draws[4]!.material as ShaderMaterial).uniforms["map"]?.value).toBe(
+      (draws[1]!.material as ShaderMaterial).uniforms["map"]?.value,
+    );
+    const disposeMaterial = vi.spyOn(draws[0]!.material as ShaderMaterial, "dispose");
+    hud.dispose();
+    expect(disposeMaterial).toHaveBeenCalledTimes(1);
+    expect(disposeTexture).not.toHaveBeenCalled();
+    texture.dispose();
+  });
   it("passes state-diff restore on WebGL and WebGPU host profiles", async () => {
     for (const kind of ["webgl", "webgpu"] as const) {
       const renderer = createHostRenderer(kind);

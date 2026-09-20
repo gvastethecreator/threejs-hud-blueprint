@@ -71,6 +71,10 @@ layer order → z-index → stable authored sequence
 
 Batching may merge adjacent compatible commands but may not reorder transparent commands across a visual boundary merely to reduce draw calls.
 
+The overlay keeps separate instance runs when the queue switches between shapes, UI text, pixel text, or textures. It reuses these runs across frames. This preserves mixed paint order without creating a mesh for each node. A clipped glyph uses a smaller destination quad and matching atlas UVs. Shader output converts to the renderer output color space before premultiplying RGB by the final opacity.
+
+For WebGL image draws, the host passes a `textures: ReadonlyMap<string, THREE.Texture>` to `createHudOverlayAdapter`. Keys match `HudTextureHandle.id`. These textures are borrowed; the host configures their filtering and color space and disposes them after the HUD. A ready handle without a bound texture produces no draw. The WebGPU overlay still has its documented limited profile and does not submit this custom image shader. The image command carries its source UV rectangle; missing bindings never draw a solid placeholder.
+
 A batch key can include:
 
 ```text

@@ -72,6 +72,7 @@ export function encodeOverlayQueue(
               id: `${image.texture.id}:${image.texture.filter}`,
             },
             tint: image.tint,
+            uv: image.uv,
           };
           queue.push({ ...draft, batchKey: composeBatchKey(draft) });
         }
@@ -160,6 +161,7 @@ function shapeParams(node: unknown): ShapeParams | undefined {
 }
 
 function asImage(node: unknown): {
+  uv: import("../contracts/geometry.js").ReadonlyRect;
   texture: { id: string; ready: boolean; filter: string } | null;
   tint: number;
   sliceRects?: () => readonly { x: number; y: number; width: number; height: number }[];
@@ -167,6 +169,7 @@ function asImage(node: unknown): {
   if (typeof node !== "object" || node === null || !("texture" in node) || !("tint" in node))
     return null;
   return node as {
+    uv: import("../contracts/geometry.js").ReadonlyRect;
     texture: { id: string; ready: boolean; filter: string } | null;
     tint: number;
     sliceRects?: () => readonly { x: number; y: number; width: number; height: number }[];

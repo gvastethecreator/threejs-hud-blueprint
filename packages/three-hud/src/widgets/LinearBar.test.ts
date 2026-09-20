@@ -8,6 +8,9 @@ describe("LinearBar", () => {
     bar.setValue(150);
     expect(bar.value).toBe(100);
     expect(bar.fillNode.size.width).toBe(200);
+    bar.setSize(320, 12);
+    expect(bar.fillNode.size).toEqual({ width: 320, height: 12 });
+    expect(bar.delayedNode.size.height).toBe(12);
   });
 
   it("themes track, value, and delayed fills without host writes to fillNode", () => {

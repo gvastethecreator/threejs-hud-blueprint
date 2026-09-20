@@ -83,7 +83,7 @@ export function createOverlayShaderMaterial(textured = false): ShaderMaterial {
       void main() {
         float alpha = 1.0;
         vec4 sampleColor = vec4(1.0);
-        if (vShape < 4.5) {
+        if (vShape < 3.5) {
           if (vUv.x < vUvRect.x || vUv.y < vUvRect.y || vUv.x > vUvRect.z || vUv.y > vUvRect.w) {
             discard;
           }
@@ -98,17 +98,22 @@ export function createOverlayShaderMaterial(textured = false): ShaderMaterial {
         if (useMap > 0.5 && vShape > 3.5) {
           vec2 uv = mix(vUvRect.xy, vUvRect.zw, vUv);
           sampleColor = texture2D(map, uv);
-          if (vParams.y > 0.5) {
+          if (vShape < 4.5) {
+            alpha *= sampleColor.a;
+          } else if (vParams.y > 0.5) {
             alpha *= step(0.5, sampleColor.a);
           } else {
             float sd = sampleColor.a;
             float w = max(0.02, fwidth(sd) * 0.75);
             alpha *= smoothstep(0.5 - w, 0.5 + w, sd);
           }
-          sampleColor.rgb *= alpha;
+
         }
         if (alpha < 0.01) discard;
-        gl_FragColor = vec4(vColor * sampleColor.rgb, alpha * vParams.w);
+        float finalAlpha = alpha * vParams.w;
+        gl_FragColor = vec4(vColor * sampleColor.rgb, finalAlpha);
+        #include <colorspace_fragment>
+        gl_FragColor.rgb *= finalAlpha;
       }
     `,
     transparent: true,

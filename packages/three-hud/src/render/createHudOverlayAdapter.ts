@@ -13,6 +13,7 @@ import {
   UnsignedByteType,
   Vector3,
   type Texture,
+  type Material,
 } from "three";
 import type { ReadonlyRect } from "../contracts/geometry.js";
 import type { HudLayer } from "../core/HudLayer.js";
@@ -52,6 +53,8 @@ export type HudOverlayAdapterOptions = Readonly<{
   renderer: OverlayRendererLike;
   clearDepth?: boolean;
   cssViewport?: ReadonlyRect;
+  /** Host-owned textures keyed by HudTextureHandle.id. The adapter never disposes them. */
+  textures?: ReadonlyMap<string, Texture>;
 }>;
 
 export type HudOverlayAdapter = HudRendererAdapter & {
@@ -84,38 +87,32 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
   const sdfAtlas = own(createAtlasTexture(true, LinearFilter));
   const pixelAtlas = own(createAtlasTexture(false, NearestFilter));
   const webgpuSafe = profile === "webgpu";
-  const shapeMaterial = own(
-    webgpuSafe
-      ? new MeshBasicMaterial({
-          transparent: true,
-          depthTest: OVERLAY_COLOR_POLICY.depthTest,
-          depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
-          toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
-        })
-      : createOverlayShaderMaterial(false),
-  );
-  const sdfTextMaterial = own(
-    webgpuSafe
-      ? new MeshBasicMaterial({
-          map: sdfAtlas,
-          transparent: true,
-          depthTest: OVERLAY_COLOR_POLICY.depthTest,
-          depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
-          toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
-        })
-      : createTextMaterial(sdfAtlas),
-  );
-  const pixelTextMaterial = own(
-    webgpuSafe
-      ? new MeshBasicMaterial({
-          map: pixelAtlas,
-          transparent: true,
-          depthTest: OVERLAY_COLOR_POLICY.depthTest,
-          depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
-          toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
-        })
-      : createTextMaterial(pixelAtlas),
-  );
+  const shapeMaterial = webgpuSafe
+    ? new MeshBasicMaterial({
+        transparent: true,
+        depthTest: OVERLAY_COLOR_POLICY.depthTest,
+        depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
+        toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
+      })
+    : createOverlayShaderMaterial(false);
+  const sdfTextMaterial = webgpuSafe
+    ? new MeshBasicMaterial({
+        map: sdfAtlas,
+        transparent: true,
+        depthTest: OVERLAY_COLOR_POLICY.depthTest,
+        depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
+        toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
+      })
+    : createTextMaterial(sdfAtlas);
+  const pixelTextMaterial = webgpuSafe
+    ? new MeshBasicMaterial({
+        map: pixelAtlas,
+        transparent: true,
+        depthTest: OVERLAY_COLOR_POLICY.depthTest,
+        depthWrite: OVERLAY_COLOR_POLICY.depthWrite,
+        toneMapped: OVERLAY_COLOR_POLICY.toneMapped,
+      })
+    : createTextMaterial(pixelAtlas);
   const pool = own(
     new HudResourcePool({ initialCapacity: 64, maxCapacity: 4096, material: shapeMaterial }),
   );
@@ -139,6 +136,46 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
   );
   pixelTextPool.mesh.renderOrder = 3;
   scene.add(pixelTextPool.mesh);
+  const allPools = [pool, textPool, pixelTextPool];
+  const materialFactories = new Map<HudResourcePool, () => Material>([
+    [pool, () => shapeMaterial.clone()],
+    [textPool, () => createTextMaterial(sdfAtlas)],
+    [pixelTextPool, () => createTextMaterial(pixelAtlas)],
+  ]);
+  const extraRuns = new Map<HudResourcePool, HudResourcePool[]>();
+  const runCounts = new Map<HudResourcePool, number>();
+  const texturePools = new Map<string, HudResourcePool>();
+  let previousPool: HudResourcePool | null = null;
+  let activePool = pool;
+  let runOrder = 0;
+  function orderedPool(base: HudResourcePool): HudResourcePool {
+    if (previousPool === base) return activePool;
+    previousPool = base;
+    const occurrence = runCounts.get(base) ?? 0;
+    runCounts.set(base, occurrence + 1);
+    activePool = base;
+    if (occurrence > 0) {
+      const extras = extraRuns.get(base) ?? [];
+      extraRuns.set(base, extras);
+      let extra = extras[occurrence - 1];
+      if (!extra) {
+        extra = own(
+          new HudResourcePool({
+            initialCapacity: 16,
+            maxCapacity: 4096,
+            material: materialFactories.get(base)!(),
+          }),
+        );
+        extras.push(extra);
+        allPools.push(extra);
+        scene.add(extra.mesh);
+        extra.beginFrame();
+      }
+      activePool = extra;
+    }
+    activePool.mesh.renderOrder = ++runOrder;
+    return activePool;
+  }
   const rectMatrix = new Matrix4();
   const position = new Vector3();
   const scale = new Vector3();
@@ -252,15 +289,14 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
   }
 
   function syncQueue(layers: readonly HudLayer[], queue: RenderQueueSnapshot): void {
-    pool.beginFrame();
-    textPool.beginFrame();
-    pixelTextPool.beginFrame();
+    for (const target of allPools) target.beginFrame();
+    runCounts.clear();
+    previousPool = null;
+    runOrder = 0;
     transforms.clear();
     layerByNodeId.clear();
     if (layers.length === 0 || queue.commands.length === 0) {
-      pool.endFrame();
-      textPool.endFrame();
-      pixelTextPool.endFrame();
+      for (const target of allPools) target.endFrame();
       return;
     }
     const hostViewport = cssViewport ?? readHostCssViewport();
@@ -271,9 +307,7 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     }
     const fallback = layers.find((layer) => layer.enabled) ?? layers[0];
     if (!fallback) {
-      pool.endFrame();
-      textPool.endFrame();
-      pixelTextPool.endFrame();
+      for (const target of allPools) target.endFrame();
       return;
     }
     for (const command of queue.commands) {
@@ -301,9 +335,7 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
       }
       writeCommand(command, transform);
     }
-    pool.endFrame();
-    textPool.endFrame();
-    pixelTextPool.endFrame();
+    for (const target of allPools) target.endFrame();
   }
 
   function writeCommand(command: HudDrawCommand, transform: LayerViewportTransform): void {
@@ -312,21 +344,52 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
       const pixel = command.fontId === "pixel";
       const glyphs = pixel ? pixelTextPool : textPool;
       for (const glyph of command.glyphs) {
-        if (command.clip && !intersectRects(glyph, command.clip)) continue;
-        placeRect(glyph, transform, pixel);
-        scratchUv[0] = glyph.u0;
-        scratchUv[1] = glyph.v0;
-        scratchUv[2] = glyph.u1;
-        scratchUv[3] = glyph.v1;
+        const visible = command.clip ? intersectRects(glyph, command.clip) : glyph;
+        if (!visible) continue;
+        placeRect(visible, transform, pixel);
+        const du = glyph.u1 - glyph.u0,
+          dv = glyph.v1 - glyph.v0;
+        scratchUv[0] = glyph.u0 + ((visible.x - glyph.x) / glyph.width) * du;
+        scratchUv[1] =
+          glyph.v0 + ((glyph.y + glyph.height - visible.y - visible.height) / glyph.height) * dv;
+        scratchUv[2] = glyph.u0 + ((visible.x + visible.width - glyph.x) / glyph.width) * du;
+        scratchUv[3] = glyph.v1 - ((visible.y - glyph.y) / glyph.height) * dv;
         writeSlot(glyphs, command.fill, SHAPE_TEXT, 0, pixel ? 1 : 0, 0, command.opacity);
       }
       return;
     }
     if (command.kind === "image") {
-      if (command.clip && !intersectRects(command.bounds, command.clip)) return;
-      placeRect(command.bounds, transform);
-      clipToUv(command.bounds, command.clip, scratchUv);
-      writeSlot(pool, command.tint, SHAPE_IMAGE, 0, 0, 0, command.opacity);
+      if (webgpuSafe) return;
+      const textureKey = command.resource.id.replace(/:(nearest|linear)$/, "");
+      const texture = options.textures?.get(textureKey);
+      if (!texture) return;
+      let images = texturePools.get(command.resource.id);
+      if (!images) {
+        images = own(
+          new HudResourcePool({
+            initialCapacity: 16,
+            maxCapacity: 4096,
+            material: createTextMaterial(texture),
+          }),
+        );
+        texturePools.set(command.resource.id, images);
+        materialFactories.set(images, () => createTextMaterial(texture));
+        allPools.push(images);
+        scene.add(images.mesh);
+        images.beginFrame();
+      }
+      const visible = command.clip ? intersectRects(command.bounds, command.clip) : command.bounds;
+      if (!visible) return;
+      placeRect(visible, transform);
+      const uv = command.uv ?? { x: 0, y: 0, width: 1, height: 1 };
+      const bounds = command.bounds;
+      scratchUv[0] = uv.x + ((visible.x - bounds.x) / bounds.width) * uv.width;
+      scratchUv[1] =
+        uv.y +
+        ((bounds.y + bounds.height - visible.y - visible.height) / bounds.height) * uv.height;
+      scratchUv[2] = uv.x + ((visible.x + visible.width - bounds.x) / bounds.width) * uv.width;
+      scratchUv[3] = uv.y + (1 - (visible.y - bounds.y) / bounds.height) * uv.height;
+      writeSlot(images, command.tint, SHAPE_IMAGE, 0, 0, 0, command.opacity);
       return;
     }
     if (command.kind !== "shape") return;
@@ -389,6 +452,7 @@ export function createHudOverlayAdapter(options: HudOverlayAdapterOptions): HudO
     p2: number,
     p3: number,
   ): void {
+    target = orderedPool(target);
     const slot = target.acquireSlot();
     scratchParams[0] = p0;
     scratchParams[1] = p1;

@@ -50,6 +50,7 @@ export type ImageInstanceCommand = DrawCommandBase &
     bounds: ReadonlyRect;
     resource: ResourceHandle;
     tint: number;
+    uv?: ReadonlyRect;
   }>;
 
 export type GlyphQuad = Readonly<{
